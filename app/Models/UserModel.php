@@ -1,0 +1,242 @@
+<?php namespace App\Models;
+
+use CodeIgniter\Model;
+
+class UserModel extends Model
+{
+    protected $table      = 'users';
+    protected $primaryKey = 'id';
+
+    protected $returnType     = 'object';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'idcode', 'password',
+        'first_name','last_name','display_name','role','email','username',
+        'document_number', 'document_type', 'gender', 'birth_date'
+    ];
+
+    protected $useTimestamps = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = '';
+
+    protected $validationRules    = [
+        'email' => 'is_unique[users.email,id,{id}]|valid_email',
+        'document_number' => 'is_unique[users.document_number,id,{id}]',
+        'username' => 'is_unique[users.username,id,{id}]'
+    ];
+    protected $validationMessages = [
+        'email' => [
+            'is_unique' => 'El correo electrónico ya está registrado',
+            'valid_email' => 'Debe usar una dirección de correo elecrónico válida'
+        ],
+        'document_number' => [
+            'is_unique' => 'El número de documento escrito ya está registrado'
+        ],
+        'username' => [
+            'is_unique' => 'El username escrito ya está registrado'
+        ]
+    ];
+    protected $skipValidation     = false;
+
+// Buscador
+//-----------------------------------------------------------------------------
+
+    /**
+     * Array con los datos para la vista de exploración
+     */
+    public function exploreData($input)
+    {
+        $data = $this->search($input);
+
+        //Elemento de exploración
+            $data['controller'] = 'users';                      //Nombre del controlador
+            $data['cf'] = 'users/explore/';                     //Nombre del controlador-función
+            $data['viewsFolder'] = 'admin/users/explore/';     //Carpeta donde están las vistas de exploración
+            
+        //Vistas
+            $data['headTitle'] = 'Usuarios';
+            $data['viewA'] = $data['viewsFolder'] . 'explore';
+            $data['nav2'] = $data['viewsFolder'] . 'menu';
+        
+        return $data;
+    }
+
+    /**
+     * Segmento SQL SELECT para construir consulta
+     * 2020-08-11
+     */
+    function select($format = 'default')
+    {
+        $arrSelect['default'] = 'id, idcode, display_name, first_name, last_name, username, email, document_number,
+            role, status, gender, birth_date, organization_id, city_id, phone_number,
+            notes, url_image, url_thumbnail, about, admin_notes,
+            updater_id, creator_id, updated_at, created_at';
+        $arrSelect['basic'] = 'id, idcode, display_name, 
+            username, email, role';
+        $arrSelect['admin'] = '*';
+
+        return $arrSelect[$format];
+    }
+
+    public function search($input)
+    {
+        $search = new \App\Libraries\Search();
+        $dbTools = new \App\Models\DbTools();
+        
+        $qFields = ['display_name', 'first_name', 'last_name', 'email'];
+
+        $searchSettings = $search->settings($input);
+        $searchCondition = $search->condition($input, $qFields);
+
+        $data['list'] = $this->list($searchCondition, $searchSettings);
+        $data['settings'] = $searchSettings;
+        $data['condition'] = $searchCondition;
+        $data['qtyResults'] = $dbTools->numRows('users', $searchCondition);
+        $data['maxPage'] = ( $data['qtyResults'] > 0 ) ? ceil($data['qtyResults'] / $searchSettings['perPage']) : 1 ;
+
+        return $data;
+    }    
+
+    /**
+     * Listado de regustros filtrados por la condición y según los requerimientos definidos
+     * 2023-02-12
+     */
+    function list($searchCondition, $searchSettings)
+    {
+        $select = $this->select($searchSettings['selectFormat']);
+        
+        $builder = $this->builder();
+        $query = $builder->select($select)
+            ->where($searchCondition)
+            ->limit($searchSettings['perPage'], $searchSettings['offset'])
+            ->orderBy($searchSettings['orderField'], $searchSettings['orderType'])
+            ->get();
+
+        $list = $query->getResult(); 
+
+        return $list;
+    }
+
+// Datos
+//-----------------------------------------------------------------------------
+
+    /**
+     * Row de un user
+     */
+    public function get($idCode, $selectFormat = 'default')
+    {
+        $row = NULL;
+        $idCodeChecked = 0;
+        if ( strlen($idCode) > 0 ) { $idCodeChecked = $idCode; }
+
+        //$db = db_connect();
+        $builder = $this->builder();
+        $builder->select($this->select($selectFormat));
+        $builder->where('idcode', $idCodeChecked);
+        $query = $builder->get();
+
+        if ( $query->getRow(0) ) { $row = $query->getRow(0); }
+
+        return $row;
+    }
+
+    public function basic($row)
+    {
+        $data['row'] = $row;
+        $data['headTitle'] = $row->display_name;
+
+        return $data;
+    }
+
+
+// Herramientas
+//-----------------------------------------------------------------------------
+
+    /**
+     * Genera un username a partir de un email
+     * 2022-05-07
+     */
+    function emailToUsername($email)
+    {
+        $username = explode('@', $email)[0];
+        $username = substr($username, 0,25);
+        //Evitar que tenga menos de 8 caracteres:
+        if ( strlen($username) < 8 ) {
+            $username = substr($username . date('Ymd'),0,8);
+        }
+        $username = preg_replace('[A-Za-z0-9_]', '', $username);
+        $username = DbTools::uniqueSlug($username, 'users', 'username');
+        $username = str_replace(array('.', '-'), '', $username);
+
+        return $username;
+    }
+
+// Passwords
+//-----------------------------------------------------------------------------
+
+    /**
+     * Devuelve password encriptado
+     * 2021-02-26
+     */
+    function cryptPassword($input, $rounds = 7):string
+    {
+        $salt = '';
+        $salt_chars = array_merge(range('A','Z'), range('a','z'), range(0,9));
+        for($i=0; $i < 22; $i++)
+        {
+          $salt .= $salt_chars[array_rand($salt_chars)];
+        }
+        
+        return crypt($input, sprintf('$2a$%02d$', $rounds) . $salt);
+    }
+
+// ELIMINACIÓN
+//-----------------------------------------------------------------------------
+
+    /**
+     * Elimina registro tabla users, con idcode especificado
+     * 2023-02-19
+     * @param int $idCode valor en users.idcode
+     * @return $result
+     */
+    public function deleteByIdCode($idCode)
+    {
+        $restriction = $this->deleteRestriction($idCode);
+
+        if ( strlen($restriction) == 0 ) {
+            //No hay restricción, eliminar
+            $result = $this->where('idcode',$idCode)->delete();
+        } else {
+            //Devolver texto de restricción
+            $result = $restriction;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Devuelve restricción, si existe alguna para eliminar un usuario
+     * Si no existe devuelve cadena vacía, se puede eliminar usuario.
+     * 2023-02-19
+     * 
+     * @return string $restriction
+     */
+    public function deleteRestriction($idCode)
+    {
+        $restriction = '';
+        $user = $this->get($idCode, 'admin');
+
+        if ( is_null($user) ) {
+            $restriction .= "Usuario {$idCode} no existe. ";
+        } else {
+            //Usuario rol developer, no eliminable
+            if ( $user->role == 1) $restriction .= "El rol del usuario no permite su eliminación. ";
+            //Usuario rol admin, no eliminable
+            if ( $user->role == 2) $restriction .= "El rol del usuario no permite su eliminación. ";
+        }
+
+        return trim($restriction);
+    }
+}

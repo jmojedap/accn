@@ -1,0 +1,114 @@
+/* ESTILOS GENERALES APLICACIONES PML */
+/* VERSIÓN 2022-04-09 */
+
+/* Layout */
+/*-----------------------------------------------------------------------------*/
+
+.center_box{ margin: 0 auto; }
+.center_box_320{ max-width: 320px; margin: 0 auto; }
+.center_box_450{ max-width: 450px;  margin: 0 auto;}
+.center_box_750{ max-width: 750px; margin: 0 auto; }
+.center_box_920{ max-width: 920px; margin: 0 auto; }
+
+/* GRIDS */
+/*-----------------------------------------------------------------------------*/
+
+.grid-general {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0.5em 0.5em;
+  }
+  @media (max-width: 1366px) { .grid-general{ grid-template-columns: 1fr 1fr 1fr 1fr; }}
+  @media (max-width: 767px) { .grid-general{ grid-template-columns: 1fr 1fr; }}
+  @media (max-width: 450px) { .grid-general{ grid-template-columns: 1fr; }}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0.5em 0.5em;
+  }
+
+  @media (max-width: 450px) { .grid-3{ grid-template-columns: 1fr 1fr 1fr; }}
+  
+
+/* ANCHOS */
+/*-----------------------------------------------------------------------------*/
+
+.w30p { width: 30px; }
+.w32p { width: 32px; }
+.w40p { width: 40px; }
+.w50p { width: 50px; }
+.w64p { width: 64px; }
+.w75p { width: 75px; }
+.w100p { width: 100px; }
+.w120p { width: 120px; }
+.w150p { width: 150px; }
+.w240p { width: 240px; }
+.w320p { width: 320px; }
+.w360p { width: 360px; }
+
+.w25pc { width: 25%;}
+.w33pc { width: 33%;}
+.w100pc { width: 100%;}
+
+.mw360p { max-width: 360px; }
+.mw480p { max-width: 480px; }
+.mw750p { max-width: 750px; }
+
+/* LINKS Y BOTONES */
+/*-----------------------------------------------------------------------------*/
+a.link-bold{
+    color: #666;
+    font-weight: bold;
+}
+
+a.link-bold:hover{
+    text-decoration: underline;
+}
+
+.a4{
+    display: inline-block;
+    text-align: center;
+    font-size: 0.8em;
+    width: 2.6em;
+    height: 22px;
+    cursor: pointer;
+    background-color: #fafafa;
+    border: 1px solid #eaeaea;
+    color: #333;
+    border-radius: 2px;
+}
+
+a.a4{
+    line-height: 1.8em;
+}
+
+.a4:hover{
+    color: #333;
+    background-color: #eaeaea;
+    border: 1px solid #eaeaea;
+}
+
+.pointer{cursor:pointer}
+
+/* Tablas */
+/*-----------------------------------------------------------------------------*/
+
+.td-title{
+    font-size: 0.9em;
+    width: 33%;
+    text-align: right;
+}
+
+/* DISPLAY PANTALLAS GRANES Y PEQUEÑAS */
+/*-----------------------------------------------------------------------------*/
+
+/* Grandes */
+@media (min-width: 768px) {
+    .only-sm { display: none; }
+}
+
+/* Pantallas pequeñas */
+@media (max-width: 767px) {
+    .only-lg { display: none; }
+}

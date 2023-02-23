@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+/* LAYOUT */
+/*-----------------------------------------------------------------------------*/
+
+html {
+    height: -webkit-fill-available;
+}
+
+body{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9em;
+    min-height: 100vh;
+    background-color: red;
+    min-height: -webkit-fill-available;
+}
+
+.main-content{
+    padding: 0.75em;
+    background-color: #FFF;
+    width: 100%;
+    height: 100vh;
+}
+
+.header{
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer{
+    background-color: #F8F9FA;
+    text-align: center;
+    padding: 0.5em;
+    color: #999;
+    border-top: 1px solid #EEE;
+}
+
+/* Textos */
+/*-----------------------------------------------------------------------------*/
+
+h1, h2 { font-family: 'Roboto', sans-serif; }
+
+#page_title {
+    font-size: 2em;
+}
+
+a{
+    text-decoration: none;
+}
+
+/* NavBar */
+/*-----------------------------------------------------------------------------*/
+
+.nav-tabs .nav-item .active {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.nav-item .nav-link{
+	color: #76838f;
+}
+
+.nav-tabs .nav-item .active {
+    color: #AB005A;
+    border-bottom: 2px solid #AB005A;
+}
+
+/* Formularios */
+/*-----------------------------------------------------------------------------*/
+.form-control{
+    border-color: #E4EAEC;
+}
+.form-select{
+    border-color: #E4EAEC;
+}
+
+/* Botones */
+/*-----------------------------------------------------------------------------*/
+
+.btn-light {
+	background-color: #fefefe;
+	border-color: #E4EAEC;
+	color: #444;
+}
+
+.btn-light:hover,
+.btn-light:active,
+.btn-light.hover {
+    background-color: #ffffff;
+    border-color: #CCC;
+}
+
+.btn-light:disabled{
+	background-color: #ffffff;
+	border-color: #AAA;
+	color: #AAA;
+}
+
+.btn-ellipsis{
+    background-color: white;
+    border: 1px solid #ddd;
+    color: #666;
+    width: 38px;
+    height: 38px;
+    border-radius: 0.25rem;
+}
+
+/* NavBar */
+/*-----------------------------------------------------------------------------*/
+.navbar{
+    background-color: #AB005A;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgb(255 255 255);
+}
+
+tr.selected {
+    background-color: #e0edfb;
+}
+
+/* PANTALLAS DIPOSITIVOS MÓVILES */
+/*-----------------------------------------------------------------------------*/
+
+
+@media (max-width: 730px) {
+    .header { grid-template-columns: auto 38px; }
+
+    #page_title {
+        font-size: 1.5em;
+    }
+}

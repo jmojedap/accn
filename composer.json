@@ -1,0 +1,16 @@
+{
+    "name": "mauricio/accn",
+    "description": "PML ProjectApp CI4",
+    "autoload": {
+        "psr-4": {
+            "Mauricio\\Accn\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jmojedap",
+            "email": "jmojedap@gmail.com"
+        }
+    ],
+    "require": {}
+}
