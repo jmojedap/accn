@@ -31,7 +31,10 @@ class Users extends BaseController
         $input = $request->getPost();
         
         $search = new \App\Libraries\Search();
+
         $data = $this->userModel->search($input);
+        //unset($data['settings']);
+        //unset($data['filters']);
 
         return $this->response->setJSON($data);
     }
@@ -109,17 +112,20 @@ class Users extends BaseController
     /**
      * JSON
      * Actualizar los datos de un usuario, tabla users
-     * 2023-02-04
+     * 2023-03-12
      */
     public function update($idCode)
     {
         $aRow = $this->request->getPost();
         $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
 
-        $data['updated'] = $this->userModel->
-            where('idcode',$idCode)->set($aRow)->update();
+        $data['saved'] = $this->userModel->where('idcode',$idCode)
+                            ->set($aRow)->update();
 
-        if ( ! $data['updated'] ) {
+        if ( $data['saved'] ) {
+            $data['savedId'] = $aRow['id'];
+            $data['savedId'] = $aRow['id'];
+        } else {
             $data['errors'] = $this->userModel->errors();
         }
 

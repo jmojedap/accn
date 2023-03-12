@@ -30,15 +30,15 @@ class ItemModel extends Model
 
     /**
      * Segmento SQL SELECT para construir consulta
-     * 2020-10-27
+     * 2023-02-22
      */
     function select($format = 'basic')
     {
         $arrSelect['basic'] = 'id, name, code';
-        $arrSelect['options'] = 'CONCAT("0", (code)) AS str_cod, code, name';
-        $arrSelect['optionsFull'] = 'CONCAT("0", (code)) AS str_cod, code, name, short_name,
+        $arrSelect['options'] = 'code, name';
+        $arrSelect['optionsFull'] = 'code, name, short_name,
             abbreviation, slug, parent_id';
-        $arrSelect['optionsAbbreviation'] = 'CONCAT("0", (code)) AS str_cod, code, abbreviation';
+        $arrSelect['optionsAbbreviation'] = 'code, abbreviation';
         return $arrSelect[$format];
     }
 

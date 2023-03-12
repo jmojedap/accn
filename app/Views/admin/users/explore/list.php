@@ -12,7 +12,7 @@
         </thead>
 
         <tbody>
-            <tr v-for="(element, key) in list" v-bind:id="`row` + element.idcode" v-bind:class="{'selected': selected.includes(element.idcode) }">
+            <tr v-for="(element, key) in results" v-bind:id="`row` + element.idcode" v-bind:class="{'selected': selected.includes(element.idcode) }">
                 <td><input type="checkbox" v-model="selected" v-bind:value="element.idcode"></td>
                 <td class="text-muted">{{ element.id }}</td>
                 <td>

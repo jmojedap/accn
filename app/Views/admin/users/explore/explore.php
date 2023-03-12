@@ -1,7 +1,7 @@
 <div id="exploreApp">
     <div class="row">
         <div class="col-md-5">
-            <?= view($viewsFolder . 'search_form') ?>
+            <?php echo view($viewsFolder . 'search_form') ?>
         </div>
         <div class="col-md-3">
             <button class="btn btn-light"
@@ -16,8 +16,8 @@
             </button>
         </div>
     </div>
-    <?= view($viewsFolder . 'list') ?>
-    <?= view('common/bs5/modal_delete_selected') ?>
+    <?php echo view($viewsFolder . 'list') ?>
+    <?php echo view('common/bs5/modal_delete_selected') ?>
 </div>
 
-<?= view($viewsFolder . 'vue') ?>
+<?php echo view($viewsFolder . 'vue') ?>

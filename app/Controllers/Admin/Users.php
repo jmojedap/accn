@@ -12,7 +12,14 @@ class Users extends BaseController
 		$this->db = \Config\Database::connect();
 		$this->userModel = new UserModel();
         $this->viewsFolder = 'admin/users/';
-        $this->viewsFolderAdmin = 'admin/users/';
+        //$this->viewsFolderAdmin = 'admin/users/';
+        $this->backLink = URL_ADMIN . 'users/explore';
+        $this->entityInfo = [
+            'controller' => 'users',
+            'singular' => 'Usuario',
+            'plural' => 'Usuarios',
+            'isMale' => 1,
+        ];
 	}
 
     public function index()
@@ -26,20 +33,26 @@ class Users extends BaseController
     /**
      * HTML
      * Listado de exploración y búsqueda de usuarios
-     * 2022-06-22
+     * 2023-03-05
      */
     public function explore()
     {
         //Filtros y detalle de la búsqueda
         $request = \Config\Services::request();
         $input = $request->getGet();
+        $data['search'] = $this->userModel->search($input);
+        
+        $data['entityInfo'] = $this->entityInfo;
+        $data['headTitle'] = $this->entityInfo['plural'];
+        $data['viewsFolder'] = $this->viewsFolder . 'explore/';
+        $data['viewA'] = $this->viewsFolder . 'explore/explore';
+        $data['nav2'] = $this->viewsFolder . 'menus/general';
 
-        //Datos básicos de la exploración
-        $data = $this->userModel->exploreData($input);
+        $data['table'] = $this->userModel->table;
 
         $data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
 
-        return view(TPL_ADMIN . 'main', $data);
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
 
     /**
@@ -56,8 +69,10 @@ class Users extends BaseController
         $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
 
         $data['viewA'] = 'admin/users/profile';
+        $data['nav2'] = $this->viewsFolder . 'menus/menu';
+        $data['backLink'] = $this->backLink;
 
-        return view(TPL_ADMIN . 'main', $data);
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
 
     /**
@@ -69,11 +84,12 @@ class Users extends BaseController
     {
         $data['headTitle'] = 'Crear usuario';
         $data['viewA'] = $this->viewsFolder . 'add/add';
-        $data['viewsFolder'] = $this->viewsFolder;
+        $data['nav2'] = $this->viewsFolder . 'menus/general';
+        $data['entityInfo'] = $this->entityInfo;
 
         $data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
 
-        return view(TPL_ADMIN . 'main', $data);
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
 
     /**
@@ -90,8 +106,10 @@ class Users extends BaseController
         $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
         $data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
 
-        $data['viewA'] = $this->viewsFolderAdmin . 'edit/edit';
+        $data['viewA'] = $this->viewsFolder . 'edit/edit';
+        $data['nav2'] = $this->viewsFolder . 'menus/menu';
+        $data['backLink'] = $this->backLink;
 
-        return view(TPL_ADMIN . 'main', $data);
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
 }

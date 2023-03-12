@@ -1,0 +1,6 @@
+[
+    {
+        "id":"post_name", "required":1, "title":"Nombre de la tabla",
+        "type":"text"
+    }
+]

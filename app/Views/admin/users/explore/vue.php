@@ -1,24 +1,19 @@
-
 <script>
 // VueApp
 //-----------------------------------------------------------------------------
-const exploreApp = createApp({
+var exploreApp = createApp({
     data(){
         return{
             loading: false,
             deleting: false,
-            settings: <?= json_encode($settings) ?>,
-            cf: '<?= $cf; ?>',
-            controller: '<?= $controller; ?>',
-            numPage: <?= $settings['numPage'] ?>,
-            maxPage: <?= $maxPage ?>,
-            qtyResults: <?= $qtyResults ?>,
-            list: <?= json_encode($list) ?>,
-            element: [],
+            filters: <?= json_encode($search['filters']) ?>, 
+            numPage: <?= $search['settings']['numPage'] ?>,
+            perPage: <?= $search['settings']['perPage'] ?>,
+            results: <?= json_encode($search['results']) ?>,
+            maxPage: <?= $search['maxPage'] ?>,
+            qtyResults: <?= $search['qtyResults'] ?>,
+            entityInfo: <?= json_encode($entityInfo) ?>,
             selected: [],
-            filters:{
-                role__eq:'<?= $input['role__eq'] ?>',
-            },
             allSelected: false,
             displayFilters: false,
             arrRoles: <?= json_encode($arrRoles) ?>,
@@ -28,10 +23,10 @@ const exploreApp = createApp({
     methods: {
         search: function(){
             this.loading = true
-            var searchFilters = new FormData(document.getElementById('searchForm'))
-            axios.post(URL_API + this.controller + '/search/', searchFilters)
+            var searchFormValues = new FormData(document.getElementById('searchForm'))
+            axios.post(URL_API + this.entityInfo.controller + '/search/', searchFormValues)
             .then(response => {
-                this.list = response.data.list
+                this.results = response.data.results
                 this.maxPage = response.data.maxPage
                 this.qtyResults = response.data.qtyResults
                 //history.pushState(null, null, URL_API + this.cf + this.numPage +'/?' + response.data.filtersStr);
@@ -44,8 +39,8 @@ const exploreApp = createApp({
         selectAll: function() {
             this.selected = [];
             if (this.allSelected) {
-                for (element in this.list) {
-                    this.selected.push(this.list[element].idcode);
+                for (element in this.results) {
+                    this.selected.push(this.results[element].idcode);
                 }
             }
         },
@@ -58,7 +53,7 @@ const exploreApp = createApp({
             var payload = new FormData();
             payload.append('selected', this.selected);
             
-            axios.post(URL_API + this.controller + '/delete_selected', payload)
+            axios.post(URL_API + this.entityInfo.controller + '/delete_selected', payload)
             .then(response => {
                 this.deleting = false
                 modalDeleteSelected.hide()
@@ -66,7 +61,7 @@ const exploreApp = createApp({
             })
             .catch(function (error) {
                 console.log(error)
-                this.deleting = true
+                this.deleting = false
             })
         },
         hideDeleted: function(results){
@@ -90,7 +85,7 @@ const exploreApp = createApp({
             this.selected = []
         },
         set_current: function(key){
-            this.element = this.list[key];
+            this.element = this.results[key];
         },
         toggle_filters: function(){
             this.displayFilters = !this.displayFilters;
@@ -98,7 +93,7 @@ const exploreApp = createApp({
         }
     },
     mounted(){
-        //this.search()
+        //this.runSearch()
     }
 }).mount('#exploreApp')
 

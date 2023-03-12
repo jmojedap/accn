@@ -47,6 +47,21 @@ class Search {
     }
 
     /**
+     * Array con valores de filtros realizados en una búsqueda a partir del $input
+     * y el listado de nombres de filtros $filtersNames
+     * 2023-03-04
+     */
+    public static function filters($input, $filtersNames)
+    {
+        foreach ($filtersNames as $filterName) {
+            $filters[$filterName] = '';
+            if ( isset($input[$filterName]) ) { $filters[$filterName] = $input[$filterName]; }
+        }
+
+        return $filters;
+    }
+
+    /**
      * Array con variables de configuración de la búsqueda de registros
      * 2023-02-12
      */

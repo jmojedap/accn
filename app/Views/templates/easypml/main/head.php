@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="<?= URL_RESOURCES ?>templates/easypml/style.css"></link>    
 
     <script>
-        const URL_CUR = '<?= URL_ADMIN ?>'; const URL_API = '<?= URL_API ?>';
+        const URL_MOD = '<?= URL_ADMIN ?>'; const URL_API = '<?= URL_API ?>';
         var appSection = '<?= $uri->getSegment(2) . '/' . $uri->getSegment(3); ?>';
 
         <?php if ( isset($_SESSION['logged']) ) : ?>

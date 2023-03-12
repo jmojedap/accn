@@ -55,7 +55,7 @@
 <script>
 //Activación inicial de elementos actuales
 //-----------------------------------------------------------------------------
-nav_1_elements.forEach(element => {
+nav1Elements.forEach(element => {
     //Activar elemento actual, si está en las secciones
     if ( element.sections.includes(appSection) ) { element.active = true }
     //Activar subelemento actual, si está en las secciones
@@ -76,7 +76,7 @@ nav_1_elements.forEach(element => {
 const navbarApp = createApp({
     data(){
         return{
-            elements: nav_1_elements
+            elements: nav1Elements
         }
     },
     methods: {

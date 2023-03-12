@@ -46,7 +46,7 @@ class Accounts extends BaseController
 		$role = $_SESSION['role'];
 		$destination = 'accounts/profile';
 		if ( $role == 1 ) {
-			$destination = 'accounts/profile';
+			$destination = 'admin/users/explore';
 		}
 
 		return redirect()->to(base_url($destination));

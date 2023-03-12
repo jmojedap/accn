@@ -3,8 +3,8 @@
 ?>
 
 <script>
-const newUser = {
-    role: '021',
+var newUser = {
+    role: 21,
     first_name: 'Nuevo',
     last_name: 'Eliminar',
     email: 'user<?= $random ?>@example.co',
@@ -14,10 +14,11 @@ const newUser = {
 
 // VueApp
 //-----------------------------------------------------------------------------
-let addUser = createApp({
+var addUser = createApp({
     data() {
         return {
-            urlCur: URL_CUR,
+            entityInfo: <?= json_encode($entityInfo) ?>,
+            urlMod: URL_MOD,
             user: newUser,
             validation: {
                 emailUnique: -1
@@ -36,9 +37,7 @@ let addUser = createApp({
                 .then(response => {
                     this.validation = response.data.validation
                 })
-                .catch(function(error) {
-                    console.log(error)
-                })
+                .catch(function(error) { console.log(error) })
         },
         handleSubmit: function() {
             this.loading = true
@@ -52,9 +51,7 @@ let addUser = createApp({
                         this.loading = false
                     }
                 })
-                .catch(function(error) {
-                    console.log(error)
-                })
+                .catch(function(error) { console.log(error) })
         },
         submitForm: function(formData) {
             axios.post(URL_API + 'users/create/', formData)
@@ -76,9 +73,12 @@ let addUser = createApp({
         resetForm: function() {
             for (key in this.user) this.user[key] = ''
             this.validation.emailUnique = -1
-        }
+        },
+        goToCreated: function(){
+            window.location = URL_MOD + `users/profile/` + this.idCode
+        },
     }
 }).mount('#addUser')
 
-let createdModal = new bootstrap.Modal(document.getElementById('createdModal'))
+var createdModal = new bootstrap.Modal(document.getElementById('createdModal'))
 </script>

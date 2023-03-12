@@ -40,6 +40,7 @@ class UserModel extends Model
     ];
     protected $skipValidation     = false;
 
+
 // Buscador
 //-----------------------------------------------------------------------------
 
@@ -82,28 +83,31 @@ class UserModel extends Model
 
     public function search($input)
     {
-        $search = new \App\Libraries\Search();
-        $dbTools = new \App\Models\DbTools();
-        
         $qFields = ['display_name', 'first_name', 'last_name', 'email'];
-
-        $searchSettings = $search->settings($input);
+        $filtersNames = ['q','role__eq','document_number__eq'];
+        
+        $search = new \App\Libraries\Search();
+        $filters = $search->filters($input, $filtersNames);
+        $settings = $search->settings($input);
         $searchCondition = $search->condition($input, $qFields);
 
-        $data['list'] = $this->list($searchCondition, $searchSettings);
-        $data['settings'] = $searchSettings;
-        $data['condition'] = $searchCondition;
-        $data['qtyResults'] = $dbTools->numRows('users', $searchCondition);
-        $data['maxPage'] = ( $data['qtyResults'] > 0 ) ? ceil($data['qtyResults'] / $searchSettings['perPage']) : 1 ;
+        $dbTools = new \App\Models\DbTools();
+        $qtyResults = \App\Models\DbTools::numRows('users', $searchCondition);
+
+        $data['settings'] = $settings;
+        $data['filters'] = $filters;
+        $data['results'] = $this->searchResults($searchCondition, $settings);
+        $data['qtyResults'] = $qtyResults;
+        $data['maxPage'] = ($qtyResults > 0) ? ceil($qtyResults / $settings['perPage']) : 1;
 
         return $data;
-    }    
+    }
 
     /**
-     * Listado de regustros filtrados por la condición y según los requerimientos definidos
+     * Listado de registros filtrados por la condición y según los requerimientos definidos
      * 2023-02-12
      */
-    function list($searchCondition, $searchSettings)
+    function searchResults($searchCondition, $searchSettings)
     {
         $select = $this->select($searchSettings['selectFormat']);
         
@@ -149,7 +153,6 @@ class UserModel extends Model
 
         return $data;
     }
-
 
 // Herramientas
 //-----------------------------------------------------------------------------

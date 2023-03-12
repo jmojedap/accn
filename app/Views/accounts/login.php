@@ -60,7 +60,7 @@ var loginApp = createApp({
         saveToken: function(jwtToken){
             console.log('Guardano token')
             localStorage.setItem("jwtToken", jwtToken);
-            window.location = URL_APP + 'accounts/logged';
+            window.location = URL_MOD + 'accounts/logged';
         },
     },
 }).mount('#loginApp')

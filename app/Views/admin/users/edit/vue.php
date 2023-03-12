@@ -1,12 +1,12 @@
 <script>
-let fields = <?= json_encode($row) ?>;
+var fields = <?= json_encode($row) ?>;
 
 // VueApp
 //-----------------------------------------------------------------------------
-let editUser = createApp({
+var editUser = createApp({
     data() {
         return {
-            urlApp: URL_CUR,
+            urlApp: URL_MOD,
             fields: fields,
             validation: {
                 emailUnique: -1
@@ -46,8 +46,6 @@ let editUser = createApp({
             axios.post(URL_API + 'users/update/' + this.idCode, formData)
                 .then(response => {
                     if ( response.data.saved ) {
-                        this.rowId = response.data.savedId
-                        this.idCode = response.data.idcode
                         toastr['success']('Guardado')
                     } else {
                         toastr['error']('No se guardó')

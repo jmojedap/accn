@@ -7,8 +7,9 @@
                         <label for="role" class="col-md-4 col-form-label text-end">Rol</label>
                         <div class="col-md-8">
                             <select name="role" v-model="user.role" class="form-select">
-                                <option v-for="optionRole in arrRoles" v-bind:value="optionRole.str_cod">
-                                    {{ optionRole.name }}</option>
+                                <option v-for="optionRole in arrRoles" v-bind:value="optionRole.code">
+                                    {{ optionRole.name }}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -63,20 +64,18 @@
 
     <!-- Modal -->
     <div class="modal fade" id="createdModal" tabindex="-1" aria-labelledby="" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Usuario creado</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body">
-                    <i class="fa fa-check"></i> Usuario creado correctamente
-                </div>
-                <div class="modal-footer">
-                    <a v-bind:href="urlCur + `users/profile/` + idCode" class="btn btn-primary">Abrir usuario</a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-plus"></i> Crear otro
-                    </button>
+                    <p class="text-center">
+                        <i class="fa fa-check-circle text-success fa-2x"></i>
+                    </p>
+                    <div class="d-flex flex-column">
+                        <button type="button" class="btn btn-primary btn-sm mb-2" v-on:click="goToCreated">
+                            Abrir {{ entityInfo.singular.toLowerCase() }}
+                        </button>
+                        <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Crear otro</button>
+                    </div>
                 </div>
             </div>
         </div>

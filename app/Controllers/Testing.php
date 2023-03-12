@@ -13,6 +13,20 @@ class Testing extends BaseController
         return $this->response->setJSON($data);
     }
 
+    public function pmlAdmin()
+    {
+        //$response = new \App\Libraries\Responses();
+
+        $data['viewA'] = 'formulario';
+        $data['headTitle'] = 'Probando vistas en CI4';
+        $data['nav2'] = 'admin/users/menus/menu';
+
+        //return \App\Libraries\PmlResponses::view(TPL_ADMIN . 'main', $data);
+        //return \App\Libraries\Pml::view(TPL_ADMIN . 'main', $data);
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
+
+    }
+
     public function dbToolsRowId()
     {
         $data['userNull'] = $this->dbTools->rowId('users',null);

@@ -12,8 +12,9 @@ body{
     font-family: 'Open Sans', sans-serif;
     font-size: 0.9em;
     min-height: 100vh;
-    background-color: red;
+    background-color: #FFFFFF;
     min-height: -webkit-fill-available;
+    padding-top: 65px;
 }
 
 .main-content{
@@ -64,8 +65,8 @@ a{
 }
 
 .nav-tabs .nav-item .active {
-    color: #AB005A;
-    border-bottom: 2px solid #AB005A;
+    color: #F5304D;
+    border-bottom: 2px solid #F5304D;
 }
 
 /* Formularios */
@@ -111,7 +112,7 @@ a{
 /* NavBar */
 /*-----------------------------------------------------------------------------*/
 .navbar{
-    background-color: #AB005A;
+    background-color: #F5304D;
 }
 
 .navbar-dark .navbar-nav .nav-link {

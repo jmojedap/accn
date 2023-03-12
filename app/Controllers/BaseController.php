@@ -60,6 +60,7 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         $this->session = \Config\Services::session();
+        $this->pml = new \App\Libraries\Pml();
 
 		//PML
 		$this->itemModel = new ItemModel();
