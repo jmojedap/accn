@@ -61,6 +61,20 @@
 .mw480p { max-width: 480px; }
 .mw750p { max-width: 750px; }
 
+/* IMÁGENES CUADRADAS */
+/*-----------------------------------------------------------------------------*/
+
+.sqr-120{
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+.sqr-60{
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
 /* LINKS Y BOTONES */
 /*-----------------------------------------------------------------------------*/
 a.link-bold{

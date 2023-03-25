@@ -1,5 +1,13 @@
 <?php
     $uri = current_url(true);
+    $appSection = '';
+    $segments = $uri->getSegments();
+    //$appSection = '';
+    //echo count($segments);
+    if ( count($segments) == 2 ) $appSection =  $uri->getSegment(2, '');
+    if ( count($segments) == 3 ) $appSection =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '');
+    if ( count($segments) >= 4 ) $appSection =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '') . '/' . $uri->getSegment(4, '');
+    
 ?>
 
     <meta charset="UTF-8">
@@ -48,7 +56,7 @@
 
     <script>
         const URL_MOD = '<?= URL_ADMIN ?>'; const URL_API = '<?= URL_API ?>';
-        var appSection = '<?= $uri->getSegment(2) . '/' . $uri->getSegment(3); ?>';
+        var appSection = '<?= $appSection ?>';
 
         <?php if ( isset($_SESSION['logged']) ) : ?>
             const APP_RID = <?= $_SESSION['role'] ?>; const APP_UID = <?= $_SESSION['user_id'] ?>;

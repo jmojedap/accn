@@ -8,7 +8,7 @@ class Testing extends BaseController
     {
         $request = \Config\Services::request();
 
-        $data['get'] = $request->getCookie('lepetit_session');
+        $data['get'] = $request->getCookie('accn_session');
 
         return $this->response->setJSON($data);
     }

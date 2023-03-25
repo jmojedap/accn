@@ -97,6 +97,7 @@ system/
 writable/
 public/resources/images/
 public/resources/brands/
+public/content/
 app/Config/App.php
 app/Config/Database.php
 app/Config/Constants.php

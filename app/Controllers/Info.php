@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController; // Which BaseController are you referring to.
 
-class Home extends BaseController
+class Info extends BaseController
 {
     public function index()
     {
@@ -18,5 +18,9 @@ class Home extends BaseController
         $data['userNoExiste'] = $this->dbTools->rowId('users',1982564654);
 
         return $this->response->setJSON($data);
+    }
+
+    public function noPermitido(){
+        echo 'Acceso no permitido';
     }
 }

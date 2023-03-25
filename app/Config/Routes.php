@@ -30,7 +30,12 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
-$routes->get('/admin/test/test', "Testing::pmlAdmin");
+$routes->get('admin', "Testing::pmlAdmin");
+
+// GENERAL
+//-----------------------------------------------------------------------------
+$routes->get('', 'Accounts::login');
+$routes->get('info/no_permitido', 'Info::noPermitido');
 
 // ACOUNTS
 //-----------------------------------------------------------------------------
@@ -44,7 +49,7 @@ $routes->group('accounts', static function ($routes) {
     $routes->get('profile', 'Accounts::profile');
 });
 
-$routes->post('/api/accounts/validate_login', 'Api\Accounts::validateLogin');
+$routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
 
 // USERS
 //-----------------------------------------------------------------------------
@@ -66,6 +71,25 @@ $routes->post('/api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->post('create', 'Api\Users::create');
         $routes->post('update/(:num)', 'Api\Users::update/$1');
         $routes->post('delete_selected', 'Api\Users::deleteSelected');
+    });
+
+// FILES ADMIN
+    //-----------------------------------------------------------------------------
+    $routes->group('admin/files', static function ($routes) {
+        $routes->get('explore', 'Admin\Files::explore');
+        $routes->get('add', 'Admin\Files::add');
+        $routes->get('info/(:num)', 'Admin\Files::info/$1');
+        $routes->get('edit/(:num)', 'Admin\Files::edit/$1');
+    });
+
+    // USERS API
+    //-----------------------------------------------------------------------------
+    $routes->group('api/files', static function ($routes) {
+        $routes->post('search', 'Api\Files::search');
+        $routes->post('validate', 'Api\Files::validateForm');
+        $routes->post('upload', 'Api\Files::upload');
+        $routes->post('update/(:num)', 'Api\Files::update/$1');
+        $routes->post('delete_selected', 'Api\Files::deleteSelected');
     });
 
 /*
