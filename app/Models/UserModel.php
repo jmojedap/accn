@@ -84,7 +84,7 @@ class UserModel extends Model
     public function search($input)
     {
         $qFields = ['display_name', 'first_name', 'last_name', 'email'];
-        $filtersNames = ['q','role__eq','document_number__eq'];
+        $filtersNames = ['q','role__eq','document_number__eq', 'gender__eq'];
         
         $search = new \App\Libraries\Search();
         $filters = $search->filters($input, $filtersNames);

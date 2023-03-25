@@ -40,6 +40,7 @@ class Users extends BaseController
         //Filtros y detalle de la búsqueda
         $request = \Config\Services::request();
         $input = $request->getGet();
+        //$input['perPage'] = 2;
         $data['search'] = $this->userModel->search($input);
         
         $data['entityInfo'] = $this->entityInfo;
@@ -51,6 +52,7 @@ class Users extends BaseController
         $data['table'] = $this->userModel->table;
 
         $data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
+        $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
 
         return $this->pml->view(TPL_ADMIN . 'main', $data);
     }

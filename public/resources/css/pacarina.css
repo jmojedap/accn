@@ -26,9 +26,15 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     gap: 0.5em 0.5em;
-  }
+}
 
-  @media (max-width: 450px) { .grid-3{ grid-template-columns: 1fr 1fr 1fr; }}
+@media (max-width: 450px) { .grid-3{ grid-template-columns: 1fr 1fr 1fr; }}
+
+.grid-columns-15rem{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.5em;
+}
   
 
 /* ANCHOS */

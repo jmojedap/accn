@@ -17,6 +17,7 @@ var exploreApp = createApp({
             allSelected: false,
             displayFilters: false,
             arrRoles: <?= json_encode($arrRoles) ?>,
+            arrGenders: <?= json_encode($arrGenders) ?>,
             selected_row_class: 'table-info',
         }
     },
@@ -37,16 +38,13 @@ var exploreApp = createApp({
             .catch(function (error) { console.log(error) })
         },
         selectAll: function() {
-            this.selected = [];
-            if (this.allSelected) {
-                for (element in this.results) {
-                    this.selected.push(this.results[element].idcode);
-                }
-            }
+            this.selected = this.allSelected ? this.results.map(element => element.idcode) : [];
         },
         sumPage: function(sum){
-            this.numPage = Pcrn.limit_between(this.numPage + sum, 1, this.maxPage);
-            this.search();
+            this.numPage = Pcrn.limit_between(this.numPage + sum, 1, this.maxPage)
+            setTimeout(() => {
+                this.search()
+            }, 50);
         },
         deleteSelected: function(){
             this.deleting = true
@@ -84,17 +82,34 @@ var exploreApp = createApp({
             if ( qtyNoDeleted > 0 ) toastr['warning'](qtyNoDeleted + ' registros NO eliminados')
             this.selected = []
         },
-        set_current: function(key){
+        resetFilter: function(filterName){
+            this.filters[filterName] = ''
+            setTimeout(() => {
+                this.search()
+            }, 100);
+        },
+        setCurrent: function(key){
             this.element = this.results[key];
         },
-        toggle_filters: function(){
+        toggleFilters: function(){
             this.displayFilters = !this.displayFilters;
-            $('#adv_filters').toggle('fast');
-        }
+            $('#searchFilters').toggle('fast');
+        },
+        roleName: function(value = '', field = 'name'){
+            var roleName = ''
+            var item = this.arrRoles.find(row => row.code == value)
+            if ( item != undefined ) roleName = item[field]
+            return roleName
+        },
     },
-    mounted(){
-        //this.runSearch()
-    }
+    computed:{
+        paginationText: function(){
+            var startRow = (this.numPage - 1) * this.perPage + 1
+            var endRow = this.numPage * this.perPage
+            if (this.qtyResults < endRow ) endRow = this.qtyResults
+            return startRow + '-' + endRow + ' de '
+        },
+    },
 }).mount('#exploreApp')
 
 var modalDeleteSelected = new bootstrap.Modal(document.getElementById('modalDeleteSelected'))
