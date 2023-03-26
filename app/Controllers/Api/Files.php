@@ -161,26 +161,22 @@ class Files extends BaseController
 	 * 2023-03-25
 	 */
 	public function upload()
-	{	
-		//Guardar archivo y preparar array para registro
+	{
+		//Guardar archivo y crear registro en tabla files
             $userId = $_SESSION['user_id'];
-			$aRow = $this->fileModel->upload($this->request, $userId);
-
-		//Guardar registro en tabla files
-			$this->fileModel->save($aRow);
-			$savedId = $this->fileModel->insertID();
-			$data['row'] = $this->fileModel->get($savedId);
-			//$data['aRow'] = $aRow;
+			$data['savedId'] = $this->fileModel->upload($this->request, $userId);
+            $data['row'] = $this->fileModel->get($data['savedId']);
 		
-		//Ajustar imagen y minuatura
-		if ( $aRow['is_image'] )
+        //Procesos adicionales para archivos de imagen
+		if ( $data['row']->is_image )
 		{	
-			$data['thumbnail'] = $this->fileModel->createThumbnail($data['row']);		//Crear miniatura
-			//$data['resized'] = $this->fileModel->resize_image($data['row']);			//Reducir dimensiones a un máximo permitido
-			//$this->fileModel->update_dimensions($data['row']);	//Actualizar los campos de dimensiones y tamaño
+            //Crear miniatura
+			$data['thumbnail'] = $this->fileModel->createThumbnail($data['row']);
+            //Reducir dimensiones a un máximo permitido
+			$data['resized'] = $this->fileModel->resizeImage($data['row']);
+            //Actualizar los campos de dimensiones y tamaño de archivo
+			$data['imageDimensions'] = $this->fileModel->updateDimensions($data['row']);
 		}
-
-		if ( $savedId > 0 ) { $data['status'] = 1; }
 
 		return $this->response->setJSON($data);
 	}

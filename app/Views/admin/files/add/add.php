@@ -24,8 +24,8 @@ var addFileApp = createApp({
             .then(response => {
                 console.log(response.data);
                 //Ir a la vista de la imagen
-                if ( response.data.status == 1 ) {
-                    window.location = URL_MOD + 'files/info/' + response.data.row.id;
+                if ( response.data.savedId > 0 ) {
+                    //window.location = URL_MOD + 'files/info/' + response.data.row.id;
                 }
                 //Mostrar respuesta html, si existe
                 if ( response.data.html ) { $('#uploadResponse').html(response.data.html); }

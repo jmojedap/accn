@@ -58,7 +58,7 @@ class FileModel extends Model
      */
     function select($format = 'default')
     {
-        $arrSelect['default'] = 'id, file_name, title, url, url_thumbnail, folder';
+        $arrSelect['default'] = 'id, file_name, title, url, url_thumbnail, folder, is_image';
         $arrSelect['basic'] = 'id, title, url, url_thumbnail';
         $arrSelect['admin'] = '*';
 
@@ -142,35 +142,55 @@ class FileModel extends Model
 //-----------------------------------------------------------------------------
 
     /**
-     * Guarda el archivo en carpeta de UPLOADS y devuelve array para creación de registro en la tabla files
+     * Guarda el archivo en carpeta de UPLOADS y crea registro en tabla files
+     * Devuelve el array con los datos del archivo guardado
      * 2021-01-25
      */
     public function upload($request, $userId)
     {
-        helper('text'); //Para random_string
-
         $file = $request->getFile('file_field');
-        $aRow = $request->getPost();
-
-        //Construir registro
-        $aRow['title'] = substr($file->getName(),0, strlen($file->getName()) - (strlen($file->getExtension()) + 1));
-        $aRow['ext'] = $file->getExtension();
-        $aRow['folder'] = date('Y/m/');
-        $aRow['is_image'] = ( substr($file->getMimeType(),0,5) == 'image' ) ? 1 : 0 ;
-        $aRow['type'] = $file->getMimeType();
-        $aRow['file_name'] =  $userId . '_' .  date('YmdHis') . random_string('numeric', 3) . '.' . $file->getExtension();
-        $aRow['size'] = intval($file->getSize()/1028);
-        $aRow['url'] = URL_UPLOADS . $aRow['folder'] . $aRow['file_name'];
-        $aRow['url_thumbnail'] = URL_UPLOADS . $aRow['folder'] . 'sm_' . $aRow['file_name'];
-        $aRow['creator_id'] = $userId;
-        $aRow['updater_id'] = $userId;
-        $aRow['created_at'] = date('Y-m-d H:i:s');
-        $aRow['updated_at'] = date('Y-m-d H:i:s');
-
+        $aRowBase = $request->getPost();
+        $aRow = $this->aRowAdd($file, $userId, $aRowBase);
+        
         //Guardar archivo en carpeta
         if (! $file->hasMoved()) {
             $file->move(PATH_UPLOADS . $aRow['folder'], $aRow['file_name']);
         }
+
+        //Guardar registro en tabla files
+        $this->save($aRow);
+        $savedId = $this->insertID();
+
+        return $savedId;
+    }
+
+    /**
+     * Prepara array para crear un nuevo registro en la tabla files a partir
+     * del array base, archivo y userId
+     * 2023-03-26
+     */
+    public function aRowAdd($file, $userId, $aRowBase)
+    {
+        helper('text'); //Para random_string
+        
+        $aRow = $aRowBase;
+        $fileName = $userId . '_' .  date('YmdHis') . random_string('numeric', 3) . '.' . $file->getExtension();
+        $folder = date('Y/m/');
+
+        //Construir registro
+        $aRow['title'] = substr($file->getName(),0, strlen($file->getName()) - (strlen($file->getExtension()) + 1));
+        $aRow['ext'] = $file->getExtension();
+        $aRow['folder'] = $folder;
+        $aRow['is_image'] = ( substr($file->getMimeType(),0,5) == 'image' ) ? 1 : 0 ;
+        $aRow['type'] = $file->getMimeType();
+        $aRow['file_name'] =  $fileName;
+        $aRow['size'] = intval($file->getSize()/1028);
+        $aRow['url'] = URL_UPLOADS . $folder . $fileName;
+        $aRow['url_thumbnail'] = URL_UPLOADS . $folder . 'sm_' . $fileName;
+        $aRow['creator_id'] = $userId;
+        $aRow['updater_id'] = $userId;
+        $aRow['created_at'] = date('Y-m-d H:i:s');
+        $aRow['updated_at'] = date('Y-m-d H:i:s');
 
         return $aRow;
     }
@@ -220,11 +240,52 @@ class FileModel extends Model
 
         $image = \Config\Services::image()
             ->withFile(PATH_UPLOADS . $row->folder . $row->file_name)
-            //->fit($pixels, null, 'center')   //Miniatura cuadrada
             ->resize($width, $height) //Miniatura no cuadrada
-            ->save($thumbnail_path, 80);
+            ->save($thumbnail_path, 90);
 
         return $thumbnail_path;
+    }
+
+    /**
+     * Ajusta una imagen cargada con una calidad y tamaño determinado
+     * 2021-01-22
+     */
+    public function resizeImage($row)
+    {
+        //Valores iniciales
+        $resized = FALSE;
+        $file_path = PATH_UPLOADS . $row->folder . $row->file_name;
+        $max_pixels = 800;      //Tamaño máximo en pixeles
+        $master_dim = 'width';  //Lado más largo para conservar tamaño
+
+        $image_size = getimagesize($file_path);
+
+        //Si la imagen es horizontal
+        if ( $image_size[0] > $image_size[1] ) $master_dim = 'height';
+        
+        //Si alguna dimensión supera el máximo
+        if ( $image_size[0] > $max_pixels or $image_size[1] > $max_pixels )
+        {
+            $image = \Config\Services::image()
+                ->withFile($file_path)
+                ->resize($max_pixels, $max_pixels, TRUE, $master_dim)
+                ->save($file_path, 90);
+
+            $resized = TRUE;
+        }
+
+        return $resized;
+    }
+
+    /**
+     * Actualiza campos de dimensiones de una imagen, registro en la tabla files
+     * 2023-03-26
+     */
+    public function updateDimensions($row)
+    {
+        $arrRow = $this->arrDimensions($row);
+        $this->update($row->id, $arrRow);
+        return $arrRow;
     }
 
     /**
