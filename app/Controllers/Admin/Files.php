@@ -22,9 +22,13 @@ class Files extends BaseController
         ];
 	}
 
-    public function index()
+    public function index($fileId = null)
     {
-        return redirect()->to('admin/files/explore');
+        if ( $fileId > 0 ) {
+            return redirect()->to("admin/files/info/{$fileId}");
+        } else {
+            return redirect()->to('admin/files/explore');
+        }
     }
 
 // Exploración de archivos
@@ -51,8 +55,8 @@ class Files extends BaseController
 
         $data['table'] = $this->fileModel->table;
 
-        $data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
-        $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
+        //$data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
+        //$data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
 
         return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
@@ -85,8 +89,6 @@ class Files extends BaseController
         $data['viewA'] = $this->viewsFolder . 'add/add';
         $data['nav2'] = $this->viewsFolder . 'menus/general';
         $data['entityInfo'] = $this->entityInfo;
-
-        //$data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
 
         return $this->pml->view(TPL_ADMIN . 'main', $data);
     }

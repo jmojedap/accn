@@ -21,7 +21,7 @@ var nav1Elements = [
         text: 'Archivos',
         active: false,
         icon: 'far fa-image',
-        cf: 'files/add',
+        cf: 'files/explore',
         sections: ['files/explore', 'files/add', 'files/import', 'files/info', 'files/edit', 'files/image', 'files/details'],
         subelements: []
     },

@@ -32,7 +32,7 @@ class Files extends BaseController
         
         $search = new \App\Libraries\Search();
 
-        $data = $this->userModel->search($input);
+        $data = $this->fileModel->search($input);
         //unset($data['settings']);
         //unset($data['filters']);
 
@@ -85,9 +85,9 @@ class Files extends BaseController
         //Preparar array del registro
         $aRow = $this->request->getPost();
         $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
-        $aRow['username'] = $this->userModel->emailToUsername($aRow['email']);
+        $aRow['username'] = $this->fileModel->emailToUsername($aRow['email']);
         if ( isset($aRow['password']) ) {
-            $aRow['password'] = $this->userModel->cryptPassword($aRow['password']);
+            $aRow['password'] = $this->fileModel->cryptPassword($aRow['password']);
         }
 
         //Control de rol de usuario, no administrador
@@ -96,7 +96,7 @@ class Files extends BaseController
         }
 
         //Guardar
-        $data['savedId'] = $this->userModel->insert($aRow);
+        $data['savedId'] = $this->fileModel->insert($aRow);
 
         //Si se creó, datos complementarios
         if ($data['savedId']) {
@@ -104,7 +104,7 @@ class Files extends BaseController
             $data['aRow'] = $aRow;
         }
         
-        $data['errors'] = $this->userModel->errors();
+        $data['errors'] = $this->fileModel->errors();
 
         return $this->response->setJSON($data);
     }
@@ -114,19 +114,19 @@ class Files extends BaseController
      * Actualizar los datos de un usuario, tabla files
      * 2023-03-12
      */
-    public function update($idCode)
+    public function update($fileId)
     {
         $aRow = $this->request->getPost();
         $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
 
-        $data['saved'] = $this->userModel->where('idcode',$idCode)
+        $data['saved'] = $this->fileModel->where('idcode',$fileId)
                             ->set($aRow)->update();
 
         if ( $data['saved'] ) {
             $data['savedId'] = $aRow['id'];
             $data['savedId'] = $aRow['id'];
         } else {
-            $data['errors'] = $this->userModel->errors();
+            $data['errors'] = $this->fileModel->errors();
         }
 
         return $this->response->setJSON($data);
@@ -144,8 +144,10 @@ class Files extends BaseController
         $selected = explode(',', $this->request->getPost('selected'));
         $results = [];
         
-        foreach ($selected as $idCode) {
-            $results[$idCode] = $this->userModel->deleteByIdCode($idCode);
+        $session = $_SESSION;
+
+        foreach ($selected as $fileId) {
+            $results[$fileId] = $this->fileModel->deleteUnlink($fileId, $session);
         }
 
         $data['results'] = $results;
@@ -162,21 +164,8 @@ class Files extends BaseController
 	 */
 	public function upload()
 	{
-		//Guardar archivo y crear registro en tabla files
-            $userId = $_SESSION['user_id'];
-			$data['savedId'] = $this->fileModel->upload($this->request, $userId);
-            $data['row'] = $this->fileModel->get($data['savedId']);
-		
-        //Procesos adicionales para archivos de imagen
-		if ( $data['row']->is_image )
-		{	
-            //Crear miniatura
-			$data['thumbnail'] = $this->fileModel->createThumbnail($data['row']);
-            //Reducir dimensiones a un máximo permitido
-			$data['resized'] = $this->fileModel->resizeImage($data['row']);
-            //Actualizar los campos de dimensiones y tamaño de archivo
-			$data['imageDimensions'] = $this->fileModel->updateDimensions($data['row']);
-		}
+        $userId = $_SESSION['user_id'];
+        $data = $this->fileModel->upload($this->request, $userId);
 
 		return $this->response->setJSON($data);
 	}

@@ -78,6 +78,7 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
     $routes->group('admin/files', static function ($routes) {
         $routes->get('explore', 'Admin\Files::explore');
         $routes->get('add', 'Admin\Files::add');
+        $routes->get('index/(:num)', 'Admin\Files::index/$1');
         $routes->get('info/(:num)', 'Admin\Files::info/$1');
         $routes->get('edit/(:num)', 'Admin\Files::edit/$1');
     });

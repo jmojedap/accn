@@ -59,7 +59,7 @@ class FileModel extends Model
     function select($format = 'default')
     {
         $arrSelect['default'] = 'id, file_name, title, url, url_thumbnail, folder, is_image';
-        $arrSelect['basic'] = 'id, title, url, url_thumbnail';
+        $arrSelect['basic'] = 'id, file_name, title, url, url_thumbnail';
         $arrSelect['admin'] = '*';
 
         return $arrSelect[$format];
@@ -133,7 +133,7 @@ class FileModel extends Model
     public function basic($row)
     {
         $data['row'] = $row;
-        $data['headTitle'] = $row->title;
+        $data['headTitle'] = 'Archivo - ' . $row->title;
 
         return $data;
     }
@@ -144,24 +144,44 @@ class FileModel extends Model
     /**
      * Guarda el archivo en carpeta de UPLOADS y crea registro en tabla files
      * Devuelve el array con los datos del archivo guardado
-     * 2021-01-25
+     * 2023-04-08
      */
     public function upload($request, $userId)
     {
-        $file = $request->getFile('file_field');
-        $aRowBase = $request->getPost();
-        $aRow = $this->aRowAdd($file, $userId, $aRowBase);
-        
-        //Guardar archivo en carpeta
-        if (! $file->hasMoved()) {
-            $file->move(PATH_UPLOADS . $aRow['folder'], $aRow['file_name']);
+        $data['savedId'] = 0; //Resultado por defecto
+
+        $validation = \Config\Services::validation();
+        $validation->setRuleGroup('generalFile');   //Ver Config/Validation
+
+        //Validar archivo
+        if ( $validation->withRequest($request)->run() ) {
+            //Guardar archivo y crear registro en tabla files
+                $file = $request->getFile('file_field');
+                $aRowAdd = $this->aRowAdd($file, $userId, $request);
+                $this->insert($aRowAdd);
+                $data['savedId']= $this->insertID();
+                $data['row'] = $this->get($data['savedId']);
+
+                //Guardar archivo en carpeta
+                if (! $file->hasMoved()) {
+                    $file->move(PATH_UPLOADS . $data['row']->folder, $data['row']->file_name);
+                }
+            
+            //Procesos adicionales para archivos de imagen
+            if ( $data['row']->is_image )
+            {	
+                //Crear miniatura
+                $data['thumbnail'] = $this->createThumbnail($data['row']);
+                //Reducir dimensiones a un máximo permitido
+                $data['resized'] = $this->resizeImage($data['row']);
+                //Actualizar los campos de dimensiones y tamaño de archivo
+                $data['imageDimensions'] = $this->updateDimensions($data['row']);
+            }
+        } else {
+            $data['errors'] = $validation->getErrors();
         }
 
-        //Guardar registro en tabla files
-        $this->save($aRow);
-        $savedId = $this->insertID();
-
-        return $savedId;
+        return $data;
     }
 
     /**
@@ -169,11 +189,11 @@ class FileModel extends Model
      * del array base, archivo y userId
      * 2023-03-26
      */
-    public function aRowAdd($file, $userId, $aRowBase)
+    public function aRowAdd($file, $userId, $request)
     {
         helper('text'); //Para random_string
         
-        $aRow = $aRowBase;
+        $aRow = $request->getPost();;
         $fileName = $userId . '_' .  date('YmdHis') . random_string('numeric', 3) . '.' . $file->getExtension();
         $folder = date('Y/m/');
 
@@ -195,17 +215,66 @@ class FileModel extends Model
         return $aRow;
     }
 
+// ELIMINACIÓN
+//-----------------------------------------------------------------------------
+
+    /**
+     * Elimina registro de la tabla files y elimina (unlink) archivos asociados 
+     * de las carpetas en servidor
+     * 2023-04-07
+     */
+    public function deleteUnlink($fileId, $session)
+    {
+        $row = $this->get($fileId, 'admin');
+        $restriction = $this->deleteRestriction($row, $session);
+
+        if ( strlen($restriction) == 0 ) {
+            //No hay restricción, eliminar
+            $result = $this->where('id',$row->id)->delete();
+            if ( $result == TRUE ) {
+                $this->unlink($row);
+            }
+        } else {
+            //Devolver texto de restricción
+            $result = $restriction;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Devuelve restricción, si existe alguna para eliminar un archivo
+     * Si no existe devuelve cadena vacía, se puede eliminar archivo.
+     * 2023-04-04
+     * 
+     * @return string $restriction
+     */
+    public function deleteRestriction($row, $session)
+    {
+        $restriction = '';
+
+        if ( is_null($row) ) {
+            $restriction .= "El registro que intenta eliminar no existe. ";
+        } else {
+            //No administradores ni editores
+            if ( $session['role'] > 3 ) {
+                //El usuario en sesión no es el creador
+                if ( $session['user_id'] != $row->creator_id ) $restriction .= "No es el creador del registro. ";
+            }
+        }
+
+        return trim($restriction);
+    }
+
     /**
      * Eliminar archivo y miniaturas si existen
      * 2021-01-25
      */
-    public function unlink($fileId)
+    public function unlink($rowFile)
     {
-        $row = $this->row($fileId);
-
         //Array rutas de archivos
-        $paths[] = PATH_UPLOADS . $row->folder . 'sm_' . $row->file_name;   //Thumbnail
-        $paths[] = PATH_UPLOADS . $row->folder . $row->file_name;           //Archivo original
+        $paths[] = PATH_UPLOADS . $rowFile->folder . 'sm_' . $rowFile->file_name;   //Thumbnail
+        $paths[] = PATH_UPLOADS . $rowFile->folder . $rowFile->file_name;           //Archivo original
 
         //Eliminar archivos
         foreach ($paths as $path)

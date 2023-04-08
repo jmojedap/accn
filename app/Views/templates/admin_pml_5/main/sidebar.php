@@ -82,7 +82,7 @@ var nav1App = createApp({
                     this.elements[i].active = true;
                     $('.treeview-menu').slideUp();
                     appSection = this.elements[i].cf;
-                    getSections('nav_1')
+                    getSections('nav1')
                     this.hide_sidebar()
                 }
             }
@@ -101,7 +101,7 @@ var nav1App = createApp({
     
                 //Cargando secciones
                 appSection = this.elements[i].subelements[j].cf;
-                getSections('nav_1')
+                getSections('nav1')
                 this.hide_sidebar()
             }
         },

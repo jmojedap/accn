@@ -12,12 +12,17 @@ var addFileApp = createApp({
         return{
             file: '',
             loading: false,
+            fileRow: {url: ''},
+            errors: {
+                file_field: ''
+            }
         }
     },
     methods: {
         handleSubmit: function(){
             var formData = new FormData();
             formData.append('file_field', this.file);
+            formData.append('table_id', 26);
 
             this.loading = true
             axios.post(URL_API + 'files/upload/', formData, {headers: {'Content-Type': 'multipart/form-data'}})
@@ -25,10 +30,12 @@ var addFileApp = createApp({
                 console.log(response.data);
                 //Ir a la vista de la imagen
                 if ( response.data.savedId > 0 ) {
-                    //window.location = URL_MOD + 'files/info/' + response.data.row.id;
+                    window.location = URL_MOD + 'files/info/' + response.data.row.id;
+                } else {
+                    toastr['error'](response.data.errors.file_field)
+                    this.errors = response.data.errors
                 }
-                //Mostrar respuesta html, si existe
-                if ( response.data.html ) { $('#uploadResponse').html(response.data.html); }
+                
                 //Limpiar formulario
                 $('#field-file').val(''); 
 
