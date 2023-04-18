@@ -79,6 +79,23 @@ class Files extends BaseController
     }
 
     /**
+     * HTML VIEW
+     * Vista información detallada del registro archivo
+     * 2023-04-17
+     */
+    public function details($rowId)
+    {
+        $row = $this->fileModel->get($rowId, 'admin');
+        $data = $this->fileModel->basic($row);
+
+        $data['viewA'] = 'common/bs5/row_details';
+        $data['nav2'] = $this->viewsFolder . 'menus/menu';
+        $data['backLink'] = $this->backLink;
+
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
+    }
+
+    /**
      * HTML FORM
      * Vista con formulario para crear un nuevo archivo
      * 2023-01-28

@@ -111,15 +111,14 @@ class Files extends BaseController
 
     /**
      * JSON
-     * Actualizar los datos de un usuario, tabla files
-     * 2023-03-12
+     * Actualizar el registro de un archivo, tabla files
+     * 2023-04-15
      */
     public function update($fileId)
     {
         $aRow = $this->request->getPost();
-        $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
 
-        $data['saved'] = $this->fileModel->where('idcode',$fileId)
+        $data['saved'] = $this->fileModel->where('id',$fileId)
                             ->set($aRow)->update();
 
         if ( $data['saved'] ) {

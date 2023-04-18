@@ -58,8 +58,8 @@ class FileModel extends Model
      */
     function select($format = 'default')
     {
-        $arrSelect['default'] = 'id, file_name, title, url, url_thumbnail, folder, is_image';
-        $arrSelect['basic'] = 'id, file_name, title, url, url_thumbnail';
+        $arrSelect['default'] = 'id, file_name, title, url, url_thumbnail, folder, is_image, keywords, description';
+        $arrSelect['basic'] = 'id, file_name, title, url, url_thumbnail, description, keywords';
         $arrSelect['admin'] = '*';
 
         return $arrSelect[$format];
@@ -67,7 +67,7 @@ class FileModel extends Model
 
     public function search($input)
     {
-        $qFields = ['file_name', 'title', 'subtitle', 'description'];
+        $qFields = ['file_name', 'title', 'subtitle', 'description', 'keywords'];
         $filtersNames = ['q','table_id__eq'];
         
         $search = new \App\Libraries\Search();

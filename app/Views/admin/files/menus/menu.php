@@ -3,13 +3,20 @@
 ?>
 <script>
 var sectionId = '<?= $uri->getSegment(3) . '_' . $uri->getSegment(4) ?>'
-var nav2RowId = '<?= $row->idcode ?>'
+var nav2RowId = '<?= $row->id ?>'
 var sections = [
     {
         id: 'files_info',
         text: 'Información',
         appSection: 'files/info/' + nav2RowId,
         roles: [1,2,3],
+        anchor: false
+    },
+    {
+        id: 'files_details',
+        text: 'Detalles',
+        appSection: 'files/details/' + nav2RowId,
+        roles: [1,2],
         anchor: false
     },
     {
