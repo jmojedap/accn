@@ -8,106 +8,184 @@ class ItemModel extends Model
     protected $primaryKey = 'id';
 
     protected $returnType     = 'object';
-    protected $useSoftDeletes = true;
+    protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['id', 'name'];
+    protected $allowedFields = [
+        'category_id', 'code', 'name', 'description', 'abbreviation',
+        'position', 'slug', 'filters', 'long_name', 'short_name', 'label_class'
+    ];
 
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $createdField  = '';
     protected $updatedField  = '';
     protected $deletedField  = '';
 
-    protected $validationRules    = [];
+    protected $validationRules    = [
+        'category_id' => 'required',
+        'code' => 'required',
+        'name' => 'required',
+    ];
     protected $validationMessages = [
-        'name' => [
-            'required' => 'El nombre del item es obligatorio'
+        'category_id' => [
+            'required' => 'La categoría del ítem es obligatoria',
         ]
     ];
     protected $skipValidation     = false;
 
-// 
+
+// Buscador
 //-----------------------------------------------------------------------------
 
     /**
      * Segmento SQL SELECT para construir consulta
-     * 2023-02-22
+     * 2020-08-11
      */
-    function select($format = 'basic')
+    function select($format = 'default')
     {
-        $arrSelect['basic'] = 'id, name, code';
+        $arrSelect['default'] = 'id, category_id, code, name';
+        $arrSelect['basic'] = 'id, code, name';
         $arrSelect['options'] = 'code, name';
-        $arrSelect['optionsFull'] = 'code, name, short_name,
-            abbreviation, slug, parent_id';
-        $arrSelect['optionsAbbreviation'] = 'code, abbreviation';
+        $arrSelect['admin'] = '*';
+
         return $arrSelect[$format];
     }
 
-    function list($filters, $num_page, $per_page)
+    /**
+     * Devuelve listado de itemss filtrados o segmentaos por criterios en $input
+     * @param array $input
+     * @return array $data
+     * 2024-05-23
+     */
+    public function search($input)
     {
-        $builder = $this->builder();
+        $qFields = ['name', 'description', ];
+        $filtersNames = ['q','category_id__eq', 'code__eq'];
         
-        $builder->select($this->select());
-        
-        $condition = $this->search_condition($filters);
-        if ( $condition ) $builder->where($condition);
-        
-        //Paginación
-        $offset = ($num_page - 1) * $per_page;      //Número de la página de datos que se está consultado
-        $builder->limit($per_page, $offset);
+        $search = new \App\Libraries\Search();
+        $filters = $search->filters($input, $filtersNames);
+        $settings = $search->settings($input);
+        $searchCondition = $search->condition($input, $qFields);
 
-        //Orden
-        $order_by = ( array_key_exists('o', $filters) ) ? $filters['o'] : 'code';
-        $order_type = ( array_key_exists('ot', $filters) ) ? $filters['ot'] : 'ASC';
-        $builder->orderBy($order_by, $order_type);
+        $dbTools = new \App\Models\DbTools();
+        $qtyResults = \App\Models\DbTools::numRows('items', $searchCondition);
 
-        $query = $builder->get();
+        $data['settings'] = $settings;
+        $data['filters'] = $filters;
+        $data['results'] = $this->searchResults($searchCondition, $settings);
+        $data['qtyResults'] = $qtyResults;
+        $data['maxPage'] = ($qtyResults > 0) ? ceil($qtyResults / $settings['perPage']) : 1;
 
-        return $query->getResult();
+        return $data;
     }
 
     /**
-     * String con condición WHERE SQL para filtrar user
+     * Listado de registros filtrados por la condición y según los requerimientos definidos
+     * 2023-02-12
      */
-    public function search_condition($filters)
+    function searchResults($searchCondition, $searchSettings)
     {
-        //$filters = $search->filters();
-        $condition = NULL;
+        $select = $this->select($searchSettings['selectFormat']);
+        
+        $builder = $this->builder();
+        $query = $builder->select($select)
+            ->where($searchCondition)
+            ->limit($searchSettings['perPage'], $searchSettings['offset'])
+            ->orderBy($searchSettings['orderField'], $searchSettings['orderType'])
+            ->get();
 
-        //q words condition
-        if ( array_key_exists('q', $filters) )
-        {
-            $search = new \App\Libraries\Search(); 
-            
-            $words_condition = $search->words_condition($filters['q'], array('item', 'description'));
-            if ( $words_condition )
-            {
-                $condition .= $words_condition . ' AND ';
-            }
-        }
+        $list = $query->getResult(); 
 
-        if ( array_key_exists('cat', $filters) ) $condition .= "category_id = {$filters['cat']} AND ";
-
-        if ( strlen($condition) > 0 ) $condition = substr($condition, 0, -5);
-
-        return $condition;
+        return $list;
     }
 
-// Otras
+// Datos
 //-----------------------------------------------------------------------------
 
-    public function array_by_condition($condition = 'category_id = 0', $field = 'name')
+    /**
+     * Row de un item
+     * 2023-04-30
+     */
+    public function getRow($condition, $selectFormat = 'default')
     {
+        $row = NULL;
+        $conditionChecked = 'id = 0';
+        if ( strlen($condition) > 0 ) { $conditionChecked = $condition; }
+
         $builder = $this->builder();
-        $builder->select($this->select());
-        $builder->where($condition);
+        $builder->select($this->select($selectFormat));
+        $builder->where($conditionChecked);
         $query = $builder->get();
 
-        $pml = new \App\Libraries\Pml();
+        if ( $query->getRow(0) ) { $row = $query->getRow(0); }
 
-        $arr_items = $pml->query_to_options($query, $field, 'code', 'Roles de usuario');
-
-        return $arr_items;
+        return $row;
     }
+
+    public function basic($row)
+    {
+        $data['row'] = $row;
+        $data['headTitle'] = $row->name;
+
+        return $data;
+    }
+
+    /**
+     * Convierte el array de input de un formulario (POST) en un array para
+     * crear o actualizar un registro en la tabla items
+     * 2024-05-24
+     */
+    public function inputToRow($input)
+    {
+        $aRow = $input;
+        
+        //Creación de items
+        /*if ( !isset($aRow['id']) ) {
+            
+        }*/
+
+        return $aRow;
+    }
+
+// ELIMINACIÓN
+//-----------------------------------------------------------------------------
+
+    /**
+     * Elimina registro tabla items, que cumplen con una condición SQL
+     * 2024-05-29
+     * @param string $condition :: condición sql de registros a eliminar
+     * @return $result :: resultado de la eliminación
+     */
+    public function deleteByCondition($condition = 'id = 0')
+    {
+        $restriction = $this->deleteRestriction($condition);
+
+        if ( strlen($restriction) == 0 ) {
+            //No hay restricción, eliminar
+            $result = $this->where($condition)->delete();
+        } else {
+            //Devolver texto de restricción
+            $result = $restriction;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Devuelve restricción, si existe alguna para eliminar un ítem
+     * Si no hay restricción devuelve cadena vacía, se puede eliminar ítem.
+     * 2024-05-29
+     * @param string $condition :: Condición SQL para evalua restricción
+     * @return string $restriction
+     */
+    public function deleteRestriction($condition)
+    {
+        $restriction = '';
+
+        return trim($restriction);
+    }
+
+// INFO
+//-----------------------------------------------------------------------------
 
     public function arrOptions($condition, $selectFormat = 'options')
     {
@@ -119,6 +197,4 @@ class ItemModel extends Model
 
         return $query->getResultArray();
     }
-
-
 }

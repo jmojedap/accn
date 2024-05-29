@@ -1,1 +1,0 @@
-<h1>Mauricio Ojeda</h1>

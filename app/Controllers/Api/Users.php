@@ -83,17 +83,8 @@ class Users extends BaseController
     public function create()
     {
         //Preparar array del registro
-        $aRow = $this->request->getPost();
-        $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
-        $aRow['username'] = $this->userModel->emailToUsername($aRow['email']);
-        if ( isset($aRow['password']) ) {
-            $aRow['password'] = $this->userModel->cryptPassword($aRow['password']);
-        }
-
-        //Control de rol de usuario, no administrador
-        if ( intval($aRow['role']) <= 2 ) {
-            $aRow['role'] = 21;
-        }
+        $input = $this->request->getPost();
+        $aRow = $this->userModel->inputToRow($input);
 
         //Guardar
         $data['savedId'] = $this->userModel->insert($aRow);
@@ -101,7 +92,7 @@ class Users extends BaseController
         //Si se creó, datos complementarios
         if ($data['savedId']) {
             $data['idcode'] = $this->dbTools->setIdCode('users', $data['savedId']);
-            $data['aRow'] = $aRow;
+            //$data['aRow'] = $aRow;
         }
         
         $data['errors'] = $this->userModel->errors();
@@ -116,14 +107,13 @@ class Users extends BaseController
      */
     public function update($idCode)
     {
-        $aRow = $this->request->getPost();
-        $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
+        $input = $this->request->getPost();
+        $aRow = $this->userModel->inputToRow($input);
 
         $data['saved'] = $this->userModel->where('idcode',$idCode)
                             ->set($aRow)->update();
 
         if ( $data['saved'] ) {
-            $data['savedId'] = $aRow['id'];
             $data['savedId'] = $aRow['id'];
         } else {
             $data['errors'] = $this->userModel->errors();

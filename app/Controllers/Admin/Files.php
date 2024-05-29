@@ -12,7 +12,6 @@ class Files extends BaseController
 		$this->db = \Config\Database::connect();
 		$this->fileModel = new FileModel();
         $this->viewsFolder = 'admin/files/';
-        //$this->viewsFolderAdmin = 'admin/files/';
         $this->backLink = URL_ADMIN . 'files/explore';
         $this->entityInfo = [
             'controller' => 'files',
@@ -35,16 +34,14 @@ class Files extends BaseController
 //-----------------------------------------------------------------------------
 
     /**
-     * HTML
+     * HTML VIEW
      * Listado de exploración y búsqueda de archivos
      * 2023-03-05
      */
     public function explore()
     {
         //Filtros y detalle de la búsqueda
-        $request = \Config\Services::request();
-        $input = $request->getGet();
-        //$input['perPage'] = 2;
+        $input = $this->request->getPost();
         $data['search'] = $this->fileModel->search($input);
         
         $data['entityInfo'] = $this->entityInfo;
@@ -55,20 +52,19 @@ class Files extends BaseController
 
         $data['table'] = $this->fileModel->table;
 
-        //$data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
-        //$data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
-
         return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
 
     /**
      * HTML VIEW
      * Vista información del archivo
+     * @param int $rowId :: Id de la tabla files, identifica al registro del archivo
+     * 
      * 2023-01-28
      */
     public function info($rowId)
     {
-        $row = $this->fileModel->get($rowId, 'basic');
+        $row = $this->fileModel->getRow($rowId, 'admin');
         $data = $this->fileModel->basic($row);
 
         $data['viewA'] = $this->viewsFolder . 'info';
@@ -81,11 +77,12 @@ class Files extends BaseController
     /**
      * HTML VIEW
      * Vista información detallada del registro archivo
+     * @param int $rowId :: Id de la tabla files, identifica al registro del archivo
      * 2023-04-17
      */
     public function details($rowId)
     {
-        $row = $this->fileModel->get($rowId, 'admin');
+        $row = $this->fileModel->getRow($rowId, 'admin');
         $data = $this->fileModel->basic($row);
 
         $data['viewA'] = 'common/bs5/row_details';
@@ -97,7 +94,8 @@ class Files extends BaseController
 
     /**
      * HTML FORM
-     * Vista con formulario para crear un nuevo archivo
+     * Vista formulario para subir un archivo y crear registro en la tabla
+     * files
      * 2023-01-28
      */
     public function add()
@@ -117,12 +115,8 @@ class Files extends BaseController
      */
     public function edit($rowId)
     {
-        $row = $this->fileModel->get($rowId);
+        $row = $this->fileModel->getRow($rowId);
         $data = $this->fileModel->basic($row);
-
-        $data['arrDocumentTypes'] = $this->itemModel->arrOptions('category_id = 53', 'optionsAbbreviation');
-        $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
-        $data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
 
         $data['viewA'] = $this->viewsFolder . 'edit/edit';
         $data['nav2'] = $this->viewsFolder . 'menus/menu';

@@ -26,7 +26,7 @@
     <script src="https://kit.fontawesome.com/f45fca298e.js" crossorigin="anonymous"></script>
 
     <!-- Vue.js -->
-    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js" integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>const {createApp} = Vue;</script>
 
@@ -52,6 +52,7 @@
     <link rel="stylesheet" href="<?= URL_RESOURCES ?>css/sidebars.css"></link>
 
     <!-- Styles -->
+    <link rel="stylesheet" href="<?= URL_RESOURCES ?>templates/easypml/theme.css"></link>    
     <link rel="stylesheet" href="<?= URL_RESOURCES ?>templates/easypml/style.css"></link>    
 
     <script>

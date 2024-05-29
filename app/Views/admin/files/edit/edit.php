@@ -1,4 +1,9 @@
 <div id="editFileApp">
+    <div class="center_box_750 mb-2">
+        <div class="mb-2">
+            <img v-bind:src="fields.url_thumbnail" alt="Miniatura imagen" class="sqr-120 rounded">
+        </div>
+    </div>
     <div class="card center_box_750">
         <div class="card-body">
             <form accept-charset="utf-8" method="POST" id="fileForm" @submit.prevent="handleSubmit">

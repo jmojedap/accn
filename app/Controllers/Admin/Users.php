@@ -12,7 +12,6 @@ class Users extends BaseController
 		$this->db = \Config\Database::connect();
 		$this->userModel = new UserModel();
         $this->viewsFolder = 'admin/users/';
-        //$this->viewsFolderAdmin = 'admin/users/';
         $this->backLink = URL_ADMIN . 'users/explore';
         $this->entityInfo = [
             'controller' => 'users',
@@ -40,7 +39,6 @@ class Users extends BaseController
         //Filtros y detalle de la búsqueda
         $request = \Config\Services::request();
         $input = $request->getGet();
-        //$input['perPage'] = 2;
         $data['search'] = $this->userModel->search($input);
         
         $data['entityInfo'] = $this->entityInfo;
@@ -59,12 +57,30 @@ class Users extends BaseController
 
     /**
      * HTML VIEW
+     * Detalle del registro en la tabla users
+     * @param int $idCode :: users.idcode
+     * 2024-05-24
+     */
+    public function details($idCode)
+    {
+        $user = $this->userModel->getRow($idCode, 'admin');
+        $data = $this->userModel->basic($user);
+
+        $data['row'] = $user;
+        $data['viewA'] = 'common/bs5/row_details';
+        $data['nav2'] = $this->viewsFolder . 'menus/menu';
+        $data['backLink'] = $this->backLink;
+
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
+    }
+    /**
+     * HTML VIEW
      * Vista perfil del usuario
      * 2023-01-28
      */
     public function profile($idCode)
     {
-        $user = $this->userModel->get($idCode, 'basic');
+        $user = $this->userModel->getRow($idCode, 'basic');
         $data = $this->userModel->basic($user);
 
         $data['arrDocumentTypes'] = $this->itemModel->arrOptions('category_id = 53', 'optionsAbbreviation');
@@ -101,7 +117,7 @@ class Users extends BaseController
      */
     public function edit($idCode)
     {
-        $user = $this->userModel->get($idCode);
+        $user = $this->userModel->getRow($idCode);
         $data = $this->userModel->basic($user);
 
         $data['arrDocumentTypes'] = $this->itemModel->arrOptions('category_id = 53', 'optionsAbbreviation');

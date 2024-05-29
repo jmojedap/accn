@@ -1,0 +1,121 @@
+
+
+/* Fuentes */
+/*-----------------------------------------------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+
+
+:root{
+    --color-main-app: #F5304D;
+    --color-light: #fff2f4;
+    --color-dark: #871E4C;
+    --color-bg: #FCFCFC;
+    --color-secondary: #E90064;
+
+    --font-main: 'Rubik', sans-serif;
+
+    --color-bg-primary: #0256d5;
+    --color-bg-primary-alt: #346fbd;
+    --color-bg-secondary: #E90064;
+    --color-bg-secondary-alt: #FF5F9E;
+    --color-bg-success: #30a338;
+    --color-bg-success-alt: #2dc44e;
+    --color-bg-warning: #e6a000;
+    --color-bg-warning-alt: #fbb62d;
+    --color-bg-ligth: #ced4da;
+    --color-bg-ligth-alt: #FCFCFC;
+    --color-bg-danger: #ee3248;
+    --color-bg-danger-alt: #f34a5e;
+
+    --color-text-link: #0256d5;
+    --color-text-link-hover: #346fbd;
+
+    --color-text-1: #5e4296;
+    --color-text-2: #2D62A9;
+    --color-text-3: #0097a7;
+    --color-text-4: #30a338;
+    --color-text-5: #e6a000;
+    --color-text-6: #ec6c38;
+    --color-text-7: #ee3248;
+    --color-text-8: #ea3471;
+}
+
+/* Botones */
+/*-----------------------------------------------------------------------------*/
+
+.btn-primary {
+    background-color: var(--color-bg-primary);
+    border-color: var(--color-bg-primary);
+}
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary.hover {
+    background-color: var(--color-bg-primary-alt);
+    border-color: var(--color-bg-primary-alt);
+}
+
+.btn-secondary {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-bg-secondary);
+}
+.btn-secondary:hover,
+.btn-secondary:active,
+.btn-secondary.hover {
+    background-color: var(--color-bg-secondary-alt);
+    border-color: var(--color-bg-secondary-alt);
+}
+
+.btn-success {
+    background-color: var(--color-bg-success);
+    border-color: var(--color-bg-success);
+}
+.btn-success:hover,
+.btn-success:active,
+.btn-success.hover {
+    background-color: var(--color-bg-success-alt);
+    border-color: var(--color-bg-success-alt);
+}
+
+.btn-warning {
+    background-color: var(--color-bg-warning);
+    border-color: var(--color-bg-warning);
+}
+.btn-warning:hover,
+.btn-warning:active,
+.btn-warning.hover {
+    background-color: var(--color-bg-warning-alt);
+    border-color: var(--color-bg-warning-alt);
+}
+
+.btn-light{
+    border-color: var(--color-bg-ligth)
+}
+
+.btn-light:hover,
+.btn-light:active,
+.btn-light.hover{
+    background-color: var(--color-bg-ligth-alt);
+    border-color: #BBB;
+}
+
+.btn-danger{
+    border-color: var(--color-bg-danger)
+}
+
+.btn-danger:hover,
+.btn-danger:active,
+.btn-danger.hover{
+    background-color: var(--color-bg-danger-alt);
+    border-color: #BBB;
+}
+
+/* Otros elementos */
+/*-----------------------------------------------------------------------------*/
+
+.progress-bar{
+    background-color: var(--color-bg-primary);
+}
+
+.bg-success {background-color: var(--color-bg-success);}
+.bg-danger {background-color: var(--color-bg-danger);}

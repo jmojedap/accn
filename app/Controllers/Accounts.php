@@ -72,10 +72,20 @@ class Accounts extends BaseController
 // PERFIL DE USUARIO
 //-----------------------------------------------------------------------------
 
+	/**
+	 * Vista perfil de usuario
+	 * 2023-04-30
+	 */
 	public function profile()
 	{
-		$data['headTitle'] = 'Mi perfil';
-		$data['viewA'] = $this->viewsFolder . 'profile';
+		$idcode = $_SESSION['idcode'];
+		$data['user'] = $this->accountModel->getRow($idcode);
+
+		$data['arrDocumentTypes'] = $this->itemModel->arrOptions('category_id = 53', 'optionsAbbreviation');
+        $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
+
+		$data['headTitle'] = 'Mauricio Ojeda Pepinosa';
+		$data['viewA'] = $this->viewsFolder . 'profile/profile';
 		return view(TPL_PUBLIC . 'main', $data);
 	}
 }

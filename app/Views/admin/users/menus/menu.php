@@ -13,6 +13,13 @@ var sections = [
         anchor: false
     },
     {
+        id: 'users_details',
+        text: 'Detalles',
+        appSection: 'users/details/' + nav2RowId,
+        roles: [1,2],
+        anchor: false
+    },
+    {
         id: 'users_edit',
         text: 'Editar',
         appSection: 'users/edit/' + nav2RowId,

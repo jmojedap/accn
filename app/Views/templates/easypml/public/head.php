@@ -2,20 +2,14 @@
     $uri = current_url(true);
     $appSection = '';
     $segments = $uri->getSegments();
-    //$appSection = '';
-    //echo count($segments);
     if ( count($segments) == 2 ) $appSection =  $uri->getSegment(2, '');
     if ( count($segments) == 3 ) $appSection =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '');
     if ( count($segments) >= 4 ) $appSection =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '') . '/' . $uri->getSegment(4, '');
-    
 ?>
 
     <script>
         const loggedStatus = localStorage.getItem("logged");
         console.log('voy a redireccionar');
-        /*if ( loggedStatus ) {
-            console.log('voy a redireccionar');
-        }*/
     </script>
 
     <meta charset="UTF-8">
@@ -34,7 +28,7 @@
     <script src="https://kit.fontawesome.com/f45fca298e.js" crossorigin="anonymous"></script>
 
     <!-- Vue.js -->
-    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js" integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>const {createApp} = Vue;</script>
 

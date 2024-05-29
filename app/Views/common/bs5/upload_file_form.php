@@ -7,7 +7,13 @@
                 <div class="invalid-feedback">{{ errors.file_field }}</div>
             </div>
             <div class="col-md-4">
-                <button class="btn btn-primary w-100" type="submit">Cargar</button>
+                <button class="btn w-100" type="submit"
+                    v-bind:class="{'btn-success': file !== null, 'btn-secondary': file == null }"
+                    v-bind:disabled="file == null"
+                    >
+                    <span v-show="!loading">Cargar</span>
+                    <span v-show="loading">Cargando...</span>
+                </button>
             </div>
         </div>
     </fieldset>

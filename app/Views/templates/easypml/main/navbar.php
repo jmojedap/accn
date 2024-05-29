@@ -1,5 +1,5 @@
 <div id="navbarApp">
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark">
+    <nav class="navbar fixed-top navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img class="d-block" src="<?= URL_BRAND ?>logo-navbar.png" alt="Logo App" style="height: 30px;">

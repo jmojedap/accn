@@ -1,0 +1,17 @@
+/* Item categoría 58 - Rol de usuario */
+/*-----------------------------------------------------------------------------*/
+
+.item-role {
+    color: #FFF;
+    padding: 0.1em 0.5em;
+    border-radius: 0.3em;
+}
+.item-role-1{ background-color: #5e4296;}
+.item-role-2{ background-color: #2D62A9;}
+.item-role-3{ background-color: #0097a7;}
+.item-role-21{ background-color: #30a338;}
+
+.item-role-1::before{ content: 'Desarrollador';}
+.item-role-2::before{ content: 'Administrador'; }
+.item-role-3::before{ content: 'Editor'; }
+.item-role-21::before{ content: 'Suscriptor'; }

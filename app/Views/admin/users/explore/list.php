@@ -19,7 +19,7 @@
                     <br>
                     <span class="text-muted">{{ element.email }}</span>
                 </td>
-                <td>{{ roleName(element.role) }}</td>
+                <td><span v-bind:class="`item-role item-role-` + element.role"></span></td>
                 <td></td>
             </tr>
         </tbody>

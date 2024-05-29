@@ -58,11 +58,10 @@ abstract class BaseController extends Controller
         parent::initController($request, $response, $logger);
 
         // Preload any models, libraries, etc, here.
-
         $this->session = \Config\Services::session();
         $this->pml = new \App\Libraries\Pml();
 
-		//PML
+		//Pacarina Media Lab
 		$this->itemModel = new ItemModel();
 		$this->dbTools = new DbTools();
     }

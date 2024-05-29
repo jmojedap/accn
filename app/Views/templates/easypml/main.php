@@ -14,13 +14,12 @@
                 </div>
             <?php endif; ?>
             <div class="header">
-                <h1 id="pageTitle">
+                <h1 id="page-title">
                     <?php if ( isset($backLink) ) : ?>
                         <a class="btn btn-light mr-2 only-lg" href="<?= base_url($backLink) ?>">
                             <i class="fa fa-arrow-left"></i>
                         </a>
                     <?php endif; ?>
-                    <?= $headTitle ?>
                 </h1>
                 <?php if ( isset($nav2) ): ?>
                     <div id="nav2">

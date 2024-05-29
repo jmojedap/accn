@@ -13,7 +13,8 @@ class UserModel extends Model
     protected $allowedFields = [
         'idcode', 'password',
         'first_name','last_name','display_name','role','email','username',
-        'document_number', 'document_type', 'gender', 'birth_date'
+        'document_number', 'document_type', 'gender', 'birth_date',
+        'creator_id', 'updater_id'
     ];
 
     protected $useTimestamps = true;
@@ -45,26 +46,6 @@ class UserModel extends Model
 //-----------------------------------------------------------------------------
 
     /**
-     * Array con los datos para la vista de exploración
-     */
-    public function exploreData($input)
-    {
-        $data = $this->search($input);
-
-        //Elemento de exploración
-            $data['controller'] = 'users';                      //Nombre del controlador
-            $data['cf'] = 'users/explore/';                     //Nombre del controlador-función
-            $data['viewsFolder'] = 'admin/users/explore/';     //Carpeta donde están las vistas de exploración
-            
-        //Vistas
-            $data['headTitle'] = 'Usuarios';
-            $data['viewA'] = $data['viewsFolder'] . 'explore';
-            $data['nav2'] = $data['viewsFolder'] . 'menu';
-        
-        return $data;
-    }
-
-    /**
      * Segmento SQL SELECT para construir consulta
      * 2020-08-11
      */
@@ -81,6 +62,12 @@ class UserModel extends Model
         return $arrSelect[$format];
     }
 
+    /**
+     * Devuelve listado de usuarios filtrados o segmentaos por criterios en $input
+     * @param array $input
+     * @return array $data
+     * 2024-05-23
+     */
     public function search($input)
     {
         $qFields = ['display_name', 'first_name', 'last_name', 'email'];
@@ -128,8 +115,9 @@ class UserModel extends Model
 
     /**
      * Row de un user
+     * 2023-04-30
      */
-    public function get($idCode, $selectFormat = 'default')
+    public function getRow($idCode, $selectFormat = 'default')
     {
         $row = NULL;
         $idCodeChecked = 0;
@@ -152,6 +140,35 @@ class UserModel extends Model
         $data['headTitle'] = $row->display_name;
 
         return $data;
+    }
+
+    /**
+     * Convierte el array de input de un formulario (POST) en un array para
+     * crear o actualizar un registro en la tabla users
+     * 2024-05-24
+     */
+    public function inputToRow($input)
+    {
+        $aRow = $input;
+        $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
+        $aRow['updater_id'] = $_SESSION['user_id'];
+        
+        //Creación de usuario
+        if ( !isset($aRow['id']) ) {
+            $aRow['creator_id'] = $_SESSION['user_id'];
+            $aRow['username'] = $this->emailToUsername($aRow['email']);
+
+            //Control de rol de usuario, no administrador
+            if ( intval($aRow['role']) <= 2 ) {
+                $aRow['role'] = 21;
+            }
+            //Encriptar contraseña
+            if ( isset($aRow['password']) ) {
+                $aRow['password'] = $this->cryptPassword($aRow['password']);
+            }
+        }
+
+        return $aRow;
     }
 
 // Herramientas
@@ -182,6 +199,8 @@ class UserModel extends Model
     /**
      * Devuelve password encriptado
      * 2021-02-26
+     * @param string $input :: texto contraseña sin encriptar
+     * @return string contraseña encriptada
      */
     function cryptPassword($input, $rounds = 7):string
     {
@@ -229,7 +248,7 @@ class UserModel extends Model
     public function deleteRestriction($idCode)
     {
         $restriction = '';
-        $user = $this->get($idCode, 'admin');
+        $user = $this->getRow($idCode, 'admin');
 
         if ( is_null($user) ) {
             $restriction .= "Usuario {$idCode} no existe. ";

@@ -1,5 +1,5 @@
-<div class="center_box_920">
-    <table class="table bg-white">
+<div class="center_box_750">
+    <table class="table bg-white table-sm">
         <tbody>
             <?php foreach ( $row as $fieldName => $fieldValue ) : ?>
                 <tr>

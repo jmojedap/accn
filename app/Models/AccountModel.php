@@ -1,8 +1,9 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Models\UserModel;
 
-class AccountModel extends Model
+class AccountModel extends UserModel
 {
     protected $table = 'users';
 
@@ -47,6 +48,11 @@ class AccountModel extends Model
         return $data;
     }
 
+// Información
+//-----------------------------------------------------------------------------
+
+
+
 // Inicio de sesión
 //-----------------------------------------------------------------------------
 
@@ -74,6 +80,7 @@ class AccountModel extends Model
                 'short_name'    =>  explode(' ', $user->display_name)[0],
                 'username'    =>  $user->username,
                 'user_id'    =>  $user->id,
+                'idcode'    =>  $user->idcode,
                 'role'    => $user->role,
                 'last_login'    => $user->last_login
             ];

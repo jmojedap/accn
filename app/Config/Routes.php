@@ -41,13 +41,20 @@ $routes->get('info/no_permitido', 'Info::noPermitido');
 //-----------------------------------------------------------------------------
 $routes->get('/', 'Accounts::login');
 
-
 $routes->group('accounts', static function ($routes) {
     $routes->get('login', 'Accounts::login');
     $routes->get('logged', 'Accounts::logged');
     $routes->get('logout', 'Accounts::logout');
     $routes->get('profile', 'Accounts::profile');
 });
+
+    // ACCOUNTS API
+    //-----------------------------------------------------------------------------
+    $routes->group('api/accounts', static function ($routes) {
+        $routes->post('validate', 'Api\Accounts::validateForm');
+        $routes->post('create', 'Api\Accounts::create');
+        $routes->post('update/(:num)', 'Api\Accounts::update/$1');
+    });
 
 $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
 
@@ -60,6 +67,7 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->get('explore', 'Admin\Users::explore');
         $routes->get('add', 'Admin\Users::add');
         $routes->get('profile/(:num)', 'Admin\Users::profile/$1');
+        $routes->get('details/(:num)', 'Admin\Users::details/$1');
         $routes->get('edit/(:num)', 'Admin\Users::edit/$1');
     });
 
@@ -95,6 +103,29 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->post('upload', 'Api\Files::upload');
         $routes->post('update/(:num)', 'Api\Files::update/$1');
         $routes->post('delete_selected', 'Api\Files::deleteSelected');
+    });
+
+// ITEMS
+//-----------------------------------------------------------------------------
+
+    // ITEMS ADMIN
+    //-----------------------------------------------------------------------------
+    $routes->group('admin/items', static function ($routes) {
+        $routes->get('values/(:num)', 'Admin\Items::values/$1');
+        $routes->get('add', 'Admin\Items::add');
+    });
+
+    // ITEMS API
+    //-----------------------------------------------------------------------------
+    $routes->group('api/items', static function ($routes) {
+        $routes->post('search', 'Api\Items::search');
+        $routes->get('search', 'Api\Items::search');
+        $routes->get('get_list/(:num)', 'Api\Items::getList/$1');
+        $routes->post('validate', 'Api\Items::validateForm');
+        $routes->post('create', 'Api\Items::create');
+        $routes->post('update/(:num)', 'Api\Items::update/$1');
+        $routes->post('delete_selected', 'Api\Items::deleteSelected');
+        $routes->get('delete_row/(:num)/(:num)', 'Api\Items::deleteRow/$1/$2');
     });
 
 /*

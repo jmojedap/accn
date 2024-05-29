@@ -1,3 +1,5 @@
+<?= view('assets/lightbox2') ?>
+
 <style>
     .btn-mini{
         color: #00c0ef;

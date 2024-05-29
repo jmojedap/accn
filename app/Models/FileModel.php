@@ -53,29 +53,22 @@ class FileModel extends Model
     }
 
     /**
-     * Segmento SQL SELECT para construir consulta
-     * 2020-08-11
+     * Buscar registros en la tabla files según los filtros y opciones definidas
+     * en $input
+     * @param array $input :: Filtros y opciones de búsqueda
+     * @return array $data :: Resultados de búsqueda y configuración.
+     * 2024-05-26
      */
-    function select($format = 'default')
+    public function search($input):array
     {
-        $arrSelect['default'] = 'id, file_name, title, url, url_thumbnail, folder, is_image, keywords, description';
-        $arrSelect['basic'] = 'id, file_name, title, url, url_thumbnail, description, keywords';
-        $arrSelect['admin'] = '*';
-
-        return $arrSelect[$format];
-    }
-
-    public function search($input)
-    {
-        $qFields = ['file_name', 'title', 'subtitle', 'description', 'keywords'];
+        $qFields = ['file_name', 'title', 'description', 'keywords'];
         $filtersNames = ['q','table_id__eq'];
         
         $search = new \App\Libraries\Search();
         $filters = $search->filters($input, $filtersNames);
         $settings = $search->settings($input);
+        $settings['selectFormat'] = 'admin';
         $searchCondition = $search->condition($input, $qFields);
-
-        $dbTools = new \App\Models\DbTools();
         $qtyResults = \App\Models\DbTools::numRows('files', $searchCondition);
 
         $data['settings'] = $settings;
@@ -85,6 +78,19 @@ class FileModel extends Model
         $data['maxPage'] = ($qtyResults > 0) ? ceil($qtyResults / $settings['perPage']) : 1;
 
         return $data;
+    }
+
+    /**
+     * Segmento SQL SELECT para construir consulta
+     * 2020-08-11
+     */
+    function select($format = 'default')
+    {
+        $arrSelect['default'] = 'id, file_name, title, url, url_thumbnail, folder, ext, is_image, keywords, description';
+        $arrSelect['basic'] = 'id, file_name, title, url, url_thumbnail, description, keywords, is_image';
+        $arrSelect['admin'] = '*';
+
+        return $arrSelect[$format];
     }
 
     /**
@@ -112,8 +118,9 @@ class FileModel extends Model
 
     /**
      * Row de un FILE
+     * 2023-04-30
      */
-    public function get($fileId, $selectFormat = 'default')
+    public function getRow($fileId, $selectFormat = 'default')
     {
         $row = NULL;
         $fileIdChecked = 0;
@@ -160,7 +167,7 @@ class FileModel extends Model
                 $aRowAdd = $this->aRowAdd($file, $userId, $request);
                 $this->insert($aRowAdd);
                 $data['savedId']= $this->insertID();
-                $data['row'] = $this->get($data['savedId']);
+                $data['row'] = $this->getRow($data['savedId']);
 
                 //Guardar archivo en carpeta
                 if (! $file->hasMoved()) {
@@ -187,6 +194,10 @@ class FileModel extends Model
     /**
      * Prepara array para crear un nuevo registro en la tabla files a partir
      * del array base, archivo y userId
+     * @param object $file archivo cargado
+     * @param int $userId ID del usuario que carga el archivo
+     * @param object $request
+     * @return array $aRow, registro para guardar en la tabla file
      * 2023-03-26
      */
     public function aRowAdd($file, $userId, $request)
@@ -225,7 +236,7 @@ class FileModel extends Model
      */
     public function deleteUnlink($fileId, $session)
     {
-        $row = $this->get($fileId, 'admin');
+        $row = $this->getRow($fileId, 'admin');
         $restriction = $this->deleteRestriction($row, $session);
 
         if ( strlen($restriction) == 0 ) {
@@ -243,7 +254,7 @@ class FileModel extends Model
     }
 
     /**
-     * Devuelve restricción, si existe alguna para eliminar un archivo
+     * Devuelve restricción para eliminar un archivo, si existe
      * Si no existe devuelve cadena vacía, se puede eliminar archivo.
      * 2023-04-04
      * 

@@ -44,4 +44,41 @@ class Accounts extends BaseController
 
 		return $this->response->setJSON($data);
 	}
+
+	/**
+     * JSON
+     * Validar formularios de creación y actualización de datos de cuenta de un
+	 * usuario
+     * 2023-04-30
+     */
+    public function validateForm()
+    {
+        $data = ['status' => 1, 'error' => null];
+
+        $request = \Config\Services::request();
+        $userId = $request->getPost('id');
+        
+        $emailValidation = \App\Models\ValidationModel::email($userId, $request->getPost('email'));
+        $documentNumberValidation = \App\Models\ValidationModel::documentNumber($userId, $request->getPost('document_number'));
+        $usernameValidation = \App\Models\ValidationModel::username($userId, $request->getPost('username'));
+
+        $validation = array_merge($emailValidation, $documentNumberValidation, $usernameValidation);
+        $data['validation'] = (array) $validation;
+
+        if ( $documentNumberValidation['documentNumberUnique'] == 0 ) {
+            $data['error'] .= 'El número de documento ya está registrado. ';
+        }
+
+        if ( $emailValidation['emailUnique'] == 0 ) {
+            $data['error'] .= 'El e-mail escrito ya está registrado. ';
+        }
+
+        if ( $usernameValidation['usernameUnique'] == 0 ) {
+            $data['error'] .= 'El username escrito ya está registrado. ';
+        }
+
+        $data['status'] = ( $data['error'] ) ? 0 : 1 ;
+
+        return $this->response->setJSON($data);
+    }
 }

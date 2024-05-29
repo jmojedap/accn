@@ -24,88 +24,12 @@ class Files extends BaseController
     /**
      * JSON
      * Buscar archivos según filtros y condiciones solicitadas
+     * 2024-05-26
      */
     public function search()
     {   
-        $request = \Config\Services::request();
-        $input = $request->getPost();
-        
-        $search = new \App\Libraries\Search();
-
+        $input = $this->request->getPost();
         $data = $this->fileModel->search($input);
-        //unset($data['settings']);
-        //unset($data['filters']);
-
-        return $this->response->setJSON($data);
-    }
-
-    /**
-     * JSON
-     * Validar formularios de creación y actualización de datos de archivos
-     * 2023-02-04
-     */
-    public function validateForm()
-    {
-        $data = ['status' => 1, 'error' => null];
-
-        $request = \Config\Services::request();
-        $userId = $request->getPost('id');
-        
-        $emailValidation = \App\Models\ValidationModel::email($userId, $request->getPost('email'));
-        $documentNumberValidation = \App\Models\ValidationModel::documentNumber($userId, $request->getPost('document_number'));
-        $usernameValidation = \App\Models\ValidationModel::username($userId, $request->getPost('username'));
-
-        $validation = array_merge($emailValidation, $documentNumberValidation, $usernameValidation);
-        $data['validation'] = (array) $validation;
-
-        if ( $documentNumberValidation['documentNumberUnique'] == 0 ) {
-            $data['error'] .= 'El número de documento ya está registrado. ';
-        }
-
-        if ( $emailValidation['emailUnique'] == 0 ) {
-            $data['error'] .= 'El e-mail escrito ya está registrado. ';
-        }
-
-        if ( $usernameValidation['usernameUnique'] == 0 ) {
-            $data['error'] .= 'El username escrito ya está registrado. ';
-        }
-
-        $data['status'] = ( $data['error'] ) ? 0 : 1 ;
-
-        return $this->response->setJSON($data);
-    }
-
-    /**
-     * AJAX - JSON
-     * Insertar un nuevo usuario en la tabla files
-     * 2023-01-29
-     */
-    public function create()
-    {
-        //Preparar array del registro
-        $aRow = $this->request->getPost();
-        $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
-        $aRow['username'] = $this->fileModel->emailToUsername($aRow['email']);
-        if ( isset($aRow['password']) ) {
-            $aRow['password'] = $this->fileModel->cryptPassword($aRow['password']);
-        }
-
-        //Control de rol de usuario, no administrador
-        if ( intval($aRow['role']) <= 2 ) {
-            $aRow['role'] = 21;
-        }
-
-        //Guardar
-        $data['savedId'] = $this->fileModel->insert($aRow);
-
-        //Si se creó, datos complementarios
-        if ($data['savedId']) {
-            $data['idcode'] = $this->dbTools->setIdCode('files', $data['savedId']);
-            $data['aRow'] = $aRow;
-        }
-        
-        $data['errors'] = $this->fileModel->errors();
-
         return $this->response->setJSON($data);
     }
 

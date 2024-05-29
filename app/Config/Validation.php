@@ -51,12 +51,12 @@ class Validation extends BaseConfig
             'label' => 'archivo',
             'rules' => [
                 'uploaded[file_field]',
-                'max_size[file_field,1000]',
-                'max_dims[file_field,4000,4000]',
+                'max_size[file_field,2000]',
+                //'max_dims[file_field,4000,4000]',
             ],
             'errors' => [
                 'max_size' => 'El tamaño del archivo no debe ser mayor a 1 Mb.',
-                'max_dims' => 'archivo no es una imagen, o es demasiado ancho o alto.'
+                //'max_dims' => 'archivo no es una imagen, o es demasiado ancho o alto.'
             ]
         ],
     ];

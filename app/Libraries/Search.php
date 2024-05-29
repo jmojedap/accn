@@ -3,9 +3,11 @@ namespace App\Libraries;
 
 class Search {
 
-
     /**
-     * Condición SQL para filtrar registros es una tabla de la base de datos
+     * Devuelve condición SQL para filtrar registros es una tabla de la base
+     * de datos
+     * @param array $input
+     * @param array $qFields
      * 2023-02-12
      */
     public function condition($input, $qFields)
@@ -21,7 +23,9 @@ class Search {
             $searchedTextConditions = $this->searchedTextConditions($input['q'], $qFields);
         }
 
+        //Juntar los dos listados de condiciones SQL
         $conditions = array_merge($filtersConditions, $searchedTextConditions);
+        //Si hay condiciones, concatentar con AND
         if ( count($conditions) > 0 ) $condition = implode(' AND ', $conditions);
 
         return $condition;
@@ -47,8 +51,11 @@ class Search {
     }
 
     /**
-     * Array con valores de filtros realizados en una búsqueda a partir del $input
-     * y el listado de nombres de filtros $filtersNames
+     * Devuelve array con valores de filtros realizados en una búsqueda a 
+     * partir del $input y el listado de nombres de filtros $filtersNames
+     * @param array $input :: Criterios de búsqueda
+     * @param array $filtersNames :: Nombres de los campos buscados
+     * @return array $filters :: array con los filtros requeridos
      * 2023-03-04
      */
     public static function filters($input, $filtersNames)
@@ -62,19 +69,23 @@ class Search {
     }
 
     /**
-     * Array con variables de configuración de la búsqueda de registros
+     * Array con variables de configuración de la búsqueda de registros en una
+     * tabla
+     * @param array $input :: Solicitud del usuario
+     * @return array $settings :: Configuración de la búsqueda
      * 2023-02-12
      */
     public static function settings($input)
     {
         //Valores iniciales por defecto
         $settings = [
-            'selectFormat' => 'basic',
+            'selectFormat' => 'default',
             'numPage' => 1, 'perPage' => 12, 'offset' => 0,
             'orderField' => 'id', 'orderType' => 'DESC',
         ];
 
         foreach( $settings as $index => $value ) {
+            //Si está definido, modificar el valor por defecto
             if ( isset($input[$index]) ) { $settings[$index] = $input[$index]; }
         }
 
@@ -87,7 +98,7 @@ class Search {
     }
 
     /**
-     * Array de strings, condiciones SQL para buscar registros correspondientes
+     * Array de condiciones SQL (strings) para buscar registros correspondientes
      * a los filtros solicitados en $input
      * @param array $input
      * 2023-02-12
@@ -106,14 +117,14 @@ class Search {
     }
 
     /**
-     * El filterComparation tiene la estructura (2 partes) nombreCampo-tipoComparacion
+     * El filterComparation tiene la estructura (2 partes) nombreCampo__tipoComparacion
      * 2023-02-12
      */
     public function filterToCondition($filterComparation, $value)
     {
         $filterParts = explode('__',$filterComparation);
         $condition = null;
-        //Es un filtro
+        //Verificar si es un filtro y si el $value tiene valor
         if ( count($filterParts) == 2 & strlen($value) > 0 ) {
             if ( $filterParts[1] == 'eq' ) {
                 $condition = "{$filterParts[0]} = '$value'";
@@ -144,8 +155,7 @@ class Search {
             }
         }
         return $filtersStr;
-    } 
-    
+    }
     
     /**
      * String con segmento SQL de campos con el condicional para concatenar
@@ -161,7 +171,7 @@ class Search {
     /**
      * Condiciones SQL de búsqueda de cada palabra
      * @param string $searchedText
-     * @param array $fields
+     * @param array $fields :: Campos en los cuales se buscan las palabras
      */
     function searchedTextConditions($searchedText, $fields):array
     {
