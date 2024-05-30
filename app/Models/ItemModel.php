@@ -137,11 +137,6 @@ class ItemModel extends Model
     public function inputToRow($input)
     {
         $aRow = $input;
-        
-        //Creación de items
-        /*if ( !isset($aRow['id']) ) {
-            
-        }*/
 
         return $aRow;
     }

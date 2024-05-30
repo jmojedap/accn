@@ -36,6 +36,7 @@ $routes->get('admin', "Testing::pmlAdmin");
 //-----------------------------------------------------------------------------
 $routes->get('', 'Accounts::login');
 $routes->get('info/no_permitido', 'Info::noPermitido');
+$routes->post('tools/get_unique_slug', 'Api\Tools::getUniqueSlug');
 
 // ACOUNTS
 //-----------------------------------------------------------------------------
@@ -121,10 +122,7 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->post('search', 'Api\Items::search');
         $routes->get('search', 'Api\Items::search');
         $routes->get('get_list/(:num)', 'Api\Items::getList/$1');
-        $routes->post('validate', 'Api\Items::validateForm');
-        $routes->post('create', 'Api\Items::create');
-        $routes->post('update/(:num)', 'Api\Items::update/$1');
-        $routes->post('delete_selected', 'Api\Items::deleteSelected');
+        $routes->post('save/(:num)', 'Api\Items::save/$1');
         $routes->get('delete_row/(:num)/(:num)', 'Api\Items::deleteRow/$1/$2');
     });
 

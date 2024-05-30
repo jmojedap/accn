@@ -99,22 +99,22 @@ class Items extends BaseController
 
     /**
      * JSON
-     * Actualizar los datos de un items, tabla items
-     * 2023-03-12
+     * Crear o actualizar los datos de un ítem, tabla items
+     * 2024-05-30
      */
-    public function update($itemId)
+    public function save($itemId = 0)
     {
         $input = $this->request->getPost();
         $aRow = $this->ItemModel->inputToRow($input);
+        $condition = "id = {$itemId}";
 
-        $data['saved'] = $this->ItemModel->where('id',$itemId)
-                            ->set($aRow)->update();
+        $data['savedId'] = $this->dbTools->saveRow('items', $condition, $aRow);
+        $data['errors'] = $this->ItemModel->errors();
 
-        if ( $data['saved'] ) {
+        /*if ( $data['savedId'] > 0 ) {
             $data['savedId'] = $aRow['id'];
         } else {
-            $data['errors'] = $this->ItemModel->errors();
-        }
+        }*/
 
         return $this->response->setJSON($data);
     }

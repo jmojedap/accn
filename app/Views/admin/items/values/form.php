@@ -3,7 +3,7 @@
 ?>
 
 <form accept-charset="utf-8" id="itemForm" @submit.prevent="handleSubmit">
-    <input name="category_id" type="hidden" v-model="currCategory.cod">
+    <input name="category_id" type="hidden" v-model="currCategory.code">
 
     <div class="mb-3 row">
         <div class="col-sm-8 offset-4">
@@ -19,12 +19,12 @@
         </label>
         <div class="col-md-8">
             <input
-                name="cod"
+                name="code"
                 class="form-control"
                 placeholder="Código numérico"
                 title="Código numérico"
                 required
-                v-model="fields.cod"
+                v-model="fields.code"
                 >
         </div>
     </div>

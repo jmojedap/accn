@@ -68,7 +68,7 @@
                         </th>
                         <th width="40px" v-show="displayFormat == 'table'"></th>
                         <th width="90px" v-show="appRid <= 3" v-show="displayFormat == 'table'">
-                            <button class="a4" v-on:click="clearForm" data-bs-toggle="modal" data-bs-target="#modalFormCenter">
+                            <button class="a4" v-on:click="clearForm" data-bs-toggle="modal" data-bs-target="#modalItemForm">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </th>
@@ -107,7 +107,7 @@
                                 </button>
                             </td>
                             <td v-show="appRid <= 3" v-show="displayFormat == 'table'">
-                                <button class="a4 me-1" v-on:click="loadFormValues(key)" data-bs-toggle="modal" data-bs-target="#modalFormCenter">
+                                <button class="a4 me-1" v-on:click="loadFormValues(key)" data-bs-toggle="modal" data-bs-target="#modalItemForm">
                                     <i class="fa fa-pencil-alt"></i>
                                 </button>
                                 <button v-show="appRid <= 3" class="a4" data-bs-toggle="modal" data-bs-target="#modalSingleDelete" v-on:click="setCurrent(key)">

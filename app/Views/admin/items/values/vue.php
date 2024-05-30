@@ -110,11 +110,9 @@ var valuesApp = createApp({
             console.log(this.rowId)
         },
         setCategory: function(categoryCode){
-            //var categoryKey = 0
             var categoryKey = this.categories.findIndex(row => row.code == categoryCode)
             if ( categoryKey < 0 ) categoryKey = 0
 
-            console.log('soy: ', categoryKey)
             this.categoryKey = categoryKey
             this.currCategory = this.categories[categoryKey]
             this.setMarginValue()
@@ -129,7 +127,7 @@ var valuesApp = createApp({
             var formValues = new FormData(document.getElementById('itemForm'))
             axios.post(URL_API + 'items/save/' + this.rowId, formValues)
             .then(response => {
-                if ( response.data.status == 1 ) 
+                if ( response.data.savedId > 0 ) 
                 {
                     appState = appStates.saved
                     toastr['success']('Registro guardado')
@@ -142,12 +140,17 @@ var valuesApp = createApp({
                     }
                     
                     this.getList()
-                    this.rowId = response.data.saved_id
+                    this.rowId = response.data.savedId
+                    modalItemForm.hide()
                 }
                 this.loading = false
                 
             })
-            .catch(function (error) { console.log(error) })
+            .catch(function (error) {
+                console.log(error)
+                this.loading = false
+                modalItemForm.hide()
+            })
         },
         autocomplete: function(){
             this.setNames()
@@ -165,10 +168,12 @@ var valuesApp = createApp({
                     toastr['info'](this.entityInfo.singular + ' eliminado')
                 }
                 this.deleting = false
+                modalSingleDelete.hide()
             })
             .catch(function (error) {
                 console.log(error)
                 this.deleting = false
+                modalSingleDelete.hide()
             })
         },
         clearForm: function() {
@@ -197,7 +202,7 @@ var valuesApp = createApp({
             formValues.append('table', 'items');
             formValues.append('field', 'slug');
             
-            axios.post(baseUrl + 'tools/unique_slug/', formValues)
+            axios.post(baseUrl + 'tools/get_unique_slug/', formValues)
             .then(response => {
                 console.log(response.data)
                 this.fields.slug = response.data
@@ -210,4 +215,7 @@ var valuesApp = createApp({
         this.setCategory(categoryCode)
     }
 }).mount('#valuesApp')
+
+var modalItemForm = new bootstrap.Modal(document.getElementById('modalItemForm'));
+var modalSingleDelete = new bootstrap.Modal(document.getElementById('modalSingleDelete'));
 </script>

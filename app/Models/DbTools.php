@@ -45,7 +45,11 @@ class DbTools extends Model
 
     /**
      * Devuelve row de una $table table.id determinado
-     * 2020-08-07
+     * @param string $table :: Nombre de la tabla donde se guardará el registro
+     * @param string $condition :: Condición SQL identificar registro guardar
+     * @param array $aRow :: Array del registro a guardar
+     * @return int $savedId :: id del registro guardado
+     * 2024-05-30
      */
     public static function saveRow($table, $condition, $aRow)
     {
@@ -114,6 +118,14 @@ class DbTools extends Model
         return $slug;
     }
     
+    /**
+     * Devuelve un texto tipo slug, único para una columna en una tabla
+     * 202-05-30
+     * @param string $text :: Texto de entrada a convertir en slug
+     * @param string $table :: Nombre de la tabla donde se buscará repetidos
+     * @param string $field :: Columna de la tabla donde se verifica unicidad
+     * @return string $slug :: texto tipo slug, único
+     */
     public static function uniqueSlug($text, $table, $field = 'slug')
     {
         $baseSlug = DbTools::slug($text);
