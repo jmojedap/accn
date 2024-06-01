@@ -4,8 +4,9 @@
             <div class="row mb-3">
                 <label for="scope" class="form-label col-md-4 col-form-label text-end">Ámbito</label>
                 <div class="col-md-8">
-                    <select name="fe2" v-model="filters.fe2" class="form-select" v-on:change="getCategories">
-                        <option v-for="optionScope in scopes" v-bind:value="optionScope.id">{{ optionScope.name }}</option>
+                    <select name="fe2" v-model="filters.scope" class="form-select" v-on:change="getCategories">
+                        <option value="">[ Todos ]</option>
+                        <option v-for="optionScope in scopes" v-bind:value="optionScope.slug">{{ optionScope.name }}</option>
                     </select>
                 </div>
             </div>
@@ -33,7 +34,7 @@
                         </td>
                     </tr>
                     <tr v-for="(category, key) in categories"
-                        v-bind:class="{'table-warning': categoryKey == key}">
+                        v-bind:class="{'table-warning': category.code == currCategory.code}">
                         <td><small class="text-muted">{{ category.code }}</small></td>
                         <td>{{ category.name }}</td>
                         <td>

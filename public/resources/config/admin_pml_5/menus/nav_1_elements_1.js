@@ -46,8 +46,8 @@ var nav1Elements = [
                 sections: ['config/options', 'config/processes', 'config/colors', 'config/import', 'config/import_e']
             },
             {
-                text: 'Ítems', active: false, icon: 'fa fa-bars', cf: 'items/manage',
-                sections: ['items/manage', 'items/import']
+                text: 'Ítems', active: false, icon: 'fa fa-bars', cf: 'items/values/0',
+                sections: ['items/values', 'items/import']
             },
             {
                 text: 'Base de datos', active: false, icon: 'fa fa-database', cf: 'sync/panel',

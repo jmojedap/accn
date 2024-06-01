@@ -113,6 +113,7 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
     //-----------------------------------------------------------------------------
     $routes->group('admin/items', static function ($routes) {
         $routes->get('values/(:num)', 'Admin\Items::values/$1');
+        $routes->get('values/(:num)/(:any?)', 'Admin\Items::values/$1/$2');
         $routes->get('add', 'Admin\Items::add');
     });
 
@@ -121,7 +122,7 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
     $routes->group('api/items', static function ($routes) {
         $routes->post('search', 'Api\Items::search');
         $routes->get('search', 'Api\Items::search');
-        $routes->get('get_list/(:num)', 'Api\Items::getList/$1');
+        $routes->post('get_list', 'Api\Items::getList');
         $routes->post('save/(:num)', 'Api\Items::save/$1');
         $routes->get('delete_row/(:num)/(:num)', 'Api\Items::deleteRow/$1/$2');
     });

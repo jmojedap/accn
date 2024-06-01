@@ -44,7 +44,8 @@ class ItemModel extends Model
     {
         $arrSelect['default'] = 'id, category_id, code, name';
         $arrSelect['basic'] = 'id, code, name';
-        $arrSelect['options'] = 'code, name';
+        $arrSelect['options'] = 'code, name, slug';
+        $arrSelect['optionsAbbreviation'] = 'code, name, abbreviation';
         $arrSelect['admin'] = '*';
 
         return $arrSelect[$format];
@@ -137,7 +138,6 @@ class ItemModel extends Model
     public function inputToRow($input)
     {
         $aRow = $input;
-
         return $aRow;
     }
 
@@ -188,6 +188,8 @@ class ItemModel extends Model
 
         $builder->select($this->select($selectFormat));
         $builder->where($condition);
+        $builder->orderBy('position', 'ASC');
+        $builder->orderBy('code', 'ASC');
         $query = $builder->get();
 
         return $query->getResultArray();

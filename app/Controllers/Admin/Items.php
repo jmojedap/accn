@@ -41,6 +41,7 @@ class Items extends BaseController
             $categoriesCondition .= " AND filters LIKE '%-{$scope}-%'";
         }
         $data['arrCategories'] = $this->itemModel->arrOptions($categoriesCondition);
+        $data['arrScopes'] = $this->itemModel->arrOptions('category_id = 29');
         $data['entityInfo'] = $this->entityInfo;
         
         $data['headTitle'] = 'Valores de parámetros';

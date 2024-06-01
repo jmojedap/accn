@@ -43,7 +43,7 @@ class Items extends BaseController
      * Buscar items según filtros y condiciones solicitadas
      * 
      */
-    public function getList($categoryCode = 0)
+    public function getList()
     {   
         $request = \Config\Services::request();
         $input = $request->getPostGet();
@@ -51,7 +51,10 @@ class Items extends BaseController
         $search = new \App\Libraries\Search();
         $settings = $search->settings($input);
         $settings['selectFormat'] = 'admin';
-        $searchCondition = "category_id = {$categoryCode}";
+        $settings['orderField'] = 'code';
+        $settings['orderType'] = 'ASC';
+        $settings['perPage'] = '200';
+        $searchCondition = $search->condition($input, ['name','description']);
 
         $items = $this->ItemModel->searchResults($searchCondition, $settings);
 

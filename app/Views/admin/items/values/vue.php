@@ -10,7 +10,7 @@ var appStates = {
 };
 
 var baseUrl = '<?= base_url() ?>';
-var categoryCode= <?= $categoryCode?>;
+var categoryCode = <?= $categoryCode?>;
 var categories = <?= json_encode($arrCategories) ?>;
 var startCategory = categories.find(category => category.code == categoryCode);
 var scope = '<?= $scope ?>';
@@ -23,7 +23,7 @@ var valuesApp = createApp({
             loading: false,
             deleting: false,
             entityInfo: <?= json_encode($entityInfo) ?>,
-            filters: {q:'',fe2:scope},
+            filters: {'q':'','scope':scope},
             categories: categories,
             categoryKey: 0,
             currCategory: startCategory,
@@ -48,16 +48,7 @@ var valuesApp = createApp({
                 buttonClass: 'btn-primary'
             },
             appState: appStates.add,
-            scopes: [
-                {id:'', name: 'Todos'},
-                {id:'general', name: 'General'},
-                {id:'tesauro', name: 'Taxonomía Sector - Tesauro'},
-                {id:'sociodemografico', name: 'Sociodemográfico'},
-                {id:'analitica', name: 'Analítica/Mediciones'},
-                {id:'mecc', name: 'Monitoreo Estrategias'},
-                {id:'repositorio', name: 'Repositorio de Contenidos'},
-                {id:'cuidado', name: 'Escuela de Cuidado'},
-            ],
+            scopes: <?= json_encode($arrScopes) ?>,
             appRid: APP_RID,
             displayFormat: 'table',
         }
@@ -67,9 +58,11 @@ var valuesApp = createApp({
             this.loading = true
             var formValues = new FormData()
             formValues.append('q', this.filters.q)
-            axios.post(URL_API + 'items/get/', formValues)
+            formValues.append('category_id__eq', 0)
+            formValues.append('filters__like', this.filters.scope)
+            axios.post(URL_API + 'items/get_list/', formValues)
             .then(response => {
-                this.categories = response.data.list
+                this.categories = response.data
                 this.setFirstCategory()
                 this.loading = false
             })
@@ -87,12 +80,16 @@ var valuesApp = createApp({
             this.getCategories()
         },
         getList: function (){
-            axios.get(URL_API + 'items/get_list/' + this.currCategory.code)
+            this.loading = true
+            var formValues = new FormData()
+            formValues.append('category_id__eq', this.currCategory.code)
+            axios.post(URL_API + 'items/get_list/', formValues)
             .then(response => {
                 this.list = response.data
-                history.pushState(null, null, URL_MOD + 'items/values/' + this.currCategory.code + '/' + this.filters.fe2);
+                history.pushState(null, null, URL_MOD + 'items/values/' + this.currCategory.code + '/' + this.filters.scope);
+                this.loading = false
             })
-            .catch(function (error) { console.log(error) })
+            .catch( function(error) {console.log(error)} )
         },
         //Cargar el formulario con datos de un elemento (key) de la list
         loadFormValues: function (key){
@@ -144,7 +141,6 @@ var valuesApp = createApp({
                     modalItemForm.hide()
                 }
                 this.loading = false
-                
             })
             .catch(function (error) {
                 console.log(error)
@@ -188,6 +184,8 @@ var valuesApp = createApp({
                 this.fields.description = this.currCategory.name + ', ' + this.fields.name
             }
             if ( this.fields.short_name.length == 0 ) { this.fields.short_name = this.fields.name }
+            if ( this.fields.long_name.length == 0 ) { this.fields.long_name = this.fields.name }
+            if ( this.fields.position == null ) { this.fields.position = this.fields.code }
         },
         setAbbreviation: function() {
             var abbreviation = '';

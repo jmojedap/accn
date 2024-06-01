@@ -19,12 +19,9 @@
         </label>
         <div class="col-md-8">
             <input
-                name="code"
-                class="form-control"
-                placeholder="Código numérico"
-                title="Código numérico"
-                required
-                v-model="fields.code"
+                name="code" class="form-control" type="number" min="0"
+                placeholder="Código numérico" title="Código numérico"
+                required v-model="fields.code"
                 >
         </div>
     </div>
@@ -63,6 +60,15 @@
     </div>
 
     <div class="mb-3 row">
+        <label for="position" class="col-md-4 col-form-label text-end">Orden</label>
+        <div class="col-md-8">
+            <input name="position" class="form-control" type="number" min="0"
+                v-model="fields.position"
+                >
+        </div>
+    </div>
+
+    <div class="mb-3 row">
         <label for="short_name" class="col-md-4 col-form-label text-end">
             <span class="">Nombre corto</span>
         </label>
@@ -72,8 +78,21 @@
                 title="Nombre corto" required maxlength="25"
                 v-model="fields.short_name"
                 >
-                <div id="emailHelp" class="form-text">Para mostrarse como etiqueta en visualización de gráficos</div>
+                <div id="shortNameHelp" class="form-text">Para mostrarse como etiqueta en visualización de gráficos</div>
 
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label for="long_name" class="col-md-4 col-form-label text-end">
+            <span class="">Nombre largo</span>
+        </label>
+        <div class="col-md-8">
+            <input
+                name="long_name" class="form-control" placeholder=""
+                title="Nombre largo" required maxlength="255"
+                v-model="fields.long_name"
+                >
         </div>
     </div>
 
@@ -91,6 +110,28 @@
                 v-model="fields.slug"
 
                 >
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label for="filters" class="col-md-4 col-form-label text-end text-right">Filtros</label>
+        <div class="col-md-8">
+            <input
+                name="filters" type="text" class="form-control"
+                title="Filtros" placeholder="-filtro1-filtro-2-etc-"
+                v-model="fields.filters"
+            >
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label for="label_class" class="col-md-4 col-form-label text-end text-right">Clase CSS</label>
+        <div class="col-md-8">
+            <input
+                name="label_class" type="text" class="form-control"
+                title="Clase CSS"
+                v-model="fields.label_class"
+            >
         </div>
     </div>
 </form>
