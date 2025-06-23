@@ -9,7 +9,7 @@ use CodeIgniter\Filters\FilterInterface;
 class Auth implements FilterInterface
 {
     /**
-     * 2023-03-25
+     * 2025-06-23
      */
     public function before(RequestInterface $request, $arguments = null)
     {

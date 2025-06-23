@@ -30,7 +30,7 @@ var addFileApp = createApp({
                 console.log(response.data);
                 //Ir a la vista de la imagen
                 if ( response.data.savedId > 0 ) {
-                    window.location = URL_MOD + 'files/info/' + response.data.row.id;
+                    //window.location = URL_MOD + 'files/info/' + response.data.row.id;
                 } else {
                     toastr['error'](response.data.errors.file_field)
                     this.errors = response.data.errors
