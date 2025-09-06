@@ -97,4 +97,4 @@
     </div>
 </div>
 
-<?= view('accounts/profile/vue'); ?>
+<?= view('m/accounts/profile/vue'); ?>

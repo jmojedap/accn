@@ -9,26 +9,30 @@ use CodeIgniter\Filters\FilterInterface;
 class Auth implements FilterInterface
 {
     /**
-     * 2025-06-23
+     * 2025-07-20
      */
     public function before(RequestInterface $request, $arguments = null)
     {
         $uri = current_url(true);
         $segments = $uri->getSegments();
         $currentRoute = '';
-        //echo count($segments);
         if ( count($segments) == 2 ) $currentRoute =  $uri->getSegment(2, '');
         if ( count($segments) == 3 ) $currentRoute =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '');
         if ( count($segments) >= 4 ) $currentRoute =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '') . '/' . $uri->getSegment(4, '');
 
-        $routeAllowed = $this->routeAllowed($currentRoute);   //Verificar si el usuario en sesión tiene acceso permitido
+        //Verificar si el usuario en sesión tiene acceso permitido
+        $routeAllowed = $this->routeAllowed($currentRoute);
 
         //Verificar allow
         if ( $routeAllowed == 0 )
         {
-            echo 'Acceso no permitido: ' . $currentRoute;
-            //return redirect()->to(base_url("info/no_permitido/"));
-            exit();
+            $viewData['message'] = "Acceso no permitido";
+            $viewData['headTitle'] = "Acceso no permitido";
+            $viewData['viewA'] = 'm/info/no_permitido';
+
+            // Devolver una respuesta HTTP completa con la vista
+            $response = service('response');
+            return $response->setStatusCode(403)->setBody(view('templates/easypml/public', $viewData));
         }
     }
 
@@ -66,7 +70,7 @@ class Auth implements FilterInterface
             //Verificar si la función existe en el array de rutas restringidas para ciertos roles
             if ( array_key_exists($currentRoute, $acl->routesRoles) )
             {
-                $roles = $acl->routesRoles[$currentRoute];                //Array roles permitidos para la función
+                $roles = $acl->routesRoles[$currentRoute];          //Array roles permitidos para la función
                 if ( in_array($session->role, $roles) ) return 1;   //El rol está incluido en el array
             }
         }

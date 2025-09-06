@@ -19,7 +19,7 @@
             </div>
             
             <div class="mb-3">
-                <a href="<?= URL_APP . 'accounts/recovery' ?>">¿Olvidaste tu contraseña?</a>
+                <a href="<?= URL_APP . 'accounts/login/link' ?>">¿Olvidaste tu contraseña?</a>
             </div>
         </fieldset>
     </form>

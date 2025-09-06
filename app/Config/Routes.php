@@ -30,40 +30,50 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
-$routes->get('admin', "Testing::pmlAdmin");
-
-// GENERAL
-//-----------------------------------------------------------------------------
+// ----------------------------- GENERAL ------------------------------------------------
+//---------------------------------------------------------------------------------------
 $routes->get('', 'Accounts::login');
-$routes->get('info/no_permitido', 'Info::noPermitido');
+$routes->get('m/info/no_permitido', 'M\Info::noPermitido');
 $routes->post('tools/get_unique_slug', 'Api\Tools::getUniqueSlug');
 
-// ACOUNTS
-//-----------------------------------------------------------------------------
-$routes->get('/', 'Accounts::login');
+$routes->get('admin/tools/preview_emails/(:any)/(:num)', 'Admin\Tools::previewEmails/$1/$2');
 
-$routes->group('accounts', static function ($routes) {
-    $routes->get('login', 'Accounts::login');
-    $routes->get('logged', 'Accounts::logged');
-    $routes->get('logout', 'Accounts::logout');
-    $routes->get('profile', 'Accounts::profile');
+// ----------------------------- ACCOUNTS -------------------------------------------
+//-----------------------------------------------------------------------------------
+
+$routes->group('m/info', static function ($routes) {
+    $routes->get('inicio', 'M\Info::welcome');
 });
 
-    // ACCOUNTS API
-    //-----------------------------------------------------------------------------
-    $routes->group('api/accounts', static function ($routes) {
-        $routes->post('validate', 'Api\Accounts::validateForm');
-        $routes->post('create', 'Api\Accounts::create');
-        $routes->post('update/(:num)', 'Api\Accounts::update/$1');
+// ACOUNTS ADMIN
+//-----------------------------------------------------------------------------
+$routes->get('/', 'M\Accounts::login');
+
+    $routes->group('m/accounts', static function ($routes) {
+        $routes->get('login', 'M\Accounts::login');
+        $routes->get('login/(:any)', 'M\Accounts::login/$1');
+        $routes->get('validate_login_link/(:any)', 'M\Accounts::validateLoginLink/$1');
+        $routes->get('signup', 'M\Accounts::signup');
+        $routes->get('logged', 'M\Accounts::logged');
+        $routes->get('logout', 'M\Accounts::logout');
+        $routes->get('profile', 'M\Accounts::profile');
     });
 
-$routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
-
-// USERS
+// ACCOUNTS API
 //-----------------------------------------------------------------------------
+    $routes->group('api/accounts', static function ($routes) {
+        $routes->post('validate', 'Api\Accounts::validateForm');
+        $routes->post('get_login_link', 'Api\Accounts::getLoginLink');
+        $routes->post('create', 'Api\Accounts::create');
+        $routes->post('update/(:num)', 'Api\Accounts::update/$1');
+        $routes->get('test', 'Api\Accounts::test');
+    });
 
-    // USERS ADMIN
-    //-----------------------------------------------------------------------------
+// -------------------------- USERS -------------------------------------------------
+//-----------------------------------------------------------------------------------
+
+// USERS ADMIN
+//-------------------------------------------------------------------------
     $routes->group('admin/users', static function ($routes) {
         $routes->get('explore', 'Admin\Users::explore');
         $routes->get('add', 'Admin\Users::add');
@@ -72,8 +82,8 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->get('edit/(:num)', 'Admin\Users::edit/$1');
     });
 
-    // USERS API
-    //-----------------------------------------------------------------------------
+// USERS API
+//-----------------------------------------------------------------------------
     $routes->group('api/users', static function ($routes) {
         $routes->post('search', 'Api\Users::search');
         $routes->post('validate', 'Api\Users::validateForm');
@@ -82,11 +92,11 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->post('delete_selected', 'Api\Users::deleteSelected');
     });
 
-// FILES ADMIN
-//-----------------------------------------------------------------------------
+// ---------------------------- FILES  --------------------------------------------------
+//---------------------------------------------------------------------------------------
 
-    // FILES ADMIN
-    //-----------------------------------------------------------------------------
+// FILES ADMIN
+//-------------------------------------------------------------------------
     $routes->group('admin/files', static function ($routes) {
         $routes->get('explore', 'Admin\Files::explore');
         $routes->get('add', 'Admin\Files::add');
@@ -96,8 +106,8 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->get('edit/(:num)', 'Admin\Files::edit/$1');
     });
 
-    // FILES API
-    //-----------------------------------------------------------------------------
+// FILES API
+//-----------------------------------------------------------------------------
     $routes->group('api/files', static function ($routes) {
         $routes->post('search', 'Api\Files::search');
         $routes->post('validate', 'Api\Files::validateForm');
@@ -106,19 +116,19 @@ $routes->post('api/accounts/validate_login', 'Api\Accounts::validateLogin');
         $routes->post('delete_selected', 'Api\Files::deleteSelected');
     });
 
-// ITEMS
-//-----------------------------------------------------------------------------
+// ---------------------------- ITEMS  --------------------------------------------------
+//---------------------------------------------------------------------------------------
 
-    // ITEMS ADMIN
-    //-----------------------------------------------------------------------------
+// ITEMS ADMIN
+//-----------------------------------------------------------------------------
     $routes->group('admin/items', static function ($routes) {
         $routes->get('values/(:num)', 'Admin\Items::values/$1');
         $routes->get('values/(:num)/(:any?)', 'Admin\Items::values/$1/$2');
         $routes->get('add', 'Admin\Items::add');
     });
 
-    // ITEMS API
-    //-----------------------------------------------------------------------------
+// ITEMS API
+//-----------------------------------------------------------------------------
     $routes->group('api/items', static function ($routes) {
         $routes->post('search', 'Api\Items::search');
         $routes->get('search', 'Api\Items::search');

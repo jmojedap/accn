@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\DbUtils;
 
 class ValidationModel extends Model
 {
@@ -10,7 +11,7 @@ class ValidationModel extends Model
      * lo excluye de la comparación cuando se realiza edición
      * 2022-05-07
      */
-    public static function email($userId = null, $email)
+    public static function email($email, $userId = null)
     {
         //Valores por defecto
         $validation['emailUnique'] = -1;
@@ -18,7 +19,7 @@ class ValidationModel extends Model
         //Si tiene algún valor escrito
         if ( strlen($email) > 0 )
         {
-            $validation['emailUnique'] = \App\Models\DbTools::isUnique('users', 'email', $email, $userId);
+            $validation['emailUnique'] = DbUtils::isUnique('users', 'email', $email, $userId);
         }
 
         return $validation;
@@ -30,11 +31,11 @@ class ValidationModel extends Model
      * para proceso de edición
      * 2022-05-07
      */
-    public static function documentNumber($userId = null, $documentNumber)
+    public static function documentNumber($documentNumber, $userId = null)
     {
         $validation['documentNumberUnique'] = -1;
         if ( strlen($documentNumber) > 0 ) {
-            $validation['documentNumberUnique'] = \App\Models\DbTools::isUnique('users', 'document_number', $documentNumber, $userId);
+            $validation['documentNumberUnique'] = DbUtils::isUnique('users', 'document_number', $documentNumber, $userId);
         }
         
         return $validation;
@@ -46,13 +47,35 @@ class ValidationModel extends Model
      * para proceso de edición
      * 2023-01-29
      */
-    public static function username($userId = null, $username)
+    public static function username($username, $userId = null): array
     {
         $validation['usernameUnique'] = -1;
         if ( strlen($username) > 0 ) {
-            $validation['usernameUnique'] = \App\Models\DbTools::isUnique('users', 'username', $username, $userId);
+            $validation['usernameUnique'] = DbUtils::isUnique('users', 'username', $username, $userId);
         }
         
         return $validation;
+    }
+
+    /**
+     * Validación de Google Recaptcha V3, la validación se realiza considerando el valor de
+     * $recaptcha->score, que va de 0 a 1.
+     * 2025-07-20
+     */
+    public static function recaptcha($response): int
+    {
+        $recaptcha = -1;
+
+        $secret = K_RCSC;   //Ver app/Config/Constants.php
+        //$response = $this->input->post('g-recaptcha-response');
+        $json_recaptcha = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$response}");
+        $recaptcha_content = json_decode($json_recaptcha);
+        //echo $json_recaptcha;
+        if ( $recaptcha_content->success ) {
+            $recaptcha = 0;
+            if ( $recaptcha_content->score > 0.7 ) $recaptcha = 1;
+        }
+        
+        return $recaptcha;
     }
 }

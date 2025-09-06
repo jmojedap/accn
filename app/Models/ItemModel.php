@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\DbUtils;
 
 class ItemModel extends Model
 {
@@ -67,8 +68,7 @@ class ItemModel extends Model
         $settings = $search->settings($input);
         $searchCondition = $search->condition($input, $qFields);
 
-        $dbTools = new \App\Models\DbTools();
-        $qtyResults = \App\Models\DbTools::numRows('items', $searchCondition);
+        $qtyResults = DbUtils::numRows('items', $searchCondition);
 
         $data['settings'] = $settings;
         $data['filters'] = $filters;

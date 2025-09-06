@@ -51,9 +51,9 @@ class Users extends BaseController
         $request = \Config\Services::request();
         $userId = $request->getPost('id');
         
-        $emailValidation = \App\Models\ValidationModel::email($userId, $request->getPost('email'));
-        $documentNumberValidation = \App\Models\ValidationModel::documentNumber($userId, $request->getPost('document_number'));
-        $usernameValidation = \App\Models\ValidationModel::username($userId, $request->getPost('username'));
+        $emailValidation = \App\Models\ValidationModel::email($request->getPost('email'), $userId);
+        $documentNumberValidation = \App\Models\ValidationModel::documentNumber($request->getPost('document_number'), $userId);
+        $usernameValidation = \App\Models\ValidationModel::username($request->getPost('username'), $userId);
 
         $validation = array_merge($emailValidation, $documentNumberValidation, $usernameValidation);
         $data['validation'] = (array) $validation;
@@ -91,8 +91,7 @@ class Users extends BaseController
 
         //Si se creó, datos complementarios
         if ($data['savedId']) {
-            $data['idcode'] = $this->dbTools->setIdCode('users', $data['savedId']);
-            //$data['aRow'] = $aRow;
+            $data['idcode'] = DbUtils::setIdCode('users', $data['savedId']);
         }
         
         $data['errors'] = $this->userModel->errors();

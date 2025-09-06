@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 /* LAYOUT */
 /*-----------------------------------------------------------------------------*/
 
@@ -6,10 +8,8 @@ html {
 }
 
 body{
-    font-family: var(--font-main), sans-serif;
     font-family: "Rubik", sans-serif;
     font-optical-sizing: auto;
-    font-weight: 300;
     font-style: normal;
     min-height: 100vh;
     background-color: #FFFFFF;

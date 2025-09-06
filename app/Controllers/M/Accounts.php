@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\M;
 
+use App\Controllers\BaseController;
 use App\Models\AccountModel;
+use App\Libraries\DbUtils;
 
 class Accounts extends BaseController
 {
@@ -10,7 +12,7 @@ class Accounts extends BaseController
     {
         $this->db = \Config\Database::connect();
         $this->accountModel = new AccountModel();
-		$this->viewsFolder = 'accounts/';
+		$this->viewsFolder = 'm/accounts/';
         
         //Local time set
         date_default_timezone_set("America/Bogota");
@@ -24,13 +26,33 @@ class Accounts extends BaseController
 	 * Vista para realizar inicio de sesión
 	 * 2022-06-22
 	 */
-	public function login()
+	public function login($type = 'password')
 	{
 		if ( isset($_SESSION['logged']) ) {
-			return redirect()->to(base_url('accounts/logged'));
+			return redirect()->to(base_url('m/accounts/logged'));
 		} else {
 			$data['headTitle'] = 'Iniciar sesión';
 			$data['viewA'] = $this->viewsFolder . 'login';
+			if ($type == 'link') {
+				// Obtener access key por variables GET
+    			$data['accessKey'] = $this->request->getGet('access_key')?? '';
+				$data['viewA'] = $this->viewsFolder . 'login_link';
+			}
+			return view(TPL_PUBLIC . 'public', $data);
+		}
+	}
+
+	/**
+	 * Vista para crear cuenta de usuario
+	 * 2025-07-20
+	 */
+	public function signup()
+	{
+		if ( isset($_SESSION['logged']) ) {
+			return redirect()->to(base_url('m/accounts/logged'));
+		} else {
+			$data['headTitle'] = 'Crea tu cuenta';
+			$data['viewA'] = $this->viewsFolder . 'signup';
 			return view(TPL_PUBLIC . 'public', $data);
 		}
 	}
@@ -65,9 +87,36 @@ class Accounts extends BaseController
 			$data['status'] = 1;
 			return $this->response->setJSON($data);
 		} else {
-			return redirect()->to(base_url('accounts/login'));
+			return redirect()->to(base_url('m/accounts/login'));
 		}
 	}
+
+	/**
+     * Validar un accessKey para login de usuario.
+     * Si es válido, inicia sesión; si no, redirecciona.
+     * 2025-08-23
+     */
+    public function validateLoginLink(string $accessKey)
+    {
+        // Buscar usuario por accessKey
+		$now = date('Y-m-d H:i:s');
+		$condition = "access_key = '{$accessKey}' AND access_key != '' AND access_key_expiry > '{$now}'";
+        $user = DbUtils::row('users', $condition);
+
+        if ($user) {
+            // Crear sesión
+            $this->accountModel->createSession($user->email, true);
+
+            // Inhabilitar el key actual generando uno nuevo
+            $this->accountModel->setAccessKey($user->id);
+
+            // Redirigir al dashboard (o método logged())
+            return redirect()->to(base_url('m/accounts/logged'));
+        } else {
+            // Redirigir a pantalla de error/login
+            return redirect()->to(base_url("m/accounts/login/link"));
+        }
+    }
 
 // PERFIL DE USUARIO
 //-----------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\DbUtils;
 
 class UserModel extends Model
 {
@@ -78,8 +79,7 @@ class UserModel extends Model
         $settings = $search->settings($input);
         $searchCondition = $search->condition($input, $qFields);
 
-        $dbTools = new \App\Models\DbTools();
-        $qtyResults = \App\Models\DbTools::numRows('users', $searchCondition);
+        $qtyResults = DbUtils::numRows('users', $searchCondition);
 
         $data['settings'] = $settings;
         $data['filters'] = $filters;
@@ -187,7 +187,7 @@ class UserModel extends Model
             $username = substr($username . date('Ymd'),0,8);
         }
         $username = preg_replace('[A-Za-z0-9_]', '', $username);
-        $username = DbTools::uniqueSlug($username, 'users', 'username');
+        $username = DbUtils::uniqueSlug($username, 'users', 'username');
         $username = str_replace(array('.', '-'), '', $username);
 
         return $username;

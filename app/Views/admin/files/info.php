@@ -10,12 +10,6 @@
                     onerror="this.src='<?= URL_IMG ?>app/nd.png'"
                 >
             </a>
-            <img
-                v-bind:src="row.url_thumbnail"
-                class="sqr-120 rounded" v-show="row.is_image == 1"
-                v-bind:alt="row.title"
-                onerror="this.src='<?= URL_IMG ?>app/nd.png'"
-            >
         </div>
         <div class="col-md-8">
             <table class="table bg-white">

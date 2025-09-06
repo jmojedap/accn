@@ -130,4 +130,10 @@ class Users extends BaseController
 
         return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
+
+    public function test()
+    {
+        //return $this->pml->view();
+        echo 'hola';
+    }
 }

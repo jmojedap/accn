@@ -23,6 +23,7 @@ class DbTools extends Model
 
     /**
      * Devuelve row de una $table table.id determinado
+     * Si no existe encuentra devuelve NULL
      * 2023-01-29
      */
     public static function row($table, $condition = 'id = 0', $select = '*')
@@ -44,7 +45,7 @@ class DbTools extends Model
 
 
     /**
-     * Devuelve row de una $table table.id determinado
+     * Inserta o actualiza una fila en una tabla
      * @param string $table :: Nombre de la tabla donde se guardará el registro
      * @param string $condition :: Condición SQL identificar registro guardar
      * @param array $aRow :: Array del registro a guardar
@@ -128,11 +129,11 @@ class DbTools extends Model
      */
     public static function uniqueSlug($text, $table, $field = 'slug')
     {
-        $baseSlug = DbTools::slug($text);
+        $baseSlug = DbUtils::slug($text);
         
         //Count equal slug
             $condition = "{$field} = '{$baseSlug}'";
-            $numRows = DbTools::numRows($table, $condition);
+            $numRows = DbUtils::numRows($table, $condition);
         
         $sufix = '';
         if ( $numRows > 0 )

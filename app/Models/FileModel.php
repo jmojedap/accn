@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\DbUtils;
 
 class FileModel extends Model
 {
@@ -69,7 +70,7 @@ class FileModel extends Model
         $settings = $search->settings($input);
         $settings['selectFormat'] = 'admin';
         $searchCondition = $search->condition($input, $qFields);
-        $qtyResults = \App\Models\DbTools::numRows('files', $searchCondition);
+        $qtyResults = DbUtils::numRows('files', $searchCondition);
 
         $data['settings'] = $settings;
         $data['filters'] = $filters;
