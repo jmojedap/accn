@@ -5,7 +5,7 @@
 <form accept-charset="utf-8" id="itemForm" @submit.prevent="handleSubmit">
     <input name="category_id" type="hidden" v-model="currCategory.code">
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <div class="col-sm-8 offset-4">
             <button class="btn w120p" v-bind:class="appState.buttonClass" type="submit">
                 {{ appState.buttonText }}
@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="cod" class="col-md-4 col-form-label text-end">
             Código numérico
         </label>
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="name" class="col-md-4 col-form-label text-end">
             <span class="">Nombre</span>
         </label>
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="description" class="col-md-4 col-form-label text-end">Descripción</label>
         <div class="col-md-8">
             <textarea
@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="abbreviation" class="col-md-4 col-form-label text-end">Abreviatura</label>
         <div class="col-md-8">
             <input name="abbreviation" class="form-control"
@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="position" class="col-md-4 col-form-label text-end">Orden</label>
         <div class="col-md-8">
             <input name="position" class="form-control" type="number" min="0"
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="short_name" class="col-md-4 col-form-label text-end">
             <span class="">Nombre corto</span>
         </label>
@@ -83,7 +83,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="long_name" class="col-md-4 col-form-label text-end">
             <span class="">Nombre largo</span>
         </label>
@@ -96,7 +96,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="slug" class="col-md-4 col-form-label text-end">
             <span class="">Slug</span>
         </label>
@@ -113,7 +113,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="filters" class="col-md-4 col-form-label text-end text-right">Filtros</label>
         <div class="col-md-8">
             <input
@@ -124,7 +124,7 @@
         </div>
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-1 row">
         <label for="label_class" class="col-md-4 col-form-label text-end text-right">Clase CSS</label>
         <div class="col-md-8">
             <input

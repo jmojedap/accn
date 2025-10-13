@@ -156,4 +156,25 @@ class Items extends BaseController
         $data['results'] = $results;
         return $this->response->setJSON($data);
     }
+
+    /**
+     * Actualizar el archivo JS con los ítems
+     * 2025-09-27
+     */
+    public function updateItemsListFile()
+    {
+        $items = $this->itemModel->findAll();
+
+        // Generar el contenido JS
+        $jsContent = 'const itemsAppList = ' . 
+            json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . 
+            ';' . PHP_EOL;
+
+        // Guardar en el archivo .js
+        $filePath = ROOTPATH . 'public/resources/js/items_list.js';
+        file_put_contents($filePath, $jsContent);
+
+        $data['message'] = 'Archivo actualizado';
+        return $this->response->setJSON($data);
+    }
 }

@@ -32,22 +32,25 @@ $routes->set404Override();
 
 // ----------------------------- GENERAL ------------------------------------------------
 //---------------------------------------------------------------------------------------
-$routes->get('', 'Accounts::login');
+$routes->get('', 'M\Info::inicio');
+$routes->get('/', 'M\Info::inicio');
+$routes->get('/m', 'M\Info::inicio');
 $routes->get('m/info/no_permitido', 'M\Info::noPermitido');
 $routes->post('tools/get_unique_slug', 'Api\Tools::getUniqueSlug');
 
 $routes->get('admin/tools/preview_emails/(:any)/(:num)', 'Admin\Tools::previewEmails/$1/$2');
+$routes->get('admin/tools/master_login/(:num)', 'Admin\Tools::masterLogin/$1');
 
-// ----------------------------- ACCOUNTS -------------------------------------------
+// ----------------------------- INFO -------------------------------------------
 //-----------------------------------------------------------------------------------
 
 $routes->group('m/info', static function ($routes) {
-    $routes->get('inicio', 'M\Info::welcome');
+    $routes->get('inicio', 'M\Info::inicio');
+    $routes->get('sits', 'M\Info::exploreSits');
 });
 
 // ACOUNTS ADMIN
 //-----------------------------------------------------------------------------
-$routes->get('/', 'M\Accounts::login');
 
     $routes->group('m/accounts', static function ($routes) {
         $routes->get('login', 'M\Accounts::login');
@@ -55,6 +58,7 @@ $routes->get('/', 'M\Accounts::login');
         $routes->get('validate_login_link/(:any)', 'M\Accounts::validateLoginLink/$1');
         $routes->get('signup', 'M\Accounts::signup');
         $routes->get('logged', 'M\Accounts::logged');
+        $routes->get('master_login/(:num)', 'M\Accounts::masterLogin/$1');
         $routes->get('logout', 'M\Accounts::logout');
         $routes->get('profile', 'M\Accounts::profile');
     });
@@ -63,10 +67,28 @@ $routes->get('/', 'M\Accounts::login');
 //-----------------------------------------------------------------------------
     $routes->group('api/accounts', static function ($routes) {
         $routes->post('validate', 'Api\Accounts::validateForm');
+        $routes->post('validate_login', 'Api\Accounts::validateLogin');
         $routes->post('get_login_link', 'Api\Accounts::getLoginLink');
         $routes->post('create', 'Api\Accounts::create');
-        $routes->post('update/(:num)', 'Api\Accounts::update/$1');
+        $routes->post('update', 'Api\Accounts::update');
         $routes->get('test', 'Api\Accounts::test');
+    });
+
+// -------------------------- SYNC -------------------------------------------------
+//-----------------------------------------------------------------------------------
+
+// SYNC ADMIN
+//-------------------------------------------------------------------------
+    $routes->group('admin/sync', static function ($routes) {
+        $routes->get('panel', 'Admin\Sync::panel');
+    });
+
+// SYNC API
+//-----------------------------------------------------------------------------
+    $routes->group('api/sync', static function ($routes) {
+        $routes->get('generate_files/(:any)', 'Api\Sync::generateFiles/$1');
+        $routes->get('sync_table/(:any)', 'Api\Sync::syncTable/$1');
+        $routes->get('delete_generated_files/(:any)', 'Api\Sync::deleteGeneratedFiles/$1');
     });
 
 // -------------------------- USERS -------------------------------------------------
@@ -135,6 +157,7 @@ $routes->get('/', 'M\Accounts::login');
         $routes->post('get_list', 'Api\Items::getList');
         $routes->post('save/(:num)', 'Api\Items::save/$1');
         $routes->get('delete_row/(:num)/(:num)', 'Api\Items::deleteRow/$1/$2');
+        $routes->get('update_items_list_file', 'Api\Items::updateItemsListFile');
     });
 
 /*

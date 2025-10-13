@@ -1,7 +1,6 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
-use App\Models\UserModel;
 use App\Libraries\DbUtils;
 use App\Libraries\MailPml;
 
@@ -54,6 +53,8 @@ class AccountModel extends UserModel
     {
         $aRow = $input;
         $aRow['role'] = 21;
+        $aRow['updater_id'] = $this->session->get('user_id');
+        $aRow['updated_at'] = date('Y-m-d H:i:s');
         
         //Creación de usuario
         if ( !isset($aRow['id']) ) {
@@ -108,6 +109,16 @@ class AccountModel extends UserModel
         
         //Devolver array
             return $data;
+    }
+
+    /**
+     * Actualiza la fecha y hora del último ingreso del usuario
+     * 2025-10-04
+     */
+    public function updateLastLogin($userId)
+    {
+        $aRow['last_login'] = date('Y-m-d H:i:s');
+        DbUtils::saveRow('users', "id = {$userId}", $aRow);
     }
 
     /**

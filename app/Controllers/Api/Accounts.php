@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Controllers\BaseController;
 use App\Models\AccountModel;
+use App\Models\UserModel;
 use App\Models\NotificationModel;
 use App\Models\ValidationModel;
 use App\Libraries\DbUtils;
@@ -157,6 +158,23 @@ class Accounts extends BaseController
         } else {
             $data['errors'] = $errors;
         }
+
+        return $this->response->setJSON($data);
+    }
+
+    /**
+     * JSON
+     * Actualizar los datos de un usuario, tabla users
+     * 2025-09-07
+     */
+    public function update()
+    {
+        $idcode = $this->session->idcode;
+        $input = $this->request->getPost();
+        $userModel = new UserModel();
+        $aRow = $userModel->inputToRow($input);
+
+        $data['saved'] = DbUtils::saveRow('users', "idcode = {$idcode}", $aRow);
 
         return $this->response->setJSON($data);
     }

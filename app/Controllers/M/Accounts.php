@@ -61,12 +61,12 @@ class Accounts extends BaseController
 	 * REDIRECT
 	 * Redireccionamiento cuando un usuario ya ha iniciado sesión
 	 * el destino depende del rol del usuario
-	 * 2022-06-20
+	 * 2025-09-07
 	 */
 	public function logged()
 	{
 		$role = $_SESSION['role'];
-		$destination = 'accounts/profile';
+		$destination = 'm/accounts/profile';
 		if ( $role == 1 ) {
 			$destination = 'admin/users/explore';
 		}
@@ -107,6 +107,9 @@ class Accounts extends BaseController
             // Crear sesión
             $this->accountModel->createSession($user->email, true);
 
+			//Fecha y hora del último ingreso
+			$this->accountModel->updateLastLogin($user->id);
+
             // Inhabilitar el key actual generando uno nuevo
             $this->accountModel->setAccessKey($user->id);
 
@@ -122,18 +125,15 @@ class Accounts extends BaseController
 //-----------------------------------------------------------------------------
 
 	/**
-	 * Vista perfil de usuario
-	 * 2023-04-30
+	 * Vista perfil de usuario, con formulario para edición de datos básicos
+	 * 2025-09-07
 	 */
 	public function profile()
 	{
-		$idcode = $_SESSION['idcode'];
+		$idcode = $this->session->idcode;
 		$data['user'] = $this->accountModel->getRow($idcode);
 
-		$data['arrDocumentTypes'] = $this->itemModel->arrOptions('category_id = 53', 'optionsAbbreviation');
-        $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
-
-		$data['headTitle'] = 'Mauricio Ojeda Pepinosa';
+		$data['headTitle'] = $data['user']->display_name;
 		$data['viewA'] = $this->viewsFolder . 'profile/profile';
 		return view(TPL_PUBLIC . 'main', $data);
 	}

@@ -2,7 +2,7 @@
 function getSections(menuType)
 {
     beforeGetSections(menuType);
-    axios.get(URL_APP + appSection + '/?json=' + menuType)
+    axios.get(URL_MOD + appSection + '/?json=' + menuType)
     .then(response => {
         loadSections(response.data, menuType);
     })
@@ -28,7 +28,7 @@ function loadSections(responseData, menuType)
 {
     $('#loadingIndicator').hide()
     document.title = responseData.head_title
-    history.pushState(null, null, URL_APP + appSection)
+    history.pushState(null, null, URL_MOD + appSection)
     
     $('#head_title').html(responseData.head_title)
     $('#view_a').html(responseData.view_a)

@@ -1,5 +1,10 @@
 <div id="profileApp">
     <div class="center_box_750">
+        <div class="mb-2">
+            <a class="btn btn-light w100p" href="<?= URL_ADMIN . "tools/master_login/{$row->idcode}" ?>">
+                Login
+            </a>
+        </div>
         <table class="table bg-white">
             <tbody>
                 <tr>

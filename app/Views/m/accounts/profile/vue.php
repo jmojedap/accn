@@ -6,11 +6,10 @@ var userProfileApp = createApp({
             user: <?= json_encode($user) ?>,
             fields: <?= json_encode($user) ?>,
             loading: false,
-            urlApp: URL_MOD,
             validation: {
-                emailUnique: -1
+                emailUnique: -1, usernameUnique: -1
             },
-            arrGenders: <?= json_encode($arrGenders) ?>,
+            arrGenders: ItemsApp.arrayCategory(59),
             rowId: 0,
             idCode: '<?= $user->idcode ?>',
             hidePassword: true,
@@ -21,7 +20,7 @@ var userProfileApp = createApp({
             this.section = newSection
         },
         validateForm: function() {
-            var formValues = new FormData(document.getElementById('editForm'))
+            var formValues = new FormData(document.getElementById('accountForm'))
             axios.post(URL_API + 'accounts/validate/', formValues)
                 .then(response => {
                     this.validation = response.data.validation
@@ -43,20 +42,27 @@ var userProfileApp = createApp({
                 .catch(function(error) { console.log(error) })
         },
         submitForm: function(formData) {
-            axios.post(URL_API + 'accounts/update/' + this.idCode, formData)
-                .then(response => {
-                    if ( response.data.saved ) {
-                        toastr['success']('Guardado')
-                    } else {
-                        toastr['error']('No se guardó')
-                    }
-                    this.loading = false
-                })
-                .catch(function(error) { console.log(error) })
+            axios.post(URL_API + 'accounts/update/', formData)
+            .then(response => {
+                if ( response.data.saved ) {
+                    toastr['success']('Guardado')
+                    this.user = this.fields
+                } else {
+                    toastr['error']('No se guardó')
+                }
+                this.loading = false
+            })
+            .catch(function(error) { console.log(error) })
+        },
+        genderName: function(value = '', field = 'name'){
+            return ItemsApp.fieldValue(59, value, field)
+        },
+        setDisplayName: function(){
+            console.log('display_name: ', this.fields.display_name)
+            if ( this.fields.display_name.length <= 3 ) {
+                this.fields.display_name = this.fields.first_name + ' ' + this.fields.last_name
+            }
         },
     },
-    mounted() {
-        //this.getList()
-    }
 }).mount('#userProfileApp')
 </script>

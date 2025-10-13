@@ -3,6 +3,8 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\AccountModel;
+use App\Libraries\DbUtils;
 
 class Tools extends BaseController
 {
@@ -20,7 +22,20 @@ class Tools extends BaseController
 		$this->login();
 	}
 
-    function previewEmails($type = 'login_link', $param1 = 0)
+    public function masterLogin($idCode)
+	{
+        if ( in_array($_SESSION['role'], [1,2]) ) {
+            $user = DbUtils::row('users', "idcode = {$idCode}");
+
+            $accountModel = new AccountModel();
+            $accountModel->createSession($user->email, true);
+            $data['user'] = DbUtils::row('users', "idcode = {$idCode}");
+        }
+		
+		return redirect()->to(base_url('m/accounts/logged'));
+	}
+
+    public function previewEmails($type = 'login_link', $param1 = 0)
     {
         if ($type == 'login_link')
         {
@@ -32,4 +47,6 @@ class Tools extends BaseController
 		$data['viewA'] = 'm/email/login_link';
         return view('templates/easypml/email', $data);
     }
+
+
 }

@@ -26,14 +26,28 @@ class Info extends BaseController
         return redirect()->to('admin/users/explore');
     }
 
-    public function welcome()
+    public function inicio()
     {
-        $data['headTitle'] = 'Bienvenidos a la APP';
-        $data['viewA'] = $this->viewsFolder . 'welcome';
-        return view(TPL_PUBLIC . 'public', $data);
+        $data['headTitle'] = 'MultiSits';
+        $data['viewA'] = $this->viewsFolder . 'inicio';
+        return view(TPL_PUBLIC . 'main', $data);
     }
 
     public function noPermitido(){
         return view('m/info/no_permitido');
+    }
+
+    public function exploreSits()
+    {
+        $data['headTitle'] = 'Explorar sitios y perfiles';
+        $data['viewA'] = $this->viewsFolder . 'explore_sits';
+
+        $file_path = PATH_CONTENT . 'multisits/data/sits.json';
+        if ( ! file_exists($file_path) ) {
+            die('El archivo de datos no existe. ' . $file_path);
+        }
+        $data['sits'] = file_get_contents($file_path);
+
+        return view(TPL_PUBLIC . 'main', $data);
     }
 }

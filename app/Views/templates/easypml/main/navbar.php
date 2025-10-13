@@ -1,7 +1,10 @@
+<?php
+    $session = session();
+?>
 <div id="navbarApp">
     <nav class="navbar fixed-top navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="<?= URL_APP ?>">
                 <img class="d-block" src="<?= URL_BRAND ?>logo-navbar.png" alt="Logo App" style="height: 30px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -36,11 +39,24 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav -2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= URL_APP ?>accounts/logout" role="button">
-                            Salir
-                        </a>
-                    </li>
+                    <?php if ( $session->logged == TRUE ) : ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URL_APP ?>accounts/profile" role="button">
+                                Mi Perfil <?= $session->display_name ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URL_APP ?>accounts/logout" role="button">
+                                Salir
+                            </a>
+                        </li>
+                    <?php else : ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URL_APP ?>accounts/login" role="button">
+                                Ingresar
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -81,7 +97,7 @@ const navbarApp = createApp({
                 this.elements.forEach(element => { element.active = false; });
                 this.elements[i].active = true;
                 if ( this.elements[i].anchor ) {
-                    window.location = URL_CUR + this.elements[i].appSection;
+                    window.location = URL_MOD + this.elements[i].appSection;
                 } else {
                     appSection = this.elements[i].appSection;
                     loadSections('nav_1');

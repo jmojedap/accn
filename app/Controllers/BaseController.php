@@ -9,7 +9,8 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
-use App\Models\DbTools;
+//use App\Models\DbTools;
+use App\Libraries\DbUtils;
 use App\Models\ItemModel;
 
 /**
@@ -63,6 +64,6 @@ abstract class BaseController extends Controller
 
 		//Pacarina Media Lab
 		$this->itemModel = new ItemModel();
-		$this->dbTools = new DbTools();
+		//$this->dbTools = new DbTools();
     }
 }

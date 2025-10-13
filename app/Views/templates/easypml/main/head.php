@@ -2,8 +2,7 @@
     $uri = current_url(true);
     $appSection = '';
     $segments = $uri->getSegments();
-    //$appSection = '';
-    //echo count($segments);
+
     if ( count($segments) == 2 ) $appSection =  $uri->getSegment(2, '');
     if ( count($segments) == 3 ) $appSection =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '');
     if ( count($segments) >= 4 ) $appSection =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '') . '/' . $uri->getSegment(4, '');
@@ -13,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $headTitle ?></title>
-    <link rel="shortcut icon" href="<?= URL_IMG ?>app/favicon.png" type="image/png"/>
+    <link rel="shortcut icon" href="<?= URL_BRAND ?>favicon.png" type="image/png"/>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -48,6 +47,8 @@
     <!-- PML Tools -->
     <link rel="stylesheet" href="<?= URL_RESOURCES ?>css/pacarina.css"></link>
     <script src="<?= URL_RESOURCES . 'js/pcrn.js' ?>"></script>
+    <script src="<?= URL_RESOURCES . 'js/items_list.js' ?>"></script>
+    <script src="<?= URL_RESOURCES . 'js/items.js' ?>"></script>
 
     <link rel="stylesheet" href="<?= URL_RESOURCES ?>css/sidebars.css"></link>
 
@@ -56,7 +57,7 @@
     <link rel="stylesheet" href="<?= URL_RESOURCES ?>templates/easypml/style.css"></link>    
 
     <script>
-        const URL_MOD = '<?= URL_ADMIN ?>'; const URL_API = '<?= URL_API ?>';
+        const URL_MOD = '<?= URL_APP ?>'; const URL_API = '<?= URL_API ?>';
         var appSection = '<?= $appSection ?>';
 
         <?php if ( isset($_SESSION['logged']) ) : ?>

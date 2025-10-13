@@ -54,7 +54,7 @@ class UserModel extends Model
     {
         $arrSelect['default'] = 'id, idcode, display_name, first_name, last_name, username, email, document_number,
             role, status, gender, birth_date, organization_id, city_id, phone_number,
-            notes, url_image, url_thumbnail, about, admin_notes,
+            notes, url_image, url_thumbnail, about,
             updater_id, creator_id, updated_at, created_at';
         $arrSelect['basic'] = 'id, idcode, display_name, 
             username, email, role';
@@ -114,7 +114,7 @@ class UserModel extends Model
 //-----------------------------------------------------------------------------
 
     /**
-     * Row de un user
+     * Row de un usuario, tabla users
      * 2023-04-30
      */
     public function getRow($idCode, $selectFormat = 'default')
@@ -123,7 +123,6 @@ class UserModel extends Model
         $idCodeChecked = 0;
         if ( strlen($idCode) > 0 ) { $idCodeChecked = $idCode; }
 
-        //$db = db_connect();
         $builder = $this->builder();
         $builder->select($this->select($selectFormat));
         $builder->where('idcode', $idCodeChecked);
@@ -145,12 +144,11 @@ class UserModel extends Model
     /**
      * Convierte el array de input de un formulario (POST) en un array para
      * crear o actualizar un registro en la tabla users
-     * 2024-05-24
+     * 2025-10-04
      */
     public function inputToRow($input)
     {
         $aRow = $input;
-        $aRow['display_name'] = $aRow['first_name'] . ' ' . $aRow['last_name'];
         $aRow['updater_id'] = $_SESSION['user_id'];
         
         //Creación de usuario

@@ -1,28 +1,29 @@
 var nav1Elements = [
     {
-        text: 'Usuarios',
+        text: 'Inicio',
         active: false,
         icon: '',
-        appSection: '',
-        subelements: [
-            {
-                text: 'Usuarios',
-                active: false,
-                icon: '',
-                appSection: 'users/explore',
-                sections: ['users/explore'],
-                anchor: true
-            },
-            {
-                text: 'Crear',
-                active: false,
-                icon: '',
-                appSection: 'users/add',
-                sections: ['users/add'],
-                anchor: true
-            },
-        ],
-        sections: ['users/add'],
+        appSection: 'info/inicio',
+        subelements: [],
+        sections: ['info/inicio'],
+        anchor: true
+    },
+    {
+        text: 'Explora',
+        active: false,
+        icon: '',
+        appSection: 'info/sits',
+        subelements: [],
+        sections: ['info/sits'],
+        anchor: true
+    },
+    {
+        text: 'Precios',
+        active: false,
+        icon: '',
+        appSection: 'info/precios',
+        subelements: [],
+        sections: ['info/precios'],
         anchor: true
     },
 ];
