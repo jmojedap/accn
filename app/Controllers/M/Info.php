@@ -29,7 +29,14 @@ class Info extends BaseController
     public function inicio()
     {
         $data['headTitle'] = 'MultiSits';
-        $data['viewA'] = $this->viewsFolder . 'inicio';
+        $data['viewA'] = $this->viewsFolder . 'inicio/inicio';
+        return view(TPL_PUBLIC . 'main', $data);
+    }
+    
+    public function suscriptores()
+    {
+        $data['headTitle'] = 'Cómo funciona';
+        $data['viewA'] = $this->viewsFolder . 'suscriptores/suscriptores';
         return view(TPL_PUBLIC . 'main', $data);
     }
 
@@ -40,7 +47,7 @@ class Info extends BaseController
     public function exploreSits()
     {
         $data['headTitle'] = 'Explorar sitios y perfiles';
-        $data['viewA'] = $this->viewsFolder . 'explore_sits';
+        $data['viewA'] = $this->viewsFolder . 'explore_sits/explore_sits';
 
         $file_path = PATH_CONTENT . 'multisits/data/sits.json';
         if ( ! file_exists($file_path) ) {

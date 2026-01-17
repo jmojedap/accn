@@ -92,7 +92,8 @@ class Search {
         //Controlar máximo número de resultados por petición
         if ( $settings['perPage'] > 500 ) $settings['perPage'] = 500;
 
-        $settings['offset'] = ($settings['numPage'] - 1) * $settings['perPage'];      //Número de la página de datos que se está consultado
+        //Número de la página de datos que se está consultado
+        $settings['offset'] = ($settings['numPage'] - 1) * $settings['perPage'];
 
         return $settings;
     }
@@ -141,20 +142,20 @@ class Search {
     /**
      * String con la cadena para URL tipo GET, con los valores de la búsqueda
      * 2020-10-26
-     * PENDIENTE
+     * Implementado considerando la lógica de filterToCondition
      */
-    function inputToGetString($input)
+    public static function inputToGetString($input)
     {
-        $filtersStr = '';   
-        foreach ( $filters as $key => $value ) 
-        {
-            if ( $value )
-            {
+        $filtersStr = '';
+        foreach ($input as $key => $value) {
+            if (strlen($value) > 0) {
+                // Si el valor contiene espacios, los reemplaza por '+'
                 $prep_value = str_replace(' ', '+', $value);
                 $filtersStr .= "{$key}={$prep_value}&";
             }
         }
-        return $filtersStr;
+        // Elimina el último '&' si existe
+        return rtrim($filtersStr, '&');
     }
     
     /**

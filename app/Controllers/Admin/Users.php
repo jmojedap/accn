@@ -9,7 +9,6 @@ class Users extends BaseController
 {
     public function __construct()
 	{
-		$this->db = \Config\Database::connect();
 		$this->userModel = new UserModel();
         $this->viewsFolder = 'admin/users/';
         $this->backLink = URL_ADMIN . 'users/explore';
@@ -37,8 +36,7 @@ class Users extends BaseController
     public function explore()
     {
         //Filtros y detalle de la búsqueda
-        $request = \Config\Services::request();
-        $input = $request->getGet();
+        $input = $this->request->getPostGet();
         $data['search'] = $this->userModel->search($input);
         
         $data['entityInfo'] = $this->entityInfo;
@@ -46,11 +44,6 @@ class Users extends BaseController
         $data['viewsFolder'] = $this->viewsFolder . 'explore/';
         $data['viewA'] = $this->viewsFolder . 'explore/explore';
         $data['nav2'] = $this->viewsFolder . 'menus/general';
-
-        $data['table'] = $this->userModel->table;
-
-        $data['arrRoles'] = $this->itemModel->arrOptions('category_id = 58');
-        $data['arrGenders'] = $this->itemModel->arrOptions('category_id = 59');
 
         return $this->pml->view(TPL_ADMIN . 'main', $data);
     }
@@ -129,11 +122,5 @@ class Users extends BaseController
         $data['backLink'] = $this->backLink;
 
         return $this->pml->view(TPL_ADMIN . 'main', $data);
-    }
-
-    public function test()
-    {
-        //return $this->pml->view();
-        echo 'hola';
     }
 }

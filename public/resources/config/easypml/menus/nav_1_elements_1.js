@@ -5,7 +5,7 @@ var nav1Elements = [
         icon: '',
         appSection: 'info/inicio',
         subelements: [],
-        sections: ['info/inicio'],
+        sections: ['m/info/inicio'],
         anchor: true
     },
     {
@@ -14,16 +14,7 @@ var nav1Elements = [
         icon: '',
         appSection: 'info/sits',
         subelements: [],
-        sections: ['info/sits'],
+        sections: ['m/info/sits'],
         anchor: true
-    },
-    {
-        text: 'Precios',
-        active: false,
-        icon: '',
-        appSection: 'info/precios',
-        subelements: [],
-        sections: ['info/precios'],
-        anchor: true
-    },
+    }
 ];

@@ -7,17 +7,15 @@ var exploreApp = createApp({
             loading: false,
             deleting: false,
             filters: <?= json_encode($search['filters']) ?>, 
-            numPage: <?= $search['settings']['numPage'] ?>,
-            perPage: <?= $search['settings']['perPage'] ?>,
             results: <?= json_encode($search['results']) ?>,
-            maxPage: <?= $search['maxPage'] ?>,
             qtyResults: <?= $search['qtyResults'] ?>,
             entityInfo: <?= json_encode($entityInfo) ?>,
+            settings: <?= json_encode($search['settings']) ?>,
             selected: [],
             allSelected: false,
             displayFilters: false,
-            arrRoles: <?= json_encode($arrRoles) ?>,
-            arrGenders: <?= json_encode($arrGenders) ?>,
+            arrRoles: ItemsApp.arrayCategory(58),
+            arrGenders: ItemsApp.arrayCategory(59),
             selected_row_class: 'table-info',
         }
     },
@@ -28,9 +26,9 @@ var exploreApp = createApp({
             axios.post(URL_API + this.entityInfo.controller + '/search/', searchFormValues)
             .then(response => {
                 this.results = response.data.results
-                this.maxPage = response.data.maxPage
+                this.settings = response.data.settings
                 this.qtyResults = response.data.qtyResults
-                //history.pushState(null, null, URL_API + this.cf + this.numPage +'/?' + response.data.filtersStr);
+                history.pushState(null, null, URL_MOD + this.entityInfo.controller + '/explore/?' + response.data.getString);
                 this.allSelected = false
                 this.selected = []
                 this.loading = false
@@ -41,7 +39,7 @@ var exploreApp = createApp({
             this.selected = this.allSelected ? this.results.map(element => element.idcode) : [];
         },
         sumPage: function(sum){
-            this.numPage = Pcrn.limit_between(this.numPage + sum, 1, this.maxPage)
+            this.settings.numPage = Pcrn.limit_between(this.settings.numPage + sum, 1, this.settings.maxPage)
             setTimeout(() => {
                 this.search()
             }, 50);
@@ -93,7 +91,6 @@ var exploreApp = createApp({
         },
         toggleFilters: function(){
             this.displayFilters = !this.displayFilters;
-            $('#searchFilters').toggle('fast');
         },
         roleName: function(value = '', field = 'name'){
             var roleName = ''
@@ -104,8 +101,8 @@ var exploreApp = createApp({
     },
     computed:{
         paginationText: function(){
-            var startRow = (this.numPage - 1) * this.perPage + 1
-            var endRow = this.numPage * this.perPage
+            var startRow = (this.settings.numPage - 1) * this.settings.perPage + 1
+            var endRow = this.settings.numPage * this.settings.perPage
             if (this.qtyResults < endRow ) endRow = this.qtyResults
             return startRow + '-' + endRow + ' de '
         },

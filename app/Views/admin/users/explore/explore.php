@@ -1,13 +1,3 @@
-<style>
-    .btn-mini{
-        color: #00c0ef;
-        cursor: pointer;
-    }
-
-    .btn-mini:hover{
-        color: #40d9ff;
-    }
-</style>
 <div id="exploreApp">
     <div class="row mb-2">
         <div class="col-md-4">

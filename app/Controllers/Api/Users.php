@@ -4,6 +4,8 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
+use App\Models\ValidationModel;
+use App\Libraries\DbUtils;
 
 class Users extends BaseController
 {
@@ -24,17 +26,14 @@ class Users extends BaseController
     /**
      * JSON
      * Buscar usuarios según filtros y condiciones solicitadas
+     * 2025-10-13
      */
     public function search()
-    {   
-        $request = \Config\Services::request();
+    {
+        $request = service('request');
         $input = $request->getPost();
-        
         $search = new \App\Libraries\Search();
-
         $data = $this->userModel->search($input);
-        //unset($data['settings']);
-        //unset($data['filters']);
 
         return $this->response->setJSON($data);
     }
@@ -42,18 +41,18 @@ class Users extends BaseController
     /**
      * JSON
      * Validar formularios de creación y actualización de datos de usuarios
-     * 2023-02-04
+     * 2025-10-13
      */
     public function validateForm()
     {
         $data = ['status' => 1, 'error' => null];
 
-        $request = \Config\Services::request();
+        $request = service('request');
         $userId = $request->getPost('id');
         
-        $emailValidation = \App\Models\ValidationModel::email($request->getPost('email'), $userId);
-        $documentNumberValidation = \App\Models\ValidationModel::documentNumber($request->getPost('document_number'), $userId);
-        $usernameValidation = \App\Models\ValidationModel::username($request->getPost('username'), $userId);
+        $emailValidation = ValidationModel::email($request->getPost('email'), $userId);
+        $documentNumberValidation = ValidationModel::documentNumber($request->getPost('document_number'), $userId);
+        $usernameValidation = ValidationModel::username($request->getPost('username'), $userId);
 
         $validation = array_merge($emailValidation, $documentNumberValidation, $usernameValidation);
         $data['validation'] = (array) $validation;

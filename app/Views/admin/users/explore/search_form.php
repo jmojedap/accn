@@ -1,7 +1,7 @@
-<div id="searchFilters" style="display: none;">
+<div id="searchFilters" v-show="displayFilters">
   <form accept-charset="utf-8" method="POST" id="searchForm" @submit.prevent="search">
-      <input type="hidden" name="numPage" v-model="numPage">
-      <input type="hidden" name="perPage" v-model="perPage">
+      <input type="hidden" name="numPage" v-model="settings.numPage">
+      <input type="hidden" name="perPage" v-model="settings.perPage">
       <input type="hidden" name="q" v-model="filters.q">
       <div class="grid-columns-15rem">
           <div class="mb-2">
@@ -17,7 +17,7 @@
           </div>
           <div class="mb-2">
               <label for="type" class="form-label">
-                  Género
+                  Sexo
                   <i class="fa-solid fa-circle-xmark btn-mini" v-on:click="resetFilter('gender__eq')" v-show="filters.gender__eq.length > 0"></i>
               </label>
               <select name="gender__eq" v-model="filters.gender__eq" class="form-select" v-on:change="search" v-bind:class="{'border-info': filters.gender__eq.length > 0 }">

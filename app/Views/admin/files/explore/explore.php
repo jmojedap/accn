@@ -10,6 +10,7 @@
         color: #40d9ff;
     }
 </style>
+
 <div id="exploreApp">
     <div class="row mb-2">
         <div class="col-md-4">

@@ -84,8 +84,9 @@ class UserModel extends Model
         $data['settings'] = $settings;
         $data['filters'] = $filters;
         $data['results'] = $this->searchResults($searchCondition, $settings);
+        $data['getString'] = $search->inputToGetString($input);
         $data['qtyResults'] = $qtyResults;
-        $data['maxPage'] = ($qtyResults > 0) ? ceil($qtyResults / $settings['perPage']) : 1;
+        $data['settings']['maxPage'] = ($qtyResults > 0) ? ceil($qtyResults / $settings['perPage']) : 1;
 
         return $data;
     }
@@ -153,6 +154,11 @@ class UserModel extends Model
         
         //Creación de usuario
         if ( !isset($aRow['id']) ) {
+            // Si tiene nombre y apellido y no tiene display_name, crear display_name
+            if ( isset($aRow['first_name']) AND isset($aRow['last_name']) AND !isset($aRow['display_name']) ) {
+                $aRow['display_name'] = trim($aRow['first_name'] . ' ' . $aRow['last_name']);
+            }
+
             $aRow['creator_id'] = $_SESSION['user_id'];
             $aRow['username'] = $this->emailToUsername($aRow['email']);
 

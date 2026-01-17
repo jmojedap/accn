@@ -38,7 +38,7 @@ class Accounts extends BaseController
     			$data['accessKey'] = $this->request->getGet('access_key')?? '';
 				$data['viewA'] = $this->viewsFolder . 'login_link';
 			}
-			return view(TPL_PUBLIC . 'public', $data);
+			return view(TPL_PUBLIC . 'main', $data);
 		}
 	}
 
@@ -53,7 +53,7 @@ class Accounts extends BaseController
 		} else {
 			$data['headTitle'] = 'Crea tu cuenta';
 			$data['viewA'] = $this->viewsFolder . 'signup';
-			return view(TPL_PUBLIC . 'public', $data);
+			return view(TPL_PUBLIC . 'main', $data);
 		}
 	}
 

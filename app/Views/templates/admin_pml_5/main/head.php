@@ -43,6 +43,9 @@
         <link type="text/css" rel="stylesheet" href="<?= URL_RESOURCES ?>css/pacarina.css">
         <link type="text/css" rel="stylesheet" href="<?= URL_RESOURCES ?>css/items-values.css">
         <script src="<?= URL_RESOURCES . 'js/pcrn.js' ?>"></script>
+        <script src="<?= URL_RESOURCES . 'js/items_list.js' ?>"></script>
+        <script src="<?= URL_RESOURCES . 'js/items.js' ?>"></script>
+        
         <script>
             const URL_MOD = '<?= URL_ADMIN ?>'; const URL_API = '<?= URL_API ?>'; const URL_FRONT = '<?= URL_FRONT ?>';
             const URL_BASE = '<?= base_url() ?>';

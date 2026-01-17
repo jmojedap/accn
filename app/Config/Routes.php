@@ -47,6 +47,7 @@ $routes->get('admin/tools/master_login/(:num)', 'Admin\Tools::masterLogin/$1');
 $routes->group('m/info', static function ($routes) {
     $routes->get('inicio', 'M\Info::inicio');
     $routes->get('sits', 'M\Info::exploreSits');
+    $routes->get('suscriptores', 'M\Info::suscriptores');
 });
 
 // ACOUNTS ADMIN

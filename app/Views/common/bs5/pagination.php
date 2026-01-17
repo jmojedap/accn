@@ -5,10 +5,10 @@
             <span class="text-primary">{{ qtyResults }}</span>
         </a>
     </div>
-    <button class="btn-circle" v-on:click="sumPage(-1)" v-bind:disabled="numPage==1">
+    <button class="btn-circle" v-on:click="sumPage(-1)" v-bind:disabled="settings.numPage==1">
         <i class="fa fa-chevron-left"></i>
     </button>
-    <button class="btn-circle" v-on:click="sumPage(1)" v-bind:disabled="numPage>=maxPage">
+    <button class="btn-circle" v-on:click="sumPage(1)" v-bind:disabled="settings.numPage>=settings.maxPage">
         <i class="fa fa-chevron-right"></i>
     </button>
 </div>

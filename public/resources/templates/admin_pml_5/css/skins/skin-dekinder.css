@@ -172,3 +172,12 @@
     background: linear-gradient(180deg, rgba(250,250,250,1) 0%, rgba(250,250,250,1) 100%);
   }
 }
+
+.btn-mini{
+    color: #00c0ef;
+    cursor: pointer;
+}
+
+.btn-mini:hover{
+    color: #40d9ff;
+}
