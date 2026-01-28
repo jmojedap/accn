@@ -78,6 +78,17 @@ class Files extends BaseController
         return $this->response->setJSON($data);
     }
 
+    /**
+     * Eliminación de un archivo
+     * 2026-01-28
+     */
+    public function delete($fileId)
+    {
+        $session = $_SESSION;
+        $data['deleted'] = $this->fileModel->deleteUnlink($fileId, $session);
+        return $this->response->setJSON($data);
+    }
+
 // UPLOAD
 //-----------------------------------------------------------------------------
 
@@ -92,4 +103,17 @@ class Files extends BaseController
 
 		return $this->response->setJSON($data);
 	}
+
+// ORDENACIÓN
+//-----------------------------------------------------------------------------
+
+    /**
+     * Actualiza el orden de una imagen asociada a un post (tabla file)
+     * 2026-01-28
+     */
+    public function updatePosition($fileId, $newPosition)
+    {
+        $data = $this->fileModel->updatePosition($fileId, $newPosition);
+        return $this->response->setJSON($data);
+    }
 }

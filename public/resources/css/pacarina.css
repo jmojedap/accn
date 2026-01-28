@@ -60,10 +60,21 @@
 .mw360p { max-width: 360px; }
 .mw480p { max-width: 480px; }
 .mw750p { max-width: 750px; }
+.mw920p { max-width: 920px; }
 
 /* IMÁGENES CUADRADAS */
 /*-----------------------------------------------------------------------------*/
 
+.sqr-180{
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+}
+.sqr-150{
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
 .sqr-120{
     width: 120px;
     height: 120px;

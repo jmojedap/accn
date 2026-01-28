@@ -3,7 +3,7 @@
         <thead>
             <th>Nombre</th>
             <th>Título</th>
-            <th></th>
+            <th>sync_key</th>
             <th></th>
         </thead>
         <tbody>
@@ -11,13 +11,11 @@
                 <td>{{ table.name }}</td>
                 <td>{{ table.title }}</td>
                 <td>
-                    <ul>
-                        <li v-for="file in table.files">
-                            <a target="_blank" v-bind:href="`<?= base_url('public')  ?>/` + file">{{ file }}</a>
-                        </li>
-                    </ul>
+                    <span v-show="table.table_key != ''">
+                        {{ table.name}}_{{ table.table_key }}_{{ table.qty_files }}
+                    </span>
                 </td>
-                <td>
+                <td width="100px">
                     <button class="btn btn-light" v-on:click="generateFiles(key)">
                         Generar
                     </button>
@@ -36,8 +34,9 @@
             currentIndex: 0,
             currentTable: {},
             tables: [
-                {name: 'items', title: 'Ítems', qty_files: 0, files: []},
-                {name: 'users', title: 'Users', qty_files: 0, files: []},
+                {name: 'items', title: 'Ítems', qty_files: 0, files: [], table_key: ''},
+                {name: 'users', title: 'Users', qty_files: 0, files: [], table_key: ''},
+                {name: 'posts', title: 'Posts', qty_files: 0, files: [], table_key: ''},
             ]
         }
     },
@@ -48,9 +47,11 @@
         },
         generateFiles: function(tableIndex){
             this.setCurrent(tableIndex)
-            axios.get('<?= URL_SYNC ?>' + 'generate_files/' + this.currentTable.name)
+            axios.get('<?= URL_API ?>' + 'sync/generate_files/' + this.currentTable.name)
             .then(response => {
                 this.currentTable.files = response.data.files
+                this.currentTable.qty_files = response.data.qty_files
+                this.currentTable.table_key = response.data.prefix
             })
             .catch(function(error) { console.log(error) })
         },

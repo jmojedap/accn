@@ -19,13 +19,13 @@ class Sync extends BaseController
 //-----------------------------------------------------------------------------
 
     /**
-     * Genera los archivos CSV de la tabla indicada
+     * Genera los archivos JSON de la tabla indicada
      * @param string $tableName
      * @return \CodeIgniter\HTTP\ResponseInterface
      */
     public function generateFiles($tableName = 'items')
     {
-        $data = $this->syncModel->exportTableToJSON($tableName, 20);
+        $data = $this->syncModel->exportTableToJSON($tableName);
         $data['table_name'] = $tableName;
 
         return $this->response->setJSON($data);

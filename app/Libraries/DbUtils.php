@@ -76,7 +76,7 @@ class DbUtils
     public static function setIdCode(string $table, int $rowId): string
     {
         helper('text');
-        $idCode = $rowId . random_string('numeric', 4);
+        $idCode = $rowId . random_string('numeric', 6);
         self::saveRow($table, "id = {$rowId}", ['idcode' => $idCode]);
         return $idCode;
     }

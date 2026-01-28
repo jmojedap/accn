@@ -14,7 +14,7 @@ class FileModel extends Model
     protected $allowedFields = [
         'file_name', 'ext', 'folder', 'is_image', 'type', 'type_id','title', 'subtitle',
         'description', 'keywords', 'external_link',
-        'size', 'width', 'height',
+        'size', 'width', 'height', 'is_main', 'position',
         'url', 'url_thumbnail', 'table_id', 'related_1',
         'creator_id', 'updater_id'
     ];
@@ -271,7 +271,7 @@ class FileModel extends Model
             //No administradores ni editores
             if ( $session['role'] > 3 ) {
                 //El usuario en sesión no es el creador
-                if ( $session['user_id'] != $row->creator_id ) $restriction .= "No es el creador del registro. ";
+                if ( $session['user_id'] != $row->creator_id ) $restriction .= "No puedes eliminar un archivo que no es tuyo. ";
             }
         }
 
@@ -293,6 +293,69 @@ class FileModel extends Model
         {
             if (  file_exists($path) ) unlink($path);
         }
+    }
+
+    /**
+     * Actualiza la posición de un archivo dentro de su grupo
+     */
+    public function updatePosition(int $fileId, int $newPosition): array
+    {
+        $data = ['status' => 0];
+
+        // 1. Obtener el archivo usando el método find() de CI4
+        $file = $this->find($fileId);
+        if (!$file) return $data;
+
+        // Convertir a objeto si CI4 te devuelve un array (depende de tu config)
+        $file = (object)$file;
+
+        // 2. Filtros de grupo
+        $whereGroup = [
+            'table_id'  => $file->table_id,
+            'related_1' => $file->related_1,
+            'album_id'  => $file->album_id
+        ];
+
+        // 3. Obtener el total (validación de rango)
+        $maxPosition = $this->where($whereGroup)->countAllResults();
+
+        if ($newPosition >= 0 && $newPosition < $maxPosition) {
+            
+            // Usamos la instancia de base de datos para transacciones
+            $db = \Config\Database::connect();
+            $db->transStart();
+
+            $builder = $this->builder(); // Acceso directo al Query Builder del modelo
+
+            if ($newPosition > $file->position) {
+                // Mover hacia abajo
+                $builder->where($whereGroup)
+                        ->where('position <=', $newPosition)
+                        ->where('position >', $file->position)
+                        ->set('position', 'position - 1', false)
+                        ->update();
+
+            } else if ($newPosition < $file->position) {
+                // Mover hacia arriba
+                $builder->where($whereGroup)
+                        ->where('position >=', $newPosition)
+                        ->where('position <', $file->position)
+                        ->set('position', 'position + 1', false)
+                        ->update();
+            }
+
+            // 4. Actualizar la prioridad del archivo objetivo
+            // Usamos update() del modelo que ya conoce el primaryKey
+            $this->update($fileId, ['position' => $newPosition]);
+
+            $db->transComplete();
+
+            if ($db->transStatus() !== false) {
+                $data['status'] = 1;
+            }
+        }
+
+        return $data;
     }
 
 // GESTIÓN DE IMÁGENES

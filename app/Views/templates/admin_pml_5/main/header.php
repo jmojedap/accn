@@ -9,7 +9,7 @@
                 <i class="fa fa-bars"></i><span class="sr-only">Toggle navigation</span>
             </a>
         </div>
-        <h1 id="head_title"><?= substr($headTitle, 0, 50) ?></h1>
+        <h1 id="headTitle"><?= substr($headTitle, 0, 50) ?></h1>
 
         <div class="">
             <div class="dropdown only-lg">

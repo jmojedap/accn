@@ -54,7 +54,7 @@ class UserModel extends Model
     {
         $arrSelect['default'] = 'id, idcode, display_name, first_name, last_name, username, email, document_number,
             role, status, gender, birth_date, organization_id, city_id, phone_number,
-            notes, url_image, url_thumbnail, about,
+            notes, url_image, url_thumbnail,
             updater_id, creator_id, updated_at, created_at';
         $arrSelect['basic'] = 'id, idcode, display_name, 
             username, email, role';

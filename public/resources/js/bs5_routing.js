@@ -30,7 +30,7 @@ function loadSections(responseData, menuType)
     document.title = responseData.head_title
     history.pushState(null, null, URL_MOD + appSection)
     
-    $('#head_title').html(responseData.head_title)
+    $('#headTitle').html(responseData.head_title)
     $('#view_a').html(responseData.view_a)
     
     //Si se requirió desde Nav 1

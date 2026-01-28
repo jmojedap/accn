@@ -27,7 +27,6 @@ var addFileApp = createApp({
             this.loading = true
             axios.post(URL_API + 'files/upload/', formData, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(response => {
-                console.log(response.data);
                 //Ir a la vista de la imagen
                 if ( response.data.savedId > 0 ) {
                     toastr['success']('Archivo cargado');

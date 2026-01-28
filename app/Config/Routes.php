@@ -114,6 +114,32 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('update/(:num)', 'Api\Users::update/$1');
         $routes->post('delete_selected', 'Api\Users::deleteSelected');
     });
+    
+// -------------------------- POSTS -------------------------------------------------
+//-----------------------------------------------------------------------------------
+
+// POSTS ADMIN
+//-------------------------------------------------------------------------
+    $routes->group('admin/posts', static function ($routes) {
+        $routes->get('explore', 'Admin\Posts::explore');
+        $routes->get('add', 'Admin\Posts::add');
+        $routes->get('info/(:num)', 'Admin\Posts::info/$1');
+        $routes->get('details/(:num)', 'Admin\Posts::details/$1');
+        $routes->get('edit/(:num)', 'Admin\Posts::edit/$1');
+        $routes->get('images/(:num)', 'Admin\Posts::images/$1');
+    });
+
+// POSTS API
+//-----------------------------------------------------------------------------
+    $routes->group('api/posts', static function ($routes) {
+        $routes->post('search', 'Api\Posts::search');
+        $routes->post('validate', 'Api\Posts::validateForm');
+        $routes->post('create', 'Api\Posts::create');
+        $routes->post('update/(:num)', 'Api\Posts::update/$1');
+        $routes->post('delete_selected', 'Api\Posts::deleteSelected');
+        $routes->get('images/(:num)', 'Api\Posts::images/$1');
+        $routes->get('set_main_image/(:num)/(:num)', 'Api\Posts::setMainImage/$1/$2');
+    });
 
 // ---------------------------- FILES  --------------------------------------------------
 //---------------------------------------------------------------------------------------
@@ -137,6 +163,8 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('upload', 'Api\Files::upload');
         $routes->post('update/(:num)', 'Api\Files::update/$1');
         $routes->post('delete_selected', 'Api\Files::deleteSelected');
+        $routes->delete('delete/(:num)', 'Api\Files::delete/$1');
+        $routes->put('update_position/(:num)/(:num)', 'Api\Files::updatePosition/$1/$2');
     });
 
 // ---------------------------- ITEMS  --------------------------------------------------
@@ -159,6 +187,15 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('save/(:num)', 'Api\Items::save/$1');
         $routes->get('delete_row/(:num)/(:num)', 'Api\Items::deleteRow/$1/$2');
         $routes->get('update_items_list_file', 'Api\Items::updateItemsListFile');
+    });
+
+// ---------------------------- AI GENERATE ---------------------------------------------
+//---------------------------------------------------------------------------------------
+
+// AI GENERATE API
+//-----------------------------------------------------------------------------
+    $routes->group('api/ai_generate', static function ($routes) {
+        $routes->post('get_answer', 'Api\AiGenerate::getAnswer');
     });
 
 /*

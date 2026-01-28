@@ -3,14 +3,14 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
-use App\Models\itemModel;
+use App\Models\ItemModel;
 
 class Items extends BaseController
 {
     public function __construct()
 	{
 		$this->db = \Config\Database::connect();
-		$this->itemModel = new itemModel();
+		$this->itemModel = new ItemModel();
         $this->viewsFolder = 'admin/items/';
         $this->backLink = URL_ADMIN . 'items/values';
         $this->entityInfo = [

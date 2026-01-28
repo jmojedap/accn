@@ -14,7 +14,13 @@ class SyncModel extends Model
      */
     public function exportTableToJSON(string $table_name, int $chunkSize = 10000): array
     {
+        //Limpiar carpeta antes de generar
+        $this->deleteGeneratedFiles($table_name);
+
         $db = db_connect();
+
+        //Prefijo de 24 caracteres alfanuméricos aleatorios para el nombre de archivos 
+        $prefix = substr(md5(uniqid(rand(), true)), 0, 24);
 
         // 📂 Carpeta destino en public/content/database/{tableName}/
         $folderPath = FCPATH . "public/content/database/" . $table_name . "/";
@@ -36,7 +42,7 @@ class SyncModel extends Model
                     ->get()
                     ->getResultArray();
 
-            $fileName = "part_{$part}.json";
+            $fileName = "{$prefix}_{$part}.json";
             $filePath = $folderPath . $fileName;
 
             // Guardar con formato legible
@@ -52,7 +58,8 @@ class SyncModel extends Model
         return [
             'message' => "✅ Exportación completa: {$parts} archivo(s) JSON generado(s)",
             'files'   => $files,
-            'qty_files'   => count($files)
+            'qty_files'   => count($files),
+            'prefix'   => $prefix
         ];
     }
 

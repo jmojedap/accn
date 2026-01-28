@@ -15,8 +15,7 @@ for (const item of itemsAppList) {
 
 const ItemsApp = {
     //Valor de un campo específico
-    fieldValue(categoryId, code, field) {
-        console.log(itemsMap);
+    fieldValue(categoryId, code, field = 'name') {
         code = code.toString();
         categoryId = categoryId.toString();
         return itemsMap.get(categoryId)?.get(code)?.[field] ?? `[${code}]`;
@@ -25,5 +24,5 @@ const ItemsApp = {
     arrayCategory(categoryId) {
         categoryId = categoryId.toString();
         return Array.from(itemsMap.get(categoryId)?.values() ?? []);
-    }
+    },
 };
