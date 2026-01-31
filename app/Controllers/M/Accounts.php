@@ -137,4 +137,18 @@ class Accounts extends BaseController
 		$data['viewA'] = $this->viewsFolder . 'profile/profile';
 		return view(TPL_PUBLIC . 'main', $data);
 	}
+
+	/**
+	 * Vista perfil de usuario, con formulario para edición de la foto de perfil
+	 * 2026-01-30
+	 */
+	public function picture()
+	{	
+		$idcode = $this->session->idcode;
+		$data['user'] = $this->accountModel->getRow($idcode);
+
+		$data['headTitle'] = $data['user']->display_name;
+		$data['viewA'] = $this->viewsFolder . 'picture/picture';
+		return view(TPL_PUBLIC . 'main', $data);
+	}
 }

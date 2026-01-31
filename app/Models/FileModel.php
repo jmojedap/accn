@@ -245,6 +245,9 @@ class FileModel extends Model
             $result = $this->where('id',$row->id)->delete();
             if ( $result == TRUE ) {
                 $this->unlink($row);
+
+                //Editar registros de tablas relacionadas
+                $this->editRelatedRows($row->id);
             }
         } else {
             //Devolver texto de restricción
@@ -294,6 +297,28 @@ class FileModel extends Model
             if (  file_exists($path) ) unlink($path);
         }
     }
+
+    /**
+     * Editar registros de tablas relacionadas con archivo eliminado
+     * 2026-01-30
+     */
+    public function editRelatedRows($fileId)
+    {
+        $aRow = ['image_id' => 0, 'url_image' => '', 'url_thumbnail' => ''];
+
+        //Se edita la asociación del archivo en la tabla posts
+        $this->db->table('posts')
+            ->where('image_id', $fileId)
+            ->update($aRow);
+
+        //Se edita la asociación del archivo en la tabla users  
+        $this->db->table('users')
+            ->where('image_id', $fileId)
+            ->update($aRow);
+    }   
+
+// COLECCIONES DE ARCHIVOS
+//-----------------------------------------------------------------------------
 
     /**
      * Actualiza la posición de un archivo dentro de su grupo

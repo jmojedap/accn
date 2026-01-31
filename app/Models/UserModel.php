@@ -15,6 +15,7 @@ class UserModel extends Model
         'idcode', 'password',
         'first_name','last_name','display_name','role','email','username',
         'document_number', 'document_type', 'gender', 'birth_date',
+        'image_id', 'url_image', 'url_thumbnail',
         'creator_id', 'updater_id'
     ];
 
@@ -54,7 +55,7 @@ class UserModel extends Model
     {
         $arrSelect['default'] = 'id, idcode, display_name, first_name, last_name, username, email, document_number,
             role, status, gender, birth_date, organization_id, city_id, phone_number,
-            notes, url_image, url_thumbnail,
+            notes, url_image, url_thumbnail, image_id,
             updater_id, creator_id, updated_at, created_at';
         $arrSelect['basic'] = 'id, idcode, display_name, 
             username, email, role';
@@ -264,5 +265,32 @@ class UserModel extends Model
         }
 
         return trim($restriction);
+    }
+
+// GESTIÓN DE IMÁGENES
+//-----------------------------------------------------------------------------
+
+    /**
+     * Asigna imagen a un usuario
+     * 2026-01-30
+     */
+    public function setPicture($idCode, $fileRow)
+    {
+        $user = $this->getRow($idCode, 'default');
+        if ( is_null($user) ) {
+            return 0;
+        }
+        log_message('debug', 'File row: ' . print_r($fileRow, true));
+        $result = $this->update($user->id, [
+            'image_id' => $fileRow['id'],
+            'url_image' => $fileRow['url'],
+            'url_thumbnail' => $fileRow['url_thumbnail'],
+        ]);
+
+        if ( $result ) {
+            return $fileRow['id'];
+        } else {
+            return 0;
+        }
     }
 }

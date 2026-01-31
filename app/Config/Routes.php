@@ -41,7 +41,7 @@ $routes->post('tools/get_unique_slug', 'Api\Tools::getUniqueSlug');
 $routes->get('admin/tools/preview_emails/(:any)/(:num)', 'Admin\Tools::previewEmails/$1/$2');
 $routes->get('admin/tools/master_login/(:num)', 'Admin\Tools::masterLogin/$1');
 
-// ----------------------------- INFO -------------------------------------------
+// ----------------------------- INFO -----------------------------------------------
 //-----------------------------------------------------------------------------------
 
 $routes->group('m/info', static function ($routes) {
@@ -49,6 +49,9 @@ $routes->group('m/info', static function ($routes) {
     $routes->get('sits', 'M\Info::exploreSits');
     $routes->get('suscriptores', 'M\Info::suscriptores');
 });
+
+// ----------------------------- ACCOUNTS -----------------------------------------------
+//---------------------------------------------------------------------------------------
 
 // ACOUNTS ADMIN
 //-----------------------------------------------------------------------------
@@ -62,6 +65,7 @@ $routes->group('m/info', static function ($routes) {
         $routes->get('master_login/(:num)', 'M\Accounts::masterLogin/$1');
         $routes->get('logout', 'M\Accounts::logout');
         $routes->get('profile', 'M\Accounts::profile');
+        $routes->get('picture', 'M\Accounts::picture');
     });
 
 // ACCOUNTS API
@@ -72,6 +76,7 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('get_login_link', 'Api\Accounts::getLoginLink');
         $routes->post('create', 'Api\Accounts::create');
         $routes->post('update', 'Api\Accounts::update');
+        $routes->post('set_picture', 'Api\Accounts::setPicture');
         $routes->get('test', 'Api\Accounts::test');
     });
 

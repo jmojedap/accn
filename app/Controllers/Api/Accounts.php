@@ -8,6 +8,7 @@ use App\Models\AccountModel;
 use App\Models\UserModel;
 use App\Models\NotificationModel;
 use App\Models\ValidationModel;
+use App\Models\FileModel;
 use App\Libraries\DbUtils;
 use App\Libraries\MailPml;
 
@@ -198,6 +199,33 @@ class Accounts extends BaseController
             'timestamp' => date('Y-m-d H:i:s')
         ];
 
+        return $this->response->setJSON($data);
+    }
+
+// IMAGEN DE PERFIL
+//-----------------------------------------------------------------------------
+
+    /**
+     * JSON
+     * Actualizar la imagen de perfil de un usuario, tabla users
+     * 2026-01-30
+     */
+    public function setPicture()
+    {
+        $data = ['savedId' => 0];
+        $idcode = $this->session->idcode;
+        $userId = $this->session->user_id;
+
+        $fileModel = new FileModel();
+        $uploadData = $fileModel->upload($this->request, $userId);
+
+        if ( $uploadData['savedId'] > 0 ) {
+            $fileRow = $uploadData['row']; 
+            // setPicture is inherited by AccountModel from UserModel
+            $data['savedId'] = $this->accountModel->setPicture($idcode, (array) $fileRow);
+            $data['fileRow'] = $fileRow;
+        }
+        
         return $this->response->setJSON($data);
     }
 }

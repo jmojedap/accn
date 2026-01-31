@@ -29,7 +29,7 @@ class GeminiClient
      */
     public function generate(array $requestSettings): array
     {
-        $requestSettings['model_id'] = $requestSettings['model'] ?? 'gemini-2.5-flash-lite';
+        $requestSettings['model'] = $requestSettings['model'] ?? 'gemini-2.5-flash-lite';
         $requestSettings['generate_content_format'] = $requestSettings['generate_content_format'] ?? 'generateContent';
         $requestSettings['api_key'] = getenv('gemini.ApiKey');
 
@@ -50,8 +50,9 @@ class GeminiClient
         $payload = json_encode($requestData);
 
         $responseData = $this->executeRequest($url, $payload);
+        //$responseData = $this->generateMock();
 
-        $responseText = 'Ocurrió un error al obtener la respuesta.';
+        $responseText = 'No fue posible obtener respuesta.';
         if (
             isset($responseData['response']['candidates'][0]['content']['parts'][0]['text'])
         ) {
@@ -59,10 +60,10 @@ class GeminiClient
         }
 
         return [
-            'model_id'         => $requestSettings['model_id'],
-            'response_text'    => $responseText,
-            'response_details' => $responseData['response'] ?? [],
-            'error'            => $responseData['error'] ?? '',
+            'responseText'    => $responseText,
+            'model'           => $requestSettings['model'],
+            'responseDetails' => $responseData['response'] ?? [],
+            'error'           => $responseData['error'] ?? '',
         ];
     }
 
@@ -90,8 +91,6 @@ class GeminiClient
                 $data['response'] = json_decode($response->getBody(), true);
             }
         } catch (\Throwable $e) {
-            log_message('debug', 'url: ' . $url);
-            log_message('debug', 'payload: ' . $payload);
             $data['error'] = $e->getMessage();
             log_message('error', 'b. Gemini API error: ' . $e->getMessage());
         }
@@ -106,7 +105,7 @@ class GeminiClient
     {
         return sprintf(
             'https://generativelanguage.googleapis.com/v1beta/models/%s:%s?key=%s',
-            $requestSettings['model_id'],
+            $requestSettings['model'],
             $requestSettings['generate_content_format'],
             $requestSettings['api_key']
         );
@@ -140,20 +139,44 @@ class GeminiClient
     }
 
     /**
-     * Carga instrucciones del sistema desde archivo Markdown
+     * Construye las instrucciones del sistema en formato parts (array)
+     * 2026-01-31
+     * @return array
      */
-    public function systemInstruction(
+    public function systemInstructionParts(
         string $key = 'ayudante',
-        string $folder = 'ai_system_instructions'
-    ): string {
-        $path = rtrim(PATH_CONTENT, '/') . '/' . $folder . '/' . $key . '.md';
+        string $folder = 'general'
+    ): array {
+        $instructionText = $this->systemInstructionText($key, $folder);
+        return [
+            [
+                ["text" => $instructionText],
+            ],
+        ];
+    }
 
+    /**
+     * Carga instrucciones del sistema desde archivo Markdown
+     * Ajustada para preservar estructura y mejorar seguridad
+     * 2026-01-31
+     */
+    public function systemInstructionText(
+        string $key = '',
+        string $folder = 'general'
+    ): string {
+        // 1. Construir la ruta (Usando WRITEPATH si está en writable)
+        // He añadido un filtrado básico para evitar saltos de carpeta por seguridad
+        $cleanKey = str_replace(['../', './'], '', $key);
+        $path = WRITEPATH . 'ai_instructions' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $cleanKey . '.md';
+
+        // 2. Verificación de existencia
         if (!is_file($path)) {
+            log_message('error', "Instrucción de IA no encontrada en: {$path}");
             return '';
         }
 
+        // 3. Obtener contenido
         $content = file_get_contents($path);
-        $content = str_replace(["\r\n", "\n"], ' ', $content);
 
         return trim($content);
     }
