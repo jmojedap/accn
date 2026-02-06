@@ -22,67 +22,27 @@ class AiGenerateModel extends Model
         return $response;
     }
 
-    public function getMessagesAsContent($inputData)
+    /**
+     * Obtiene los mensajes de una conversación como contenido para el chat
+     * 
+     * @param int $conversationId
+     * @return array
+     */
+    public function getMessagesAsContent($conversationId): array
     {
-        $contents = [
-            [
-                'role' => 'user',
+
+        $messages = $this->db->table('ai_messages')->where('conversation_id', $conversationId)->get()->getResult();
+        $contents = [];
+        foreach ($messages as $message) {
+            $contents[] = [
+                'role' => $message->role,
                 "parts" => [
                     [
-                        "text" => "¿Cómo estás?",
+                        "text" => $message->text,
                     ],
                 ],
-            ],
-            [
-                'role' => 'model',
-                "parts" => [
-                    [
-                        "text" => "Hola muy bien gracias.",
-                    ],
-                ],
-            ],
-            [
-                'role' => 'user',
-                "parts" => [
-                    [
-                        "text" => "Me alegra bonita",
-                    ],
-                ],
-            ],
-            [
-                'role' => 'model',
-                "parts" => [
-                    [
-                        "text" => "Ay que lindo, muchas gracias, qué quieres saber de mí, pregunta lo que quieras",
-                    ],
-                ],
-            ],
-            [
-                'role' => 'user',
-                "parts" => [
-                    [
-                        "text" => "Lo que sea? mmm jejeje por ejemplo de qué color es tu ropa interior?",
-                    ],
-                ],
-            ],
-            [
-                'role' => 'model',
-                "parts" => [
-                    [
-                        "text" => "jajaja tan bobo... pero ok, es blanca... contento?",
-                    ],
-                ],
-            ],
-            [
-                'role' => 'user',
-                "parts" => [
-                    [
-                        "text" => $inputData->prompt,
-                    ],
-                ],
-            ],
-        ];
+            ];
+        }
         return $contents;
     }
-
 }

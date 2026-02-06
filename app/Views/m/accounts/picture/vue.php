@@ -11,6 +11,7 @@ var userPictureApp = createApp({
             },
             user: {
                 id: '<?= $user->id ?>',
+                idcode: '<?= $user->idcode ?>',
                 image_id: '<?= $user->image_id ?>',
                 url_image: '<?= $user->url_image ?>',
                 url_thumbnail: '<?= $user->url_thumbnail ?>',
@@ -49,13 +50,19 @@ var userPictureApp = createApp({
         },
         deleteElement: function(){
             this.deleting = true
-            axios.delete(URL_API + 'users/delete_picture/' + this.user.id)
+            const payload = {
+                image_id: this.user.image_id,
+                user_idcode: this.user.idcode
+            }
+            axios.delete(URL_API + 'users/delete_picture/', { data: payload })
             .then(response => {
-                if ( response.data.deleted ) {
-                    toastr['info']('Imagen eliminada correctamente')
+                if ( response.data.deleting_result == true ) {
+                    toastr['info']('Imagen eliminada')
                     this.user.image_id = 0
                     this.user.url_image = ''
                     this.user.url_thumbnail = ''
+                } else {
+                    toastr['warning'](response.data.deleting_result)
                 }
                 //Ocultar modal
                 $('#modalSingleDelete').modal('hide')

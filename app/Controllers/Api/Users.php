@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
+use App\Models\FileModel;
 use App\Models\ValidationModel;
 use App\Libraries\DbUtils;
 
@@ -137,6 +138,33 @@ class Users extends BaseController
         }
 
         $data['results'] = $results;
+
+        return $this->response->setJSON($data);
+    }
+
+    /**
+     * AJAX - JSON
+     * Eliminar la foto de perfil del usuario
+     * 2026-02-05
+     */
+    public function deletePicture()
+    {
+        $payload = $this->request->getJSON();
+        $fileId = $payload->image_id;
+        $idcode = $payload->user_idcode;
+
+        //Valor inicial
+        $data['deleting_result'] = 'Usuario no encontrado';
+        $user = $this->userModel
+            ->where('idcode', $idcode)
+            ->where('image_id', $fileId)
+            ->first();
+        if ( $user ) {
+            $session = $_SESSION;
+    
+            $fileModel = new FileModel();
+            $data['deleting_result'] = $fileModel->deleteUnlink($fileId, $session);
+        }
 
         return $this->response->setJSON($data);
     }

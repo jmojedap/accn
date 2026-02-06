@@ -32,7 +32,9 @@
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
-            <?= view($viewA); ?>
+            <div id="viewA">
+                <?= view($viewA); ?>
+            </div>
         </div>
     </body>
 </html>

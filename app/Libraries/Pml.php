@@ -8,6 +8,10 @@ class Pml {
 // ROUTING
 //-----------------------------------------------------------------------------
 
+    /**
+     * Renderiza una vista, con opción de devolverla en formato JSON
+     * 2023-03-04
+     */
     public function view($viewName, $data)
     {
         $request = \Config\Services::request();

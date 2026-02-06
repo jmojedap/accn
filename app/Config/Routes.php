@@ -118,6 +118,7 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('create', 'Api\Users::create');
         $routes->post('update/(:num)', 'Api\Users::update/$1');
         $routes->post('delete_selected', 'Api\Users::deleteSelected');
+        $routes->delete('delete_picture', 'Api\Users::deletePicture');
     });
     
 // -------------------------- POSTS -------------------------------------------------
@@ -197,10 +198,15 @@ $routes->group('m/info', static function ($routes) {
 // ---------------------------- AI GENERATE ---------------------------------------------
 //---------------------------------------------------------------------------------------
 
+    $routes->group('m/chat', static function ($routes) {
+        $routes->get('conversation', 'M\Chat::conversation');
+    });
+
 // AI GENERATE API
 //-----------------------------------------------------------------------------
     $routes->group('api/ai_generate', static function ($routes) {
         $routes->post('get_answer', 'Api\AiGenerate::getAnswer');
+        $routes->delete('delete_selected_messages', 'Api\AiGenerate::deleteSelectedMessages');
     });
 
 /*

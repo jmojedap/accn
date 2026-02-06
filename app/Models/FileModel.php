@@ -199,26 +199,36 @@ class FileModel extends Model
      * @param int $userId ID del usuario que carga el archivo
      * @param object $request
      * @return array $aRow, registro para guardar en la tabla file
-     * 2023-03-26
+     * 2026-02-06
      */
     public function aRowAdd($file, $userId, $request)
     {
-        helper('text'); //Para random_string
-        
-        $aRow = $request->getPost();;
-        $fileName = $userId . '_' .  date('YmdHis') . random_string('numeric', 3) . '.' . $file->getExtension();
-        $folder = date('Y/m/');
+        helper('text');
 
-        //Construir registro
-        $aRow['title'] = substr($file->getName(),0, strlen($file->getName()) - (strlen($file->getExtension()) + 1));
-        $aRow['ext'] = $file->getExtension();
+        $aRow = $request->getPost();
+
+        $extension = $file->getExtension();
+        $baseName  = $userId . '_' . date('YmdHis') . random_string('numeric', 3);
+
+        $fileName = $baseName . '.' . $extension;
+        $folder   = date('Y/m/');
+
+        // Metadata básica
+        $aRow['title'] = pathinfo($file->getName(), PATHINFO_FILENAME);
+        $aRow['ext']   = $extension;
         $aRow['folder'] = $folder;
-        $aRow['is_image'] = ( substr($file->getMimeType(),0,5) == 'image' ) ? 1 : 0 ;
+        $aRow['is_image'] = (strpos($file->getMimeType(), 'image') === 0) ? 1 : 0;
         $aRow['type'] = $file->getMimeType();
-        $aRow['file_name'] =  $fileName;
-        $aRow['size'] = intval($file->getSize()/1028);
+        $aRow['file_name'] = $fileName;
+        $aRow['size'] = intval($file->getSize() / 1028);
+
+        // URLs
         $aRow['url'] = URL_UPLOADS . $folder . $fileName;
-        $aRow['url_thumbnail'] = URL_UPLOADS . $folder . 'sm_' . $fileName;
+
+        // thumbnail SIEMPRE en JPG
+        $aRow['url_thumbnail'] = URL_UPLOADS . $folder . 'sm_' . $baseName . '.jpg';
+
+        // Auditoría
         $aRow['creator_id'] = $userId;
         $aRow['updater_id'] = $userId;
         $aRow['created_at'] = date('Y-m-d H:i:s');
@@ -274,7 +284,7 @@ class FileModel extends Model
             //No administradores ni editores
             if ( $session['role'] > 3 ) {
                 //El usuario en sesión no es el creador
-                if ( $session['user_id'] != $row->creator_id ) $restriction .= "No puedes eliminar un archivo que no es tuyo. ";
+                if ( $session['user_id'] != $row->creator_id ) $restriction .= "No tienes permiso para eliminar este archivo. ";
             }
         }
 
@@ -387,33 +397,45 @@ class FileModel extends Model
 //-----------------------------------------------------------------------------
 
     /**
-     * Crea la miniatura de una imagen
-     * 2023-03-25
+     * Crea la miniatura de una imagen en JPG (independiente del formato original)
+     * 2026-02-06
      */
     public function createThumbnail($row, $prefix = 'sm_', $pixels = 120)
     {
-        $thumbnail_path = PATH_UPLOADS . $row->folder . $prefix . $row->file_name;
+        try {
+            $source = PATH_UPLOADS . $row->folder . $row->file_name;
 
-        /* IMAGEN NO CUADRADA */
-        $fileDimensions = $this->arrDimensions($row);
+            $baseName = pathinfo($row->file_name, PATHINFO_FILENAME);
+            $thumbPath = PATH_UPLOADS . $row->folder . $prefix . $baseName . '.jpg';
 
-        //Imagen horizontal
-        $height = $pixels;
-        $width = intval($pixels * $fileDimensions['width'] / $fileDimensions['height']);
+            $dims = $this->arrDimensions($row);
 
-        //Imagen vertical
-        if ( $fileDimensions['height'] > $fileDimensions['width'] ) {
-            $width = $pixels;
-            $height = intval($pixels * $fileDimensions['height'] / $fileDimensions['width']);
+            $height = $pixels;
+            $width  = intval($pixels * $dims['width'] / $dims['height']);
+
+            if ($dims['height'] > $dims['width']) {
+                $width  = $pixels;
+                $height = intval($pixels * $dims['height'] / $dims['width']);
+            }
+
+            \Config\Services::image()
+                ->withFile($source)
+                ->resize($width, $height)
+                ->convert(IMAGETYPE_JPEG)
+                ->save($thumbPath, 90);
+
+            return $thumbPath;
+
+        } catch (\Throwable $e) {
+
+            // Log técnico (no UX)
+            log_message('error', 'Thumbnail error: ' . $e->getMessage());
+
+            // Fallback: no thumbnail
+            return null;
         }
-
-        $image = \Config\Services::image()
-            ->withFile(PATH_UPLOADS . $row->folder . $row->file_name)
-            ->resize($width, $height) //Miniatura no cuadrada
-            ->save($thumbnail_path, 90);
-
-        return $thumbnail_path;
     }
+
 
     /**
      * Ajusta una imagen cargada con una calidad y tamaño determinado

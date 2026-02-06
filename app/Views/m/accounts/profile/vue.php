@@ -2,7 +2,7 @@
 var userProfileApp = createApp({
     data() {
         return {
-            section: 'form',
+            section: 'info',
             user: <?= json_encode($user) ?>,
             fields: <?= json_encode($user) ?>,
             loading: false,

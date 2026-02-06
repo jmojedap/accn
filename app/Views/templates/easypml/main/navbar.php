@@ -3,12 +3,12 @@ $session = session();
 ?>
 
 <style>
-    .nav-item .nav-link.active {
+    .navbar .nav-item .nav-link.active {
         background-color: #fceeeeff;
         border-radius: 10px;
     }
 
-    .nav-item .nav-link:hover {
+    .navbar .nav-item .nav-link:hover {
         background-color: #fceeeeff;
         border-radius: 10px;
     }

@@ -12,14 +12,14 @@ function getSections(menuType)
 //Antes de actualizar, limpiar o blanquear secciones
 function beforeGetSections(menuType)
 {
-    $('#view_a').html('')
-    $('#view_b').html('')
+    $('#viewA').html('')
+    $('#viewB').html('')
     
-    if ( menuType === 'nav_1' ) { $('#nav_2').html('') }
-    if ( menuType === 'nav_2' ) { $('#nav_3').html('') }
+    if ( menuType === 'nav1' ) { $('#nav2').html('') }
+    if ( menuType === 'nav2' ) { $('#nav3').html('') }
+    
+    $('.popover').remove()  //Especial, para quitar elementos de herramienta de edición enriquecida, plugin SummerNote
 
-    //Especial, para quitar elementos de herramienta de edición enriquecida, plugin SummerNote
-    $('.popover').remove()
     $('#loadingIndicator').show()
 }
 
@@ -27,22 +27,22 @@ function beforeGetSections(menuType)
 function loadSections(responseData, menuType)
 {
     $('#loadingIndicator').hide()
-    document.title = responseData.head_title
+    document.title = responseData.headTitle
     history.pushState(null, null, URL_MOD + appSection)
     
-    $('#headTitle').html(responseData.head_title)
-    $('#view_a').html(responseData.view_a)
+    $('#headTitle').html(responseData.headTitle)
+    $('#viewA').html(responseData.viewA)
     
     //Si se requirió desde Nav 1
-    if ( menuType === 'nav_1')
+    if ( menuType === 'nav1')
     {
-        $('#nav_2').html(responseData.nav_2)
-        $('#nav_3').html(responseData.nav_3)
+        $('#nav2').html(responseData.nav2)
+        $('#nav3').html(responseData.nav3)
     }
     
     //Si se requirió desde Nav 2
-    if ( menuType === 'nav_2' )
+    if ( menuType === 'nav2' )
     {
-        $('#nav_3').html(responseData.nav_3)
+        $('#nav3').html(responseData.nav3)
     }
 }

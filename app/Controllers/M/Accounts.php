@@ -133,9 +133,10 @@ class Accounts extends BaseController
 		$idcode = $this->session->idcode;
 		$data['user'] = $this->accountModel->getRow($idcode);
 
-		$data['headTitle'] = $data['user']->display_name;
+		$data['headTitle'] = $data['user']->display_name . ' - Perfil';
 		$data['viewA'] = $this->viewsFolder . 'profile/profile';
-		return view(TPL_PUBLIC . 'main', $data);
+		$data['nav2'] = $this->viewsFolder . 'menu';
+		return $this->pml->view(TPL_PUBLIC . 'main', $data);
 	}
 
 	/**
@@ -147,8 +148,9 @@ class Accounts extends BaseController
 		$idcode = $this->session->idcode;
 		$data['user'] = $this->accountModel->getRow($idcode);
 
-		$data['headTitle'] = $data['user']->display_name;
+		$data['headTitle'] = $data['user']->display_name . ' - Foto';
 		$data['viewA'] = $this->viewsFolder . 'picture/picture';
-		return view(TPL_PUBLIC . 'main', $data);
+		$data['nav2'] = $this->viewsFolder . 'menu';
+		return $this->pml->view(TPL_PUBLIC . 'main', $data);
 	}
 }

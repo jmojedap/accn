@@ -7,9 +7,24 @@
         </div>
     </div>
     <div class="text-center" v-show="user.image_id > 0">
-        <a v-bind:href="user.url_image" data-lightbox="image-1" data-title="">
-            <img v-bind:src="user.url_image" class="sqr-180 cursor-pointer">
-        </a>
+        <div class="card center_box_450">
+            <div class="card-body">
+                <div v-show="user.image_id > 0">
+                    <div class="d-flex justify-content-between">
+                        <!-- <a class="btn btn-light me-2" id="btn_crop" href="<?= URL_APP . "accounts/edit/cropping" ?>">
+                            <i class="fa fa-crop"></i> Recortar
+                        </a> -->
+                        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modalSingleDelete">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <img
+                v-bind:src="user.url_image" class="card-img-bottom" alt="user picture"
+                onerror="this.src='<?= URL_IMG ?>users/user.png'"
+            >
+        </div>
     </div>
     <?= view('common/bs5/modal_single_delete') ?>
 </div>
