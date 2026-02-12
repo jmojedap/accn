@@ -14,6 +14,10 @@ var conversationApp = createApp({
             selected: [],
             respuesta:'',
             htmlResponse: '',
+            chaterInfo: {
+                name: 'Secretaria Médica',
+                picture: '<?= URL_CONTENT ?>uploads/2026/01/sm_2197_20260130094424580.jpg'
+            },
             deleteConfirmationTexts : {
                 title: 'Borrar mensajes',
                 text: '¿Confirma la eliminación de todos los mensajes?',
@@ -139,7 +143,7 @@ var conversationApp = createApp({
                 selected: this.selected,
                 conversation_id: this.conversationId
             }
-            axios.delete(URL_API + 'ai_generate/delete_selected_messages/', { data: formValues })
+            axios.delete(URL_API + 'ai_generate/delete_messages/', { data: formValues })
             .then(response => {
                 if ( response.data.qty_deleted > 0 ) {
                     toastr['success']('Mensajes eliminados')

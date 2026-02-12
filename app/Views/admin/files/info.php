@@ -10,6 +10,12 @@
                     onerror="this.src='<?= URL_IMG ?>app/nd.png'"
                 >
             </a>
+            <div>
+                <a class="btn btn-light w120p" href="<?= URL_ADMIN ?>files/cropping/<?= $row->id ?>" v-show="row.is_image == 1">
+                    <i class="fa fa-crop"></i>
+                    Recortar
+                </a>
+            </div>
         </div>
         <div class="col-md-8">
             <table class="table bg-white">
@@ -19,8 +25,16 @@
                         <td width="80%">{{ row.title }}</td>
                     </tr>
                     <tr>
+                        <td class="td-title">Subtítulo</td>
+                        <td width="80%">{{ row.subtitle }}</td>
+                    </tr>
+                    <tr>
                         <td class="td-title">Descripción</td>
                         <td>{{ row.description }}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-title">Palabras clave</td>
+                        <td>{{ row.keywords }}</td>
                     </tr>
                     <tr>
                         <td class="td-title">URL</td>

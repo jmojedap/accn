@@ -55,6 +55,25 @@ class Files extends BaseController
         return $this->response->setJSON($data);
     }
 
+    /**
+     * JSON
+     * Recortar una imagen
+     * 2026-02-11
+     */
+    public function crop($fileId)
+    {
+        //Valor inicial por defecto
+        $data = ['status' => 0, 'message' => 'No tiene permiso para modificar esta imagen'];
+        
+        $editable = $this->fileModel->editable($fileId);
+        if ( $editable ) { 
+            $aCrop = $this->request->getPost();
+            $data = $this->fileModel->crop($fileId, $aCrop);
+        }
+        
+        return $this->response->setJSON($data);
+    }
+
 // Eliminación
 //-----------------------------------------------------------------------------
 

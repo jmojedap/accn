@@ -3,14 +3,13 @@
 namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
-use App\Models\ItemModel;
+use App\Libraries\DbUtils;
 
 class Tools extends BaseController
 {
     public function __construct()
 	{
 		$this->db = \Config\Database::connect();
-		//$this->ItemModel = new ItemModel();
 	}
 
     public function index()
@@ -35,7 +34,7 @@ class Tools extends BaseController
         $table = $input['table'];
         $field = $input['field'];
         
-        $uniqueSlug = $this->dbTools->uniqueSlug($text, $table, $field);
+        $uniqueSlug = DbUtils::uniqueSlug($text, $table, $field);
 
         return $this->response->setJSON($uniqueSlug);
     }

@@ -1,5 +1,5 @@
 <div id="editFileApp">
-    <div class="center_box_750 mb-2">
+    <div class="center_box_750 mb-2" v-show="fields.is_image == 1">
         <div class="mb-2">
             <img v-bind:src="fields.url_thumbnail" alt="Miniatura imagen" class="sqr-120 rounded">
         </div>

@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Models\ItemModel;
+use App\Libraries\DbUtils;
 
 class Items extends BaseController
 {
@@ -111,7 +112,7 @@ class Items extends BaseController
         $aRow = $this->ItemModel->inputToRow($input);
         $condition = "id = {$itemId}";
 
-        $data['savedId'] = $this->dbTools->saveRow('items', $condition, $aRow);
+        $data['savedId'] = DbUtils::saveRow('items', $condition, $aRow);
         $data['errors'] = $this->ItemModel->errors();
 
         /*if ( $data['savedId'] > 0 ) {

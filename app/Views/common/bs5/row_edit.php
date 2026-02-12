@@ -22,7 +22,7 @@
 
 <div id="editRowApp">
     <div class="center_box_920 mb-2 text-end">
-        <button class="btn btn-light me-2 w120p btn-sm" @click="section = 'form'" v-show="section == 'table'">
+        <button class="btn btn-light w120p btn-sm" @click="section = 'form'" v-show="section == 'table'">
             Editar
         </button>
         <button class="btn btn-secondary w120p btn-sm" @click="section = 'table'" v-show="section == 'form'">
@@ -58,7 +58,7 @@
                         <?php endforeach ?>
                 
                         <div class="mb-1 row">
-                            <div class="col-md-8 offset-md-4">
+                            <div class="col-md-9 offset-md-3">
                                 <button class="btn btn-primary w120p" type="submit">Guardar</button>
                             </div>
                         </div>

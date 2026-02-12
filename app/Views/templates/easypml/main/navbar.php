@@ -57,6 +57,7 @@ $session = session();
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?= URL_APP ?>accounts/profile">Mi Perfil</a></li>
+                                <li><a class="dropdown-item" href="<?= URL_APP ?>sits/mis_sits">Mis Sits</a></li>
                                 <?php if ( in_array($session->role, [1,2]) ) : ?>
                                     <li><a class="dropdown-item" href="<?= URL_ADMIN ?>users/explore">Administrador</a></li>  
                                 <?php endif; ?>

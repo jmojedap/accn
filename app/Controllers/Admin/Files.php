@@ -82,10 +82,15 @@ class Files extends BaseController
      */
     public function details($rowId)
     {
-        $row = $this->fileModel->getRow($rowId, 'admin');
-        $data = $this->fileModel->basic($row);
+        $file = $this->fileModel->getRow($rowId, 'admin');
+        $data = $this->fileModel->basic($file);
 
-        $data['viewA'] = 'common/bs5/row_details';
+        $fieldsMeta = $this->fileModel->getFieldData('files');
+        $data['fieldsMeta'] = $fieldsMeta;
+
+        $data['row'] = $file;
+        $data['viewA'] = 'common/bs5/row_edit';
+        $data['formAction'] = URL_API . 'files/update/' . $file->id;
         $data['nav2'] = $this->viewsFolder . 'menus/menu';
         $data['backLink'] = $this->backLink;
 
@@ -121,6 +126,28 @@ class Files extends BaseController
         $data['viewA'] = $this->viewsFolder . 'edit/edit';
         $data['nav2'] = $this->viewsFolder . 'menus/menu';
         $data['backLink'] = $this->backLink;
+
+        return $this->pml->view(TPL_ADMIN . 'main', $data);
+    }
+
+    /**
+     * HTML VIEW
+     * Formulario para el recorte de imágenes
+     * 2026-02-11
+     */
+    public function cropping($rowId)
+    {
+        $row = $this->fileModel->getRow($rowId);
+        $data = $this->fileModel->basic($row);
+
+        $data['imageId'] = $rowId;
+        $data['backDestination'] = URL_ADMIN . 'files/info/' . $rowId;
+        $data['urlImage'] = $row->url;
+
+        $data['viewA'] = 'common/bs5/cropping';
+        $data['nav2'] = $this->viewsFolder . 'menus/menu';
+        $data['backLink'] = $this->backLink;
+
 
         return $this->pml->view(TPL_ADMIN . 'main', $data);
     }

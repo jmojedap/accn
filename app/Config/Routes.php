@@ -159,6 +159,7 @@ $routes->group('m/info', static function ($routes) {
         $routes->get('info/(:num)', 'Admin\Files::info/$1');
         $routes->get('details/(:num)', 'Admin\Files::details/$1');
         $routes->get('edit/(:num)', 'Admin\Files::edit/$1');
+        $routes->get('cropping/(:num)', 'Admin\Files::cropping/$1');
     });
 
 // FILES API
@@ -171,6 +172,7 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('delete_selected', 'Api\Files::deleteSelected');
         $routes->delete('delete/(:num)', 'Api\Files::delete/$1');
         $routes->put('update_position/(:num)/(:num)', 'Api\Files::updatePosition/$1/$2');
+        $routes->post('crop/(:num)', 'Api\Files::crop/$1');
     });
 
 // ---------------------------- ITEMS  --------------------------------------------------
@@ -206,7 +208,16 @@ $routes->group('m/info', static function ($routes) {
 //-----------------------------------------------------------------------------
     $routes->group('api/ai_generate', static function ($routes) {
         $routes->post('get_answer', 'Api\AiGenerate::getAnswer');
-        $routes->delete('delete_selected_messages', 'Api\AiGenerate::deleteSelectedMessages');
+        $routes->delete('delete_messages', 'Api\AiGenerate::deleteMessages');
+    });
+
+// ---------------------------- SITS ----------------------------------------------------
+//---------------------------------------------------------------------------------------
+    $routes->group('m/sits', static function ($routes) {
+        $routes->get('mis_sits', 'M\Sits::mySits');
+        $routes->get('sit/(:num)/(:any?)', 'M\Sits::sit/$1/$2');
+        $routes->get('add', 'M\Sits::add');
+        $routes->get('edit/(:num)', 'M\Sits::edit/$1');
     });
 
 /*

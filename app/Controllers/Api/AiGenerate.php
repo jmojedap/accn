@@ -55,12 +55,12 @@ class AiGenerate extends BaseController
      * DELETE :: Elimina los mensajes seleccionados de la conversación
      * 2026-01-31
      */
-    public function deleteSelectedMessages()
+    public function deleteMessages()
     {
         $inputData = $this->request->getJSON();
         $selected = $inputData->selected;   
         $conversationId  = $inputData->conversation_id;
-        $qtyDeleted = $this->aiMesagesModel->deleteSelectedMessages($selected, $conversationId);
+        $qtyDeleted = $this->aiMesagesModel->deleteMessages($selected, $conversationId);
         return $this->response->setJSON(['qty_deleted' => $qtyDeleted]);
     }
 }

@@ -67,12 +67,12 @@ class AiMesagesModel extends Model
 
     /**
      * Elimina los mensajes seleccionados de la conversación
-     * 
+     * 2026-02-07
      * @param array $selected
      * @param int $conversationId
      * @return int  
      */
-    function deleteSelectedMessages($selected, $conversationId)
+    function deleteMessages($selected, $conversationId)
     {
         //Verificar si el usuario en sesión es el que creó el mensaje 
         $qtyDeleted = $this->where('conversation_id', $conversationId)

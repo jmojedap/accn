@@ -237,6 +237,28 @@ class FileModel extends Model
         return $aRow;
     }
 
+    /**
+     * Determina si un archivo puede ser editado o no por parte de un usuario en sesión
+     * 2026-02-11
+     */
+    public function editable($fileId)
+    {
+        $row = $this->find($fileId);
+
+        $editable = FALSE;
+
+        //Administradores y editores
+        if ( in_array($_SESSION['role'], [1,2,3]) ) { $editable = TRUE; }
+
+        //Es el creador, puede editarlo
+        if ( $row->creator_id == $_SESSION['user_id'] )
+        {
+            $editable = TRUE;
+        }
+
+        return $editable;
+    }
+
 // ELIMINACIÓN
 //-----------------------------------------------------------------------------
 
@@ -326,6 +348,7 @@ class FileModel extends Model
             ->where('image_id', $fileId)
             ->update($aRow);
     }   
+
 
 // COLECCIONES DE ARCHIVOS
 //-----------------------------------------------------------------------------
@@ -494,5 +517,58 @@ class FileModel extends Model
         $arrDimensions['size'] = intval(filesize($file_path)/1028);    //Tamaño en KB
 
         return $arrDimensions;
+    }
+
+    /**
+     * Recortar una imagen
+     * 2026-02-11
+     */
+    public function crop($fileId, array $aCrop)
+    {
+        // Valores iniciales
+        $row = $this->getRow($fileId);
+        $data = [
+            'status'  => 0,
+            'message' => 'Imagen NO recortada'
+        ];
+
+        if (!$row) {
+            $data['message'] = 'Archivo no encontrado';
+            return $data;
+        }
+
+        // Ruta completa de la imagen
+        $sourcePath = PATH_UPLOADS . $row->folder . $row->file_name;
+
+        try {
+
+            // Crear instancia del servicio de imagen (GD por defecto)
+            $image = \Config\Services::image('gd');
+
+            // Ejecutar recorte
+            $image->withFile($sourcePath)
+                ->crop(
+                    (int) $aCrop['width'],
+                    (int) $aCrop['height'],
+                    (int) $aCrop['x_axis'],
+                    (int) $aCrop['y_axis']
+                )
+                ->save($sourcePath); // Sobrescribe la imagen original
+
+            // Si llega aquí, no lanzó excepción
+            $this->updateDimensions($row);
+            $this->createThumbnail($row);
+
+            $data = [
+                'status'  => 1,
+                'message' => 'Imagen recortada'
+            ];
+
+        } catch (\Throwable $e) {
+
+            $data['html'] = $e->getMessage();
+        }
+
+        return $data;
     }
 }

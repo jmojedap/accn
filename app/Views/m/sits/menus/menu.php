@@ -6,27 +6,31 @@ var sectionId = '<?= $uri->getSegment(3) . '_' . $uri->getSegment(4) ?>'
 var nav2RowId = '<?= $row->id ?>'
 var sections = [
     {
-        id: 'files_info',
+        id: 'sits_info',
         text: 'Información',
-        appSection: 'files/info/' + nav2RowId,
-        roles: [1,2,3],
-        class: '',
+        appSection: 'sits/info/' + nav2RowId,
+        roles: [1,2,3,21],
         anchor: false
     },
     {
-        id: 'files_details',
+        id: 'sits_details',
         text: 'Detalles',
-        appSection: 'files/details/' + nav2RowId,
+        appSection: 'sits/details/' + nav2RowId,
         roles: [1,2],
-        class: '',
         anchor: false
     },
     {
-        id: 'files_edit',
-        text: 'Editar',
-        appSection: 'files/edit/' + nav2RowId,
+        id: 'sits_images',
+        text: 'Imágenes',
+        appSection: 'sits/images/' + nav2RowId,
         roles: [1,2,3],
-        class: '',
+        anchor: false
+    },
+    {
+        id: 'sits_edit',
+        text: 'Editar',
+        appSection: 'sits/edit/' + nav2RowId,
+        roles: [1,2,3,21],
         anchor: false
     }
 ]
@@ -38,7 +42,6 @@ var nav2 = sections.filter(section => section.roles.includes(parseInt(APP_RID)))
 nav2.forEach((section,i) => {
     nav2[i].class = ''
     if ( section.id == sectionId ) nav2[i].class = 'active'
-    if ( sectionId == 'files_cropping' ) nav2[0].class = 'active'
 })
 </script>
 
