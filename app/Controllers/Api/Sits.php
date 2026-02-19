@@ -4,7 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Models\SitModel;
-use App\Models\ValidationModel;
+use App\Models\FileModel;
 use App\Libraries\DbUtils;
 
 class Sits extends BaseController
@@ -45,6 +45,31 @@ class Sits extends BaseController
         
         $data['errors'] = $this->sitModel->errors();
 
+        return $this->response->setJSON($data);
+    }
+
+    /**
+     * JSON
+     * Actualizar la imagen de un sit, tabla posts
+     * 2026-02-18
+     */
+    public function setPicture()
+    {
+        $data = ['savedId' => 0];
+        $userId = $this->session->user_id;
+        $sitId = $this->request->getPost('related_1');
+
+        $fileModel = new FileModel();
+        $uploadData = $fileModel->upload($this->request, $userId);
+
+        if ( $uploadData['savedId'] > 0 ) {
+            $fileRow = $uploadData['row']; 
+            $data['savedId'] = $this->sitModel->setPicture($sitId, (array) $fileRow);
+            $data['fileRow'] = $fileRow;
+        } else {
+            $data['errors'] = $uploadData['errors'];
+        }
+        
         return $this->response->setJSON($data);
     }
 }

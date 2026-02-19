@@ -40,9 +40,10 @@ var postImages = createApp({
                     //Limpiar formulario
                     document.getElementById('field-file').value = null
                     this.file = null
+                } else   {
+                    toastr['error']('No se cargó la imagen')
+                    this.errors = response.data.errors
                 }
-                //Mostrar respuesta html, si existe
-                if ( response.data.html ) { $('#upload_response').html(response.data.html); }
             })
             .catch(function (error) { console.log(error) })
         },
@@ -57,9 +58,11 @@ var postImages = createApp({
             this.deleting = true
             axios.delete(URL_API + 'files/delete/' + fileId)
             .then(response => {
-                if ( response.data.deleted ) {
-                    toastr['info']('Imagen eliminada correctamente')
+                if ( response.data.deleting_result == true ) {
+                    toastr['info']('Imagen eliminada')
                     this.getList()
+                } else {
+                    toastr['warning']('No se eliminó la imagen')
                 }
                 //Ocultar modal
                 $('#modalSingleDelete').modal('hide')

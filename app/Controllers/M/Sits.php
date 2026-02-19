@@ -169,32 +169,22 @@ class Sits extends BaseController
 //-----------------------------------------------------------------------------
 
 	/**
-	 * Vista perfil de usuario, con formulario para edición de datos básicos
-	 * 2025-09-07
-	 */
-	public function profile()
-	{
-		$idcode = $this->session->idcode;
-		$data['user'] = $this->accountModel->getRow($idcode);
-
-		$data['headTitle'] = $data['user']->display_name . ' - Perfil';
-		$data['viewA'] = $this->viewsFolder . 'profile/profile';
-		$data['nav2'] = $this->viewsFolder . 'menu';
-		return $this->pml->view(TPL_PUBLIC . 'main', $data);
-	}
-
-	/**
 	 * Vista perfil de usuario, con formulario para edición de la foto de perfil
 	 * 2026-01-30
 	 */
-	public function picture()
+	public function picture($id, $section = 'form')
 	{	
-		$idcode = $this->session->idcode;
-		$data['user'] = $this->accountModel->getRow($idcode);
+		$data['row'] = $this->sitModel->find($id);
+		$data['section'] = $section;
 
-		$data['headTitle'] = $data['user']->display_name . ' - Foto';
+		$data['urlImage'] = $data['row']->url_image;
+		$data['imageId'] = $data['row']->image_id;
+		$data['backDestination'] = URL_APP . "sits/edit/{$id}";
+		$data['activeRatios'] = [];
+
+		$data['headTitle'] = $data['row']->title . ' - Foto';
 		$data['viewA'] = $this->viewsFolder . 'picture/picture';
-		$data['nav2'] = $this->viewsFolder . 'menu';
+		$data['nav2'] = $this->viewsFolder . 'menus/menu';
 		return $this->pml->view(TPL_PUBLIC . 'main', $data);
 	}
 }

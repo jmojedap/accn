@@ -281,4 +281,28 @@ class PostModel extends Model
 
         return $data;
     }
+
+    /**
+     * Asigna imagen a un post
+     * 2026-02-18
+     */
+    public function setPicture($postId, $fileRow)
+    {
+        $post = $this->getRow($postId, 'default');
+        if ( is_null($post) ) {
+            return 0;
+        }
+        
+        $result = $this->update($post->id, [
+            'image_id' => $fileRow['id'],
+            'url_image' => $fileRow['url'],
+            'url_thumbnail' => $fileRow['url_thumbnail'],
+        ]);
+
+        if ( $result ) {
+            return $fileRow['id'];
+        } else {
+            return 0;
+        }
+    }
 }

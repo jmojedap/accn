@@ -57,4 +57,4 @@
     </form>
 </div>
 
-<?= view('admin/posts/edit/vue'); ?>
+<?= view('m/sits/edit/vue'); ?>

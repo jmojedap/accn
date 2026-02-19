@@ -33,16 +33,15 @@
                             <a :href="url_mod + 'sits/edit/' + sit.id" class="btn btn-light me-1">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <a :href="url_mod + 'sits/delete/' + sit.id" class="btn btn-light me-1">
+                            <button  class="btn btn-light me-1" data-bs-toggle="modal" data-bs-target="#modalSingleDelete" v-on:click="setCurrent(sit.id)">
                                 <i class="fa fa-trash"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-        
+        <?= view('common/bs5/modal_single_delete') ?>
     </div>
 </div>
 

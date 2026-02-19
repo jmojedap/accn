@@ -6,15 +6,15 @@ var exploreApp = createApp({
         return{
             loading: false,
             deleting: false,
-            filters: <?= json_encode($search['filters']) ?>,
+            filters: <?= json_encode($search['filters']) ?>, 
             results: <?= json_encode($search['results']) ?>,
-            maxPage: <?= $search['maxPage'] ?>,
             qtyResults: <?= $search['qtyResults'] ?>,
             entityInfo: <?= json_encode($entityInfo) ?>,
             settings: <?= json_encode($search['settings']) ?>,
             selected: [],
             allSelected: false,
             displayFilters: false,
+            arrTypes: ItemsApp.arrayCategory(33),
             selected_row_class: 'table-info',
         }
     },
@@ -25,9 +25,9 @@ var exploreApp = createApp({
             axios.post(URL_API + this.entityInfo.controller + '/search/', searchFormValues)
             .then(response => {
                 this.results = response.data.results
-                this.maxPage = response.data.maxPage
+                this.settings = response.data.settings
                 this.qtyResults = response.data.qtyResults
-                //history.pushState(null, null, URL_API + this.cf + this.numPage +'/?' + response.data.filtersStr);
+                history.pushState(null, null, URL_MOD + this.entityInfo.controller + '/explore/?' + response.data.getString);
                 this.allSelected = false
                 this.selected = []
                 this.loading = false
@@ -35,10 +35,10 @@ var exploreApp = createApp({
             .catch(function (error) { console.log(error) })
         },
         selectAll: function() {
-            this.selected = this.allSelected ? this.results.map(element => element.id) : [];
+            this.selected = this.allSelected ? this.results.map(element => element.idcode) : [];
         },
         sumPage: function(sum){
-            this.numPage = Pcrn.limit_between(this.numPage + sum, 1, this.maxPage)
+            this.settings.numPage = Pcrn.limit_between(this.settings.numPage + sum, 1, this.settings.maxPage)
             setTimeout(() => {
                 this.search()
             }, 50);
@@ -63,15 +63,15 @@ var exploreApp = createApp({
             var qtyDeleted = 0
             var qtyNoDeleted = 0
             
-            for (const rowId in results) {
+            for (const idCode in results) {
                 //Si el resultado es true, se eliminó
-                if ( results[rowId] == true ){
-                    var elementId = '#row' + rowId
+                if ( results[idCode] == true ){
+                    var elementId = '#row' + idCode
                     $(elementId).hide('slow')
                     qtyDeleted++
                 } else {
                     qtyNoDeleted++
-                    console.log(rowId, results[rowId])
+                    console.log(idCode, results[idCode])
                 }
             }
             
@@ -90,13 +90,12 @@ var exploreApp = createApp({
         },
         toggleFilters: function(){
             this.displayFilters = !this.displayFilters;
-            $('#searchFilters').toggle('fast');
         },
     },
     computed:{
         paginationText: function(){
-            var startRow = (this.numPage - 1) * this.perPage + 1
-            var endRow = this.numPage * this.perPage
+            var startRow = (this.settings.numPage - 1) * this.settings.perPage + 1
+            var endRow = this.settings.numPage * this.settings.perPage
             if (this.qtyResults < endRow ) endRow = this.qtyResults
             return startRow + '-' + endRow + ' de '
         },

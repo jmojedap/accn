@@ -1,3 +1,5 @@
+
+
 <div id="userProfileApp">
     <div class="center_box_750">
         <div class="text-end mb-2">
@@ -10,6 +12,24 @@
         </div>
 
         <!-- INFORMACIÓN -->
+         <div class="text-center mb-3" v-show="section == 'info'">
+            <div v-show="user.url_image.length > 0">
+                <div class="position-relative d-inline-block">
+                    <img v-bind:src="user.url_image" class="sqr-180 rounded-circle" alt="{{ user.display_name }}">
+                    <a v-bind:href="'<?= base_url() ?>' + 'm/accounts/picture/'" class="btn btn-light btn-sm position-absolute bottom-0 end-0">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                </div>
+            </div>
+            <div v-show="user.url_image.length == 0">
+                <div class="position-relative d-inline-block">
+                    <img v-bind:src="'<?= URL_RESOURCES ?>' + 'images/users/user.png'" class="sqr-180 rounded-circle" alt="{{ user.display_name }}">
+                    <a v-bind:href="'<?= base_url() ?>' + 'm/accounts/picture/'" class="btn btn-light btn-sm position-absolute bottom-0 end-0">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
         <table class="table" v-show="section == 'info'">
             <tbody>
                 <tr>

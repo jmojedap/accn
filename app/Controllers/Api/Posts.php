@@ -163,4 +163,27 @@ class Posts extends BaseController
         $data = $this->postModel->setMainImage($postId, $fileId);
         return $this->response->setJSON($data);
     }
+
+    /**
+     * JSON
+     * Actualizar la imagen de un post, tabla posts
+     * 2026-02-18
+     */
+    public function setPicture()
+    {
+        $data = ['savedId' => 0];
+        $userId = $this->session->user_id;
+        $postId = $this->request->getPost('id');
+
+        $fileModel = new FileModel();
+        $uploadData = $fileModel->upload($this->request, $userId);
+
+        if ( $uploadData['savedId'] > 0 ) {
+            $fileRow = $uploadData['row']; 
+            $data['savedId'] = $this->postModel->setPicture($postId, (array) $fileRow);
+            $data['fileRow'] = $fileRow;
+        }
+        
+        return $this->response->setJSON($data);
+    }
 }

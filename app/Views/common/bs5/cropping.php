@@ -47,7 +47,7 @@
                 <div class="docs-toggles mt-3">
                     <div class="btn-group btn-group-justified">
                         <template v-for="aspectRatioOption in aspectRatioOptions">
-                            <label class="btn" :class="aspectRatio == aspectRatioOption.value ? 'btn-primary' : 'btn-light'">
+                            <label class="btn" :class="aspectRatio == aspectRatioOption.value ? 'btn-primary' : 'btn-light'" v-show="activeRatios.includes(aspectRatioOption.label)">
                                 <input type="radio" class="sr-only" :id="'aspectRatio' + aspectRatioOption.value" name="aspectRatio" :value="aspectRatioOption.value" v-model="aspectRatio">
                                 <span class="docs-tooltip" data-toggle="tooltip" :title="aspectRatioOption.title">
                                     {{ aspectRatioOption.label }}
@@ -68,38 +68,14 @@ var croppingApp = createApp({
             loading: false,
             fields: {},
             imageId: '<?= $imageId ?>',
-            backDestination: '<?= $backDestination ?>',
+            activeRatios: <?= json_encode($activeRatios) ?>,
             aspectRatioOptions: [
-                {
-                    value: '1.7777777777777777',
-                    label: '16:9',
-                    title: 'Proporción: 16 / 9',
-                },
-                {
-                    value: '0.5625',
-                    label: '9:16',
-                    title: 'Proporción: 9 / 16',
-                },
-                {
-                    value: '1.3333333333333333',
-                    label: '4:3',
-                    title: 'Proporción: 4 / 3',
-                },
-                {
-                    value: '1',
-                    label: '1:1',
-                    title: 'Proporción: 1 / 1',
-                },
-                {
-                    value: '0.6666666666666666',
-                    label: '2:3',
-                    title: 'Proporción: 2 / 3',
-                },
-                {
-                    value: 'NaN',
-                    label: 'Manual',
-                    title: 'Proporción: Manual',
-                },
+                {value: '1.7777777777777777', label: '16:9', title: 'Proporción: 16 / 9'},
+                {value: '0.5625', label: '9:16', title: 'Proporción: 9 / 16'},
+                {value: '1.3333333333333333', label: '4:3', title: 'Proporción: 4 / 3'},
+                {value: '1', label: '1:1', title: 'Proporción: 1 / 1'},
+                {value: '0.6666666666666666', label: '2:3', title: 'Proporción: 2 / 3'},
+                {value: 'NaN', label: 'Manual', title: 'Proporción: Manual'},
             ],
             aspectRatio: '1',
         }
@@ -111,8 +87,10 @@ var croppingApp = createApp({
             axios.post(URL_API + 'files/crop/' + this.imageId, formValues)
             .then(response => {
                 if ( response.data.status == 1 ) {
-                    toastr['success']('Recortado')
-                    window.location = this.backDestination
+                    toastr['success']('Imagen recortada')
+                    setTimeout(function(){
+                        window.location = '<?= $backDestination ?>'
+                    }, 1000)
                 } else {
                     toastr['error'](response.data.message)
                 }
@@ -121,8 +99,5 @@ var croppingApp = createApp({
             .catch( function(error) {console.log(error)} )
         },
     },
-    mounted(){
-        //this.getList()
-    }
 }).mount('#croppingApp')
 </script>

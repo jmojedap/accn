@@ -143,10 +143,16 @@ class Accounts extends BaseController
 	 * Vista perfil de usuario, con formulario para edición de la foto de perfil
 	 * 2026-01-30
 	 */
-	public function picture()
+	public function picture($section = 'form')
 	{	
 		$idcode = $this->session->idcode;
+		$data['section'] = $section;
 		$data['user'] = $this->accountModel->getRow($idcode);
+
+		$data['urlImage'] = $data['user']->url_image;
+		$data['imageId'] = $data['user']->image_id;
+		$data['backDestination'] = URL_APP . 'accounts/picture';
+		$data['activeRatios'] = [];
 
 		$data['headTitle'] = $data['user']->display_name . ' - Foto';
 		$data['viewA'] = $this->viewsFolder . 'picture/picture';

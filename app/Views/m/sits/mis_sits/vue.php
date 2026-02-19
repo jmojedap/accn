@@ -5,7 +5,12 @@ var misSitsApp = createApp({
             url_mod: URL_MOD,
             section: 'list',
             loading: false,
+            deleting: false,
             sits: <?= json_encode($sits) ?>,
+            currentSit: {},
+            entityInfo: {
+                singular: 'Sit'
+            },
             fields: {},
         }
     },
@@ -21,7 +26,17 @@ var misSitsApp = createApp({
                     console.log(error);
                     this.loading = false;
                 });
-        }
+        },
+        setCurrent: function(sitId){
+            this.currentSit = this.sits.find(sit => sit.id == sitId);
+        },
+        deleteElement: function(){
+            axios.get(URL_API + 'sits/delete/' + this.currentSit.id)
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(function(error) { console.log(error) })
+        },
     },
     mounted(){
         //this.getList()

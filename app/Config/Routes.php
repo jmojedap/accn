@@ -66,6 +66,7 @@ $routes->group('m/info', static function ($routes) {
         $routes->get('logout', 'M\Accounts::logout');
         $routes->get('profile', 'M\Accounts::profile');
         $routes->get('picture', 'M\Accounts::picture');
+        $routes->get('picture/(:any)', 'M\Accounts::picture/$1');
     });
 
 // ACCOUNTS API
@@ -218,6 +219,13 @@ $routes->group('m/info', static function ($routes) {
         $routes->get('sit/(:num)/(:any?)', 'M\Sits::sit/$1/$2');
         $routes->get('add', 'M\Sits::add');
         $routes->get('edit/(:num)', 'M\Sits::edit/$1');
+        $routes->get('picture/(:num)', 'M\Sits::picture/$1');
+    });
+
+// SITS API
+//-----------------------------------------------------------------------------
+    $routes->group('api/sits', static function ($routes) {
+        $routes->post('set_picture', 'Api\Sits::setPicture');
     });
 
 /*

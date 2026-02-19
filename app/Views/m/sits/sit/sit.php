@@ -4,10 +4,10 @@
     <div class="container sit">
         <div class="center_box_750">
             <div class="row">
-                <div class="col-12 col-md-4">
-                    <img :src="sit.image" v-bind:alt="sit.title">
+                <div class="col-12 col-md-3 text-center">
+                    <img :src="sit.url_thumbnail" v-bind:alt="sit.title" class="img-fluid rounded rounded-circle">
                 </div>
-                <div class="col-12 col-md-8">
+                <div class="col-12 col-md-9">
                     <h1 class="title">{{ sit.title }}</h1>
                     <div class="excerpt" v-html="sit.excerpt"></div>
                 </div>
@@ -16,11 +16,7 @@
         <div class="center_box_750">
         <div class="row">
             <div class="col-12">
-                
-                
                 <div v-html="sit.content"></div>
-
-
             </div>
             </div>
         </div>

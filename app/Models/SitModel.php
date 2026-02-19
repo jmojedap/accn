@@ -3,7 +3,7 @@
 use CodeIgniter\Model;
 use App\Libraries\DbUtils;
 
-class SitModel extends Model
+class SitModel extends PostModel
 {
     protected $table      = 'posts';
     protected $primaryKey = 'id';

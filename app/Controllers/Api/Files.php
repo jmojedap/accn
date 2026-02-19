@@ -99,12 +99,12 @@ class Files extends BaseController
 
     /**
      * Eliminación de un archivo
-     * 2026-01-28
+     * 2026-02-19
      */
     public function delete($fileId)
     {
         $session = $_SESSION;
-        $data['deleted'] = $this->fileModel->deleteUnlink($fileId, $session);
+        $data['deleting_result'] = $this->fileModel->deleteUnlink($fileId, $session);
         return $this->response->setJSON($data);
     }
 
