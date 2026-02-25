@@ -27,7 +27,7 @@
                     <tr v-for="sit in sits">
                         <td>{{ sit.title }}</td>
                         <td>
-                            <a :href="url_mod + 'sits/sit/' + sit.id + '/' + sit.slug" class="btn btn-light me-1">
+                            <a :href="url_mod + 'sits/info/' + sit.id + '/' + sit.slug" class="btn btn-light me-1">
                                 <i class="fa fa-eye"></i>
                             </a>
                             <a :href="url_mod + 'sits/edit/' + sit.id" class="btn btn-light me-1">

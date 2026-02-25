@@ -120,6 +120,36 @@ class Posts extends BaseController
         return $this->response->setJSON($data);
     }
 
+    /**
+     * JSON
+     * Guardar un post, ya sea nuevo o existente
+     * 2026-02-25
+     */
+    public function save($idCode)
+    {
+        $input = $this->request->getPost();
+        $aRow = $this->postModel->inputToRow($input);
+
+        $data['savedId'] = 0;
+
+        if ( $idCode == 0 ) {
+            $data['savedId'] = $this->postModel->insert($aRow);
+            $data['idcode'] = DbUtils::setIdCode('posts', $data['savedId']);
+        } else {
+            $updated = $this->postModel->where('idcode',$idCode)
+                                ->set($aRow)->update();
+            if ( $updated ) {
+                $data['savedId'] = $aRow['id'];
+            }
+        }
+
+        if ( $data['savedId'] == 0 ) {
+            $data['errors'] = $this->postModel->errors();
+        }
+
+        return $this->response->setJSON($data);
+    }
+
 // Eliminación
 //-----------------------------------------------------------------------------
 
@@ -138,6 +168,17 @@ class Posts extends BaseController
 
         $data['results'] = $results;
 
+        return $this->response->setJSON($data);
+    }
+
+    /**
+     * JSON
+     * Eliminar un post
+     * 2026-02-25
+     */
+    public function delete($idCode)
+    {
+        $data['deleted'] = $this->postModel->deleteByIdCode($idCode);
         return $this->response->setJSON($data);
     }
 

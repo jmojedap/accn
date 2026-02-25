@@ -48,4 +48,18 @@ class SitModel extends PostModel
         return $this->findAll();
     }
 
+    /**
+     * Obtiene los álbumes de fotos de un sitio
+     * @param int $sitId
+     * @return array
+     */
+    public function albums($sitId)
+    {
+        $this->select('id, idcode, title, slug, url_image, url_thumbnail');
+        $this->where('parent_id', $sitId);
+        $this->where('type_id', 5);
+        $this->orderBy('title', 'asc');
+        return $this->findAll();
+    }
+
 }

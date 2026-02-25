@@ -13,13 +13,6 @@
                 </div>
             </div>
         </div>
-        <div class="center_box_750">
-        <div class="row">
-            <div class="col-12">
-                <div v-html="sit.content"></div>
-            </div>
-            </div>
-        </div>
     </div>
 </div>
 

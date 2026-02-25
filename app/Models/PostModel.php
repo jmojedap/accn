@@ -14,7 +14,7 @@ class PostModel extends Model
     protected $allowedFields = [
         'idcode', 
         'title', 'slug', 'content', 'content_json', 'keywords', 'excerpt',
-        'type_id', 'status', 'published_at',
+        'type_id', 'status', 'published_at', 'parent_id',
         'image_id', 'url_image', 'url_thumbnail',
         'creator_id', 'updater_id'
     ];
@@ -43,15 +43,15 @@ class PostModel extends Model
      * Segmento SQL SELECT para construir consulta
      * 2024-05-24
      */
-    function select($format = 'default')
+    function selectSegment($format = 'default')
     {
-        $arrSelect['default'] = 'id, idcode, title, slug, excerpt, content, type_id, status, published_at,
+        $arrSelect['default'] = 'id, idcode, title, slug, excerpt, content, type_id, status, published_at, parent_id,
             keywords, url_image, url_thumbnail,
             updater_id, creator_id, updated_at, created_at';
-        $arrSelect['edition'] = 'id, idcode, published_at, title, slug, excerpt, content, type_id, status, published_at,
+        $arrSelect['edition'] = 'id, idcode, published_at, title, slug, excerpt, content, type_id, status, published_at, parent_id,
             keywords, url_image, url_thumbnail,
             updater_id, creator_id, updated_at, created_at';
-        $arrSelect['basic'] = 'id, title, slug, status, type_id, published_at';
+        $arrSelect['basic'] = 'id, title, slug, status, type_id, published_at, parent_id';
         $arrSelect['admin'] = '*';
 
         return $arrSelect[$format];
@@ -91,7 +91,7 @@ class PostModel extends Model
      */
     function searchResults($searchCondition, $searchSettings)
     {
-        $select = $this->select($searchSettings['selectFormat']);
+        $select = $this->selectSegment($searchSettings['selectFormat']);
         
         $builder = $this->builder();
         $query = $builder->select($select)
@@ -117,7 +117,7 @@ class PostModel extends Model
         $row = NULL;
 
         $builder = $this->builder();
-        $builder->select($this->select($selectFormat));
+        $builder->select($this->selectSegment($selectFormat));
         $builder->where('id', $rowId);
         $query = $builder->get();
 
@@ -135,8 +135,26 @@ class PostModel extends Model
         $row = NULL;
 
         $builder = $this->builder();
-        $builder->select($this->select($selectFormat));
+        $builder->select($this->selectSegment($selectFormat));
         $builder->where($condition);
+        $query = $builder->get();
+
+        if ( $query->getRow(0) ) { $row = $query->getRow(0); }
+
+        return $row;
+    }
+
+    /**
+     * Row de un post identificado por slug, tabla posts
+     * 2026-02-24
+     */
+    public function getRowBySlug($slug, $selectFormat = 'default')
+    {
+        $row = NULL;
+
+        $builder = $this->builder();
+        $builder->select($this->selectSegment($selectFormat));
+        $builder->where('slug', $slug);
         $query = $builder->get();
 
         if ( $query->getRow(0) ) { $row = $query->getRow(0); }
@@ -167,7 +185,7 @@ class PostModel extends Model
         $aRow['updater_id'] = $_SESSION['user_id'];
         
         //Creación de post
-        if ( !isset($aRow['id']) ) {
+        if ( !isset($aRow['id']) || $aRow['id'] == 0 ) {
             $aRow['creator_id'] = $_SESSION['user_id'];
         }
         

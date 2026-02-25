@@ -156,16 +156,34 @@ class Sits extends BaseController
 		return view(TPL_PUBLIC . 'main', $data);
 	}
 
-	public function sit($id, $slug = '')
+// CONTENIDO PÚBLICO
+//-----------------------------------------------------------------------------
+
+	public function info($slug)
 	{
-		$data['headTitle'] = 'Sit';
+		$data['row'] = $this->sitModel->getRowBySlug($slug);
+		$data['headTitle'] = $data['row']->title . ' - Información';
 		$data['viewA'] = $this->viewsFolder . 'sit/sit';
-		//$data['nav2'] = $this->viewsFolder . 'menus/menu';
-		$data['row'] = $this->sitModel->find($id);
-		return view(TPL_PUBLIC . 'main', $data);
+		$data['viewB'] = $this->viewsFolder . 'sit/info';
+		$data['nav2'] = $this->viewsFolder . 'menus/public';
+		return view(TPL_PUBLIC . 'main_base', $data);
 	}
 
-// PERFIL DE USUARIO
+	/**
+	 * Vista de listado de álbumes de fotos de un sit
+	 * 2026-02-24
+	 */
+	public function photoAlbums($slug)
+	{
+		$data['row'] = $this->sitModel->getRowBySlug($slug);
+		$data['headTitle'] = $data['row']->title . ' - Álbumes de fotos';
+		$data['viewA'] = $this->viewsFolder . 'sit/sit';
+		$data['viewB'] = $this->viewsFolder . 'photo_albums/photo_albums';
+		$data['nav2'] = $this->viewsFolder . 'menus/public';
+		return view(TPL_PUBLIC . 'main_base', $data);
+	}
+
+// EDICIÓN DEL CONTENIDO
 //-----------------------------------------------------------------------------
 
 	/**
@@ -186,5 +204,15 @@ class Sits extends BaseController
 		$data['viewA'] = $this->viewsFolder . 'picture/picture';
 		$data['nav2'] = $this->viewsFolder . 'menus/menu';
 		return $this->pml->view(TPL_PUBLIC . 'main', $data);
+	}
+
+	public function editPhotoAlbums($id)
+	{
+		$data['row'] = $this->sitModel->getRow($id);
+		$data['headTitle'] = $data['row']->title . ' - Álbumes de fotos';
+		$data['viewA'] = $this->viewsFolder . 'edit_photo_albums/edit_photo_albums';
+		$data['nav2'] = $this->viewsFolder . 'menus/menu';
+		$data['albums'] = $this->sitModel->albums($id);
+		return view(TPL_PUBLIC . 'main', $data);
 	}
 }

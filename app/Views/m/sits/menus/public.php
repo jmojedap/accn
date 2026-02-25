@@ -3,36 +3,23 @@
 ?>
 <script>
 var sectionId = '<?= $uri->getSegment(3) . '_' . $uri->getSegment(4) ?>'
+var slug = '<?= $row->slug ?>'
 var nav2RowId = '<?= $row->id ?>'
 var sections = [
     {
         id: 'sits_info',
         text: 'Información',
-        appSection: 'sits/info/' + nav2RowId,
-        roles: [1,2,3,21],
-        anchor: false
-    },
-    {
-        id: 'sits_edit_photo_albums',
-        text: 'Álbumes',
-        appSection: 'sits/edit_photo_albums/' + nav2RowId,
+        appSection: 'sits/info/' + slug,
         roles: [1,2,3,21],
         anchor: true
     },
     {
-        id: 'sits_images',
-        text: 'Imágenes',
-        appSection: 'sits/images/' + nav2RowId,
-        roles: [1,2,3],
-        anchor: false
-    },
-    {
-        id: 'sits_edit',
-        text: 'Editar',
-        appSection: 'sits/edit/' + nav2RowId,
+        id: 'sits_photo_albums',
+        text: 'Álbumes',
+        appSection: 'sits/photo_albums/' + slug,
         roles: [1,2,3,21],
-        anchor: false
-    }
+        anchor: true
+    },
 ]
     
 //Filter role sections

@@ -143,7 +143,9 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('validate', 'Api\Posts::validateForm');
         $routes->post('create', 'Api\Posts::create');
         $routes->post('update/(:num)', 'Api\Posts::update/$1');
+        $routes->post('save/(:num)', 'Api\Posts::save/$1');
         $routes->post('delete_selected', 'Api\Posts::deleteSelected');
+        $routes->delete('delete/(:num)', 'Api\Posts::delete/$1');
         $routes->get('images/(:num)', 'Api\Posts::images/$1');
         $routes->get('set_main_image/(:num)/(:num)', 'Api\Posts::setMainImage/$1/$2');
     });
@@ -216,10 +218,12 @@ $routes->group('m/info', static function ($routes) {
 //---------------------------------------------------------------------------------------
     $routes->group('m/sits', static function ($routes) {
         $routes->get('mis_sits', 'M\Sits::mySits');
-        $routes->get('sit/(:num)/(:any?)', 'M\Sits::sit/$1/$2');
+        $routes->get('info/(:any)', 'M\Sits::info/$1');
+        $routes->get('photo_albums/(:any)', 'M\Sits::photoAlbums/$1');
         $routes->get('add', 'M\Sits::add');
         $routes->get('edit/(:num)', 'M\Sits::edit/$1');
         $routes->get('picture/(:num)', 'M\Sits::picture/$1');
+        $routes->get('edit_photo_albums/(:num)', 'M\Sits::editPhotoAlbums/$1');
     });
 
 // SITS API
