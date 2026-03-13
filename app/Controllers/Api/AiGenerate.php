@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 use App\Controllers\BaseController;
 use App\Libraries\GeminiClient;
 use App\Models\AiGenerateModel;
+use App\Models\AiConversationModel;
 use App\Models\AiMesagesModel;
 
 class AiGenerate extends BaseController
@@ -13,6 +14,7 @@ class AiGenerate extends BaseController
 	{
 		$this->db = \Config\Database::connect();
 		$this->aiGenerateModel = new AiGenerateModel();
+		$this->aiConversationModel = new AiConversationModel();
 		$this->aiMesagesModel = new AiMesagesModel();
     }
 // Funciones
@@ -26,16 +28,17 @@ class AiGenerate extends BaseController
         $inputData = $this->request->getJSON();
         $prompt = $inputData->prompt;
         $conversationId = $inputData->conversation_id;
+        $conversation = $this->aiConversationModel->find($conversationId);
 
         //Guardar el mensaje en la tabla ai_messages
         $this->aiMesagesModel->insertUserMessage([
-            'conversation_id' => $conversationId,
+            'conversation_id' => $conversation['id'],
             'text' => $prompt
         ]);
 
         $geminiClient = new GeminiClient();
-        $contents = $this->aiGenerateModel->getMessagesAsContent($conversationId);
-        $systemInstructionParts = $geminiClient->systemInstructionParts($inputData->system_instruction_key);
+        $contents = $this->aiGenerateModel->getMessagesAsContent($conversation['id']);
+        $systemInstructionParts = $geminiClient->systemInstructionParts($conversation['system_instruction_key']);
         
         $data = $geminiClient->generate([
             'contents' => $contents,
@@ -44,7 +47,7 @@ class AiGenerate extends BaseController
 
         //Guardar la respuesta en la tabla ai_messages
         $this->aiMesagesModel->insertAiMessage(
-            $conversationId,
+            $conversation['id'],
             $data['responseText'],
             $data['responseDetails']);
 

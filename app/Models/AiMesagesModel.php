@@ -25,11 +25,24 @@ class AiMesagesModel extends Model
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    public function getMessages($conversationId)
+    /**
+     * Obtiene los mensajes de una conversación
+     * 2026-03-11
+     * @param int $conversationId
+     * @param string $orderBy
+     * @return array
+     */
+    public function getMessages($conversationId, $orderBy = 'created_at ASC')
     {
-        return $this->where('conversation_id', $conversationId)->findAll();
+        return $this->where('conversation_id', $conversationId)->orderBy($orderBy)->findAll();
     }
 
+    /**
+     * Inserta un mensaje de usuario en la tabla ai_messages
+     * 2026-03-11
+     * @param array $data
+     * @return int
+     */
     public function insertUserMessage($data)
     {
         $data['role'] = 'user';

@@ -1,7 +1,8 @@
 <script>
-var photoAlbumsApp = createApp({
+var albumsApp = createApp({
     data(){
         return{
+            sidId: <?= $row->id ?>,
             loading: false,
             deleting: false,
             entityInfo: {
@@ -28,6 +29,7 @@ var photoAlbumsApp = createApp({
                     toastr['success']('Guardado')
                     this.fields.idcode = response.data.idcode
                     this.section = 'list'
+                    this.getList()
                 }
                 this.loading = false
             })
@@ -41,9 +43,9 @@ var photoAlbumsApp = createApp({
             this.deleting = true
             axios.delete(URL_API + 'posts/delete/' + this.fields.idcode)
             .then(response => {
-                if ( response.data.deleted === true ) {
+                if ( response.data.code == 'DELETED' ) {
                     toastr['info']('Álbum eliminado')
-                    //this.getList()
+                    this.getList()
                     this.section = 'list'
                     modalSingleDelete.hide()
                 } else {
@@ -55,18 +57,15 @@ var photoAlbumsApp = createApp({
         },
         getList: function(){
             this.loading = true
-            axios.get(URL_API + 'sits/get_photo_albums/' + this.parent_id)
+            axios.get(URL_API + 'sits/albums/' + this.sidId)
             .then(response => {
                 this.albums = response.data
                 this.loading = false
             })
             .catch( function(error) {console.log(error)} )
         }
-    },
-    mounted(){
-        //this.getList()
     }
-}).mount('#photoAlbumsApp')
+}).mount('#albumsApp')
 
 var modalSingleDelete = new bootstrap.Modal(document.getElementById('modalSingleDelete'))
 </script>

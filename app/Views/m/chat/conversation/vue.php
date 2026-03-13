@@ -4,8 +4,7 @@
 var conversationApp = createApp({
     data(){
         return{
-            conversationId: 1,
-            userId: 1,
+            conversationId: <?= $conversation['id'] ?>,
             messages: <?php echo json_encode($messages); ?>,
             prompt: '',
             loading: false,
@@ -15,8 +14,8 @@ var conversationApp = createApp({
             respuesta:'',
             htmlResponse: '',
             chaterInfo: {
-                name: 'Secretaria Médica',
-                picture: '<?= URL_CONTENT ?>uploads/2026/01/sm_2197_20260130094424580.jpg'
+                name: '<?= $sitAgent->title ?>',
+                picture: '<?= $sitAgent->url_thumbnail ?>'
             },
             deleteConfirmationTexts : {
                 title: 'Borrar mensajes',
@@ -50,7 +49,6 @@ var conversationApp = createApp({
             const payload = {
                 prompt: this.prompt.trim(),
                 conversation_id: this.conversationId,
-                system_instruction_key: 'secretaria-medica' 
             };
             
             this.prompt = ''; // Limpiar el input del usuario antes de enviar
@@ -164,7 +162,6 @@ var conversationApp = createApp({
         }
     },
     mounted(){
-        //this.getList()
         this.$nextTick(() => {
             this.scrollToDown();
             document.getElementById('user-input').focus();

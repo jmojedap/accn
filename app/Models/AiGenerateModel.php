@@ -31,7 +31,10 @@ class AiGenerateModel extends Model
     public function getMessagesAsContent($conversationId): array
     {
 
-        $messages = $this->db->table('ai_messages')->where('conversation_id', $conversationId)->get()->getResult();
+        $messages = $this->db->table('ai_messages')
+            ->where('conversation_id', $conversationId)
+            ->orderBy('created_at', 'ASC')
+            ->get()->getResult();
         $contents = [];
         foreach ($messages as $message) {
             $contents[] = [

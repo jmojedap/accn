@@ -12,6 +12,14 @@
                     <div class="excerpt" v-html="sit.excerpt"></div>
                 </div>
             </div>
+            <div class="my-3 row">
+                <div class="col-12 col-md-3"></div>
+                <div class="col-12 col-md-9">
+                    <button class="btn btn-light w240p" @click="createConversation">
+                        Enviar mensaje
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -26,7 +34,23 @@ var sitApp = createApp({
         }
     },
     methods: {
-        
+        createConversation: function(){
+            this.loading = true;
+            // payload en formato json
+            let payload = {
+                agent_id: this.sit.id,
+                type:'ai-chat',
+            };
+            axios.post(URL_API + 'conversations/create/', {data: payload})
+            .then(response => {
+                if ( response.data.conversation_id > 0 ) {
+                    toastr['success']('Guardado')
+                    window.location.href = URL_MOD + 'chat/conversation/' + response.data.conversation_id
+                }
+                this.loading = false
+            })
+            .catch( function(error) {console.log(error)} )
+        },  
     },
     mounted(){
         //this.getList()

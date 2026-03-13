@@ -43,41 +43,34 @@ var exploreApp = createApp({
                 this.search()
             }, 50);
         },
-        deleteSelected: function(){
+        deleteSelected() {
             this.deleting = true
-            var payload = new FormData();
-            payload.append('selected', this.selected);
-            
-            axios.post(URL_API + this.entityInfo.controller + '/delete_selected', payload)
+            axios.delete(
+                URL_API + this.entityInfo.controller + '/delete_selected',
+                { data: { ids: this.selected} }
+            )
             .then(response => {
-                this.deleting = false
                 modalDeleteSelected.hide()
-                this.hideDeleted(response.data.results)
+                this.hideDeleted(response.data.deleteResults)
+                toastr['info'](response.data.summary.deleted + ' registros eliminados')
+                if (response.data.summary.not_deleted > 0) {
+                    toastr['warning'](response.data.summary.not_deleted + ' registros no pudieron ser eliminados')
+                }
             })
-            .catch(function (error) {
-                console.log(error)
+            .catch(error => {
+                console.error(error)
+            })
+            .finally(() => {
                 this.deleting = false
             })
         },
-        hideDeleted: function(results){
-            var qtyDeleted = 0
-            var qtyNoDeleted = 0
-            
-            for (const idCode in results) {
-                //Si el resultado es true, se eliminó
-                if ( results[idCode] == true ){
-                    var elementId = '#row' + idCode
+        hideDeleted: function(deletedResults){
+            deletedResults.forEach(result => {
+                if (result.code === 'DELETED') {
+                    var elementId = '#row' + result.idcode
                     $(elementId).hide('slow')
-                    qtyDeleted++
-                } else {
-                    qtyNoDeleted++
-                    console.log(idCode, results[idCode])
                 }
-            }
-            
-            if ( qtyDeleted > 0 ) toastr['info'](qtyDeleted + ' registros eliminados')
-            if ( qtyNoDeleted > 0 ) toastr['warning'](qtyNoDeleted + ' registros NO eliminados')
-            this.selected = []
+            });
         },
         resetFilter: function(filterName){
             this.filters[filterName] = ''

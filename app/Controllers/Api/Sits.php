@@ -72,4 +72,15 @@ class Sits extends BaseController
         
         return $this->response->setJSON($data);
     }
+
+    /**
+     * JSON
+     * Obtener los álbumes de fotos de un sit
+     * 2026-03-03
+     */
+    public function albums($sitId)
+    {
+        $albums = $this->sitModel->albums($sitId);
+        return $this->response->setJSON($albums);
+    }
 }

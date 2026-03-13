@@ -10,7 +10,9 @@
         <div class="chat-header d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <div class="header-icon-bg me-3">
-                    <img class="w-100 h-100 rounded-circle sqr-180" v-bind:src="chaterInfo.picture" v-bind:alt="chaterInfo.name">
+                    <img class="w-100 h-100 rounded-circle sqr-180" v-bind:src="chaterInfo.picture" v-bind:alt="chaterInfo.name"
+                        onerror="this.src='<?= URL_IMG ?>users/user.png'"
+                    >
                 </div>
                 <div>
                     <h5 class="mb-0 fw-bold text-dark" v-text="chaterInfo.name"></h5>
@@ -39,8 +41,10 @@
                 </div>
                 <!-- Avatar -->
                 <div class="message-avatar">
-                   <img v-if="message.role == 'model'" v-bind:src="chaterInfo.picture" v-bind:alt="chaterInfo.name">
-                   <img v-else src="<?= URL_RESOURCES ?>images/users/sm_user.png" alt="User">
+                   <img v-if="message.role == 'model'" v-bind:src="chaterInfo.picture" v-bind:alt="chaterInfo.name"
+                    onerror="this.src='<?= URL_IMG ?>users/user.png'"
+                   >
+                   <img v-else src="<?= URL_IMG ?>users/user.png" alt="User">
                 </div>
 
                 <!-- Bubble -->

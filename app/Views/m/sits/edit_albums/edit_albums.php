@@ -1,4 +1,4 @@
-<div id="photoAlbumsApp">
+<div id="albumsApp">
     <div v-show="section == 'form'" class="card center_box_750">
         <div class="card-body">
             <form accept-charset="utf-8" method="POST" id="albumForm" @submit.prevent="handleSubmit">
@@ -45,21 +45,34 @@
         </button>
     </div>
 
-    <table class="table table-bordered table-hover" v-show="section == 'list'">
+    <table class="table table-hover" v-show="section == 'list'">
         <thead>
             <tr>
+                <th></th>
                 <th>Título</th>
-                <th>Slug</th>
-                <th>Imagen</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="album in albums">
-                <td>{{ album.title }}</td>
-                <td>{{ album.slug }}</td>
-                <td><img :src="album.url_image" :alt="album.title" width="100"></td>
+                <td class="w100p">
+                    <a v-bind:href="'<?= URL_APP ?>albums/edit/' + album.id">
+                        <img
+                            v-bind:src="album.url_image"
+                            class="rounded w100p"
+                            v-bind:alt="album.title"
+                            onerror="this.src='<?= URL_IMG ?>app/nd.png'"
+                        >
+                    </a>
+                </td>
                 <td>
+                    <a v-bind:href="'<?= URL_APP ?>albums/edit/' + album.id">
+                        {{ album.title }}
+                    </a>
+                    <br>
+                    {{ album.excerpt }}
+                </td>
+                <td class="w120p">
                     <button type="button" @click="setCurrent(album.id)" class="btn btn-light btn-sm me-1">
                         <i class="fa fa-edit"></i>
                     </button>
@@ -73,4 +86,4 @@
     <?= view('common/bs5/modal_single_delete') ?>
 </div>
 
-<?= view('m/sits/edit_photo_albums/vue') ?>
+<?= view('m/sits/edit_albums/vue') ?>

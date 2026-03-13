@@ -150,35 +150,58 @@ class Posts extends BaseController
         return $this->response->setJSON($data);
     }
 
-// Eliminación
+// ELIMINACIÓN DE POSTS
 //-----------------------------------------------------------------------------
 
     /**
      * Eliminación de posts seleccionados
-     * 2023-02-18
+     * 2026-02-27
      */
     public function deleteSelected()
     {
-        $selected = explode(',', $this->request->getPost('selected'));
-        $results = [];
-        
-        foreach ($selected as $idCode) {
-            $results[$idCode] = $this->postModel->deleteByIdCode($idCode);
+        //Entradas
+        $payload = $this->request->getJSON(true) ?? [];
+        $ids = $payload['ids'] ?? [];
+
+        if (!is_array($ids) || empty($ids)) {
+            return $this->response->setStatusCode(400)
+                                ->setJSON(['code' => 'INVALID_IDS']);
+        }
+        // Filtrar solo valores numéricos
+        $ids = array_filter($ids, fn($v) => is_numeric($v));
+
+        if (empty($ids)) {
+            return $this->response->setStatusCode(400)
+                                ->setJSON(['code' => 'INVALID_IDS']);
         }
 
-        $data['results'] = $results;
+        $results = [];
+        // Eliminar cada post y guardar resultados
+        foreach ($ids as $id) {
+            $results[] = $this->postModel->deleteByIdCode($id, $this->session);
+        }
 
-        return $this->response->setJSON($data);
+        $deleted = count(array_filter($results, fn($r) => $r['code'] === 'DELETED'));
+
+        return $this->response->setJSON([
+            'summary' => [
+                'total' => count($ids),
+                'deleted' => $deleted,
+                'not_deleted' => count($results) - $deleted,
+            ],
+            'deleteResults' => $results
+        ]);
     }
 
     /**
      * JSON
-     * Eliminar un post
+     * Eliminar un post individual
      * 2026-02-25
      */
     public function delete($idCode)
     {
-        $data['deleted'] = $this->postModel->deleteByIdCode($idCode);
+        $session = $this->session;
+        $data = $this->postModel->deleteByIdCode($idCode, $session);
         return $this->response->setJSON($data);
     }
 
@@ -186,6 +209,7 @@ class Posts extends BaseController
      * JSON
      * Obtener las imágenes de un post
      * 2026-01-28
+     * @param int $postId :: id del post
      */
     public function images($postId)
     {
@@ -198,6 +222,7 @@ class Posts extends BaseController
      * JSON
      * Establecer imagen principal de un post
      * 2026-01-28
+     * @param int $postId :: Id del post
      */
     public function setMainImage($postId, $fileId)
     {

@@ -144,7 +144,7 @@ $routes->group('m/info', static function ($routes) {
         $routes->post('create', 'Api\Posts::create');
         $routes->post('update/(:num)', 'Api\Posts::update/$1');
         $routes->post('save/(:num)', 'Api\Posts::save/$1');
-        $routes->post('delete_selected', 'Api\Posts::deleteSelected');
+        $routes->delete('delete_selected', 'Api\Posts::deleteSelected');
         $routes->delete('delete/(:num)', 'Api\Posts::delete/$1');
         $routes->get('images/(:num)', 'Api\Posts::images/$1');
         $routes->get('set_main_image/(:num)/(:num)', 'Api\Posts::setMainImage/$1/$2');
@@ -200,11 +200,19 @@ $routes->group('m/info', static function ($routes) {
         $routes->get('update_items_list_file', 'Api\Items::updateItemsListFile');
     });
 
+// ---------------------------- AI CONVERSATIONS  ---------------------------------------------
+//---------------------------------------------------------------------------------------
+
+// AI CONVERSATIONS API
+//-----------------------------------------------------------------------------
+    $routes->group('api/conversations', static function ($routes) {
+        $routes->post('create', 'Api\AiConversations::create');
+    });
 // ---------------------------- AI GENERATE ---------------------------------------------
 //---------------------------------------------------------------------------------------
 
     $routes->group('m/chat', static function ($routes) {
-        $routes->get('conversation', 'M\Chat::conversation');
+        $routes->get('conversation/(:num)', 'M\Chat::conversation/$1');
     });
 
 // AI GENERATE API
@@ -214,22 +222,31 @@ $routes->group('m/info', static function ($routes) {
         $routes->delete('delete_messages', 'Api\AiGenerate::deleteMessages');
     });
 
+// ---------------------------- ÁLBUMS ----------------------------------------------------
+//---------------------------------------------------------------------------------------
+    $routes->group('m/albums', static function ($routes) {
+        $routes->get('mis_albums', 'M\Albums::myAlbums');
+        $routes->get('edit/(:num)', 'M\Albums::edit/$1');
+        $routes->get('edit_images/(:num)', 'M\Albums::editImages/$1');
+    });
+
 // ---------------------------- SITS ----------------------------------------------------
 //---------------------------------------------------------------------------------------
     $routes->group('m/sits', static function ($routes) {
         $routes->get('mis_sits', 'M\Sits::mySits');
         $routes->get('info/(:any)', 'M\Sits::info/$1');
-        $routes->get('photo_albums/(:any)', 'M\Sits::photoAlbums/$1');
+        $routes->get('albums/(:any)', 'M\Sits::albums/$1');
         $routes->get('add', 'M\Sits::add');
         $routes->get('edit/(:num)', 'M\Sits::edit/$1');
-        $routes->get('picture/(:num)', 'M\Sits::picture/$1');
-        $routes->get('edit_photo_albums/(:num)', 'M\Sits::editPhotoAlbums/$1');
+        $routes->get('picture/(:num)/(:any)', 'M\Sits::picture/$1/$2');
+        $routes->get('edit_albums/(:num)', 'M\Sits::editAlbums/$1');
     });
 
 // SITS API
 //-----------------------------------------------------------------------------
     $routes->group('api/sits', static function ($routes) {
         $routes->post('set_picture', 'Api\Sits::setPicture');
+        $routes->get('albums/(:num)', 'Api\Sits::Albums/$1');
     });
 
 /*

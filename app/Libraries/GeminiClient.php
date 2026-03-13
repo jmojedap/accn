@@ -48,8 +48,10 @@ class GeminiClient
         ];
 
         $payload = json_encode($requestData);
+        log_message('info', 'Gemini payload: ' . $payload);
 
         $responseData = $this->executeRequest($url, $payload);
+        log_message('info', 'Gemini response: ' . json_encode($responseData));
         //$responseData = $this->generateMock();
 
         $responseText = 'No fue posible obtener respuesta.';

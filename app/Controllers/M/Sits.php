@@ -173,12 +173,12 @@ class Sits extends BaseController
 	 * Vista de listado de álbumes de fotos de un sit
 	 * 2026-02-24
 	 */
-	public function photoAlbums($slug)
+	public function albums($slug)
 	{
 		$data['row'] = $this->sitModel->getRowBySlug($slug);
 		$data['headTitle'] = $data['row']->title . ' - Álbumes de fotos';
 		$data['viewA'] = $this->viewsFolder . 'sit/sit';
-		$data['viewB'] = $this->viewsFolder . 'photo_albums/photo_albums';
+		$data['viewB'] = $this->viewsFolder . 'albums/albums';
 		$data['nav2'] = $this->viewsFolder . 'menus/public';
 		return view(TPL_PUBLIC . 'main_base', $data);
 	}
@@ -197,7 +197,7 @@ class Sits extends BaseController
 
 		$data['urlImage'] = $data['row']->url_image;
 		$data['imageId'] = $data['row']->image_id;
-		$data['backDestination'] = URL_APP . "sits/edit/{$id}";
+		$data['backDestination'] = URL_APP . "sits/picture/{$id}/form";
 		$data['activeRatios'] = [];
 
 		$data['headTitle'] = $data['row']->title . ' - Foto';
@@ -206,11 +206,15 @@ class Sits extends BaseController
 		return $this->pml->view(TPL_PUBLIC . 'main', $data);
 	}
 
-	public function editPhotoAlbums($id)
+	/**
+	 * Vista de edición de álbumes de fotos de un sit
+	 * 2026-02-24
+	 */
+	public function editAlbums($id)
 	{
 		$data['row'] = $this->sitModel->getRow($id);
-		$data['headTitle'] = $data['row']->title . ' - Álbumes de fotos';
-		$data['viewA'] = $this->viewsFolder . 'edit_photo_albums/edit_photo_albums';
+		$data['headTitle'] = $data['row']->title . ' - Álbumes';
+		$data['viewA'] = $this->viewsFolder . 'edit_albums/edit_albums';
 		$data['nav2'] = $this->viewsFolder . 'menus/menu';
 		$data['albums'] = $this->sitModel->albums($id);
 		return view(TPL_PUBLIC . 'main', $data);

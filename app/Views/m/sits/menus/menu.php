@@ -6,32 +6,25 @@ var sectionId = '<?= $uri->getSegment(3) . '_' . $uri->getSegment(4) ?>'
 var nav2RowId = '<?= $row->id ?>'
 var sections = [
     {
-        id: 'sits_info',
-        text: 'Información',
-        appSection: 'sits/info/' + nav2RowId,
-        roles: [1,2,3,21],
-        anchor: false
-    },
-    {
-        id: 'sits_edit_photo_albums',
+        id: 'sits_edit_albums',
         text: 'Álbumes',
-        appSection: 'sits/edit_photo_albums/' + nav2RowId,
+        appSection: 'sits/edit_albums/' + nav2RowId,
         roles: [1,2,3,21],
         anchor: true
     },
     {
-        id: 'sits_images',
-        text: 'Imágenes',
-        appSection: 'sits/images/' + nav2RowId,
-        roles: [1,2,3],
-        anchor: false
+        id: 'sits_picture',
+        text: 'Foto',
+        appSection: 'sits/picture/' + nav2RowId + '/form',
+        roles: [1,2,3,21],
+        anchor: true
     },
     {
         id: 'sits_edit',
         text: 'Editar',
         appSection: 'sits/edit/' + nav2RowId,
         roles: [1,2,3,21],
-        anchor: false
+        anchor: true
     }
 ]
     

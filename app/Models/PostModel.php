@@ -202,42 +202,57 @@ class PostModel extends Model
 
     /**
      * Elimina registro tabla posts, con idcode especificado
-     * 2023-02-19
+     * 2026-02-26
      * @param int $idCode valor en posts.idcode
+     * @param array $session datos de sesión de usuario
      * @return $result
      */
-    public function deleteByIdCode($idCode)
+    public function deleteByIdCode($idCode, object $session): array
     {
-        $restriction = $this->deleteRestriction($idCode);
+        $result = [
+            'idcode' => $idCode,
+            'code'   => 'NOT_FOUND'
+        ];
 
-        if ( strlen($restriction) == 0 ) {
-            //No hay restricción, eliminar
-            $result = $this->where('idcode',$idCode)->delete();
+        $row = $this->select('id, creator_id')
+                    ->where('idcode', $idCode)
+                    ->first();
+
+        if (!$row) {
+            return $result;
+        }
+
+        $restriction = $this->deleteRestriction((object)$row, $session);
+
+        if ($restriction !== null) {
+            $result['code'] = $restriction;
+            return $result;
+        }
+
+        if ($this->where('idcode', $idCode)->delete()) {
+            $result['code']   = 'DELETED';
         } else {
-            //Devolver texto de restricción
-            $result = $restriction;
+            $result['code']   = 'DELETE_FAILED';
         }
 
         return $result;
     }
 
     /**
-     * Devuelve restricción, si existe alguna para eliminar un post
-     * Si no existe devuelve cadena vacía, se puede eliminar post.
-     * 2026-01-19
-     * 
-     * @return string $restriction
+     * Devuelve código de restricción si existe.
+     * Si no existe, devuelve null.
      */
-    public function deleteRestriction($idCode)
+    public function deleteRestriction(object $row, object $session): ?string
     {
-        $restriction = '';
-        $post = $this->getRowByCondition(['idcode' => $idCode], 'admin');
-
-        if ( is_null($post) ) {
-            $restriction .= "Post {$idCode} no existe. ";
+        // No administradores ni editores
+        if ($session->role > 3) {
+            // El usuario en sesión no es el creador
+            if ($session->user_id != $row->creator_id) {
+                return 'NOT_OWNER';
+            }
         }
 
-        return trim($restriction);
+        return null;
     }
 
 // IMAGES

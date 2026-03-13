@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div v-show="row.image_id > 0">
                         <div class="d-flex justify-content-between">
-                            <a v-bind:href="'<?= URL_APP ?>sits/picture/cropping'" class="btn btn-light me-2">
+                            <a v-bind:href="'<?= URL_APP ?>sits/picture/<?= $row->id ?>/cropping'" class="btn btn-light me-2">
                                 <i class="fa fa-crop"></i> Recortar
                             </a>
                             <a class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modalSingleDelete">

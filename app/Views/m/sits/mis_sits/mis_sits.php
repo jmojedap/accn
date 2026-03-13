@@ -19,21 +19,32 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Título</th>
-                        <th width="250">Acciones</th>
+                        <th width="160">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="sit in sits">
+                        <td style="width: 75px;">
+                            <a :href="url_mod + 'sits/info/' + sit.slug">
+                                <img
+                                    v-bind:src="sit.url_thumbnail"
+                                    class="rounded rounded-circle w75p"
+                                    v-bind:alt="sit.slug"
+                                    onerror="this.src='<?= URL_IMG ?>app/sits-default.png'"
+                                >
+                            </a>
+                        </td>
                         <td>{{ sit.title }}</td>
                         <td>
-                            <a :href="url_mod + 'sits/info/' + sit.id + '/' + sit.slug" class="btn btn-light me-1">
+                            <a :href="url_mod + 'sits/info/' + sit.slug" class="btn btn-light me-1">
                                 <i class="fa fa-eye"></i>
                             </a>
                             <a :href="url_mod + 'sits/edit/' + sit.id" class="btn btn-light me-1">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <button  class="btn btn-light me-1" data-bs-toggle="modal" data-bs-target="#modalSingleDelete" v-on:click="setCurrent(sit.id)">
+                            <button  class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modalSingleDelete" v-on:click="setCurrent(sit.id)">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </td>

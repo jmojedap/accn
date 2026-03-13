@@ -3,7 +3,7 @@
 use CodeIgniter\Model;
 use App\Libraries\DbUtils;
 
-class SitModel extends PostModel
+class AlbumModel extends PostModel
 {
     protected $table      = 'posts';
     protected $primaryKey = 'id';
@@ -36,29 +36,30 @@ class SitModel extends PostModel
     protected $skipValidation     = false;
 
     /**
-     * Obtiene los sitios creados por un usuario
+     * Obtiene los álbumes creados por un usuario
      * @param int $userId
      * @return array
      */
-    public function mySits($userId)
+    public function myAlbums($userId)
     {
         $this->where('creator_id', $userId);
-        $this->where('type_id', 101);
+        $this->where('type_id', 5);
         $this->orderBy('created_at', 'desc');
         return $this->findAll();
     }
 
     /**
-     * Obtiene los álbumes de fotos de un sitio
-     * @param int $sitId
+     * Devolver todos los archivos de la tabla files donde album_id = $albumId
+     * 2026-03-13
+     * @param int $albumId
      * @return array
      */
-    public function albums($sitId)
+    public function pictures($albumId)
     {
-        $this->select('id, idcode, title, slug, excerpt, url_image, url_thumbnail');
-        $this->where('parent_id', $sitId);
-        $this->where('type_id', 5);
-        $this->orderBy('title', 'asc');
-        return $this->findAll();
+        return $this->db->table('files')
+            ->where('album_id', $albumId)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->getResult();
     }
 }
