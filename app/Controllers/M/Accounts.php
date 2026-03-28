@@ -98,14 +98,22 @@ class Accounts extends BaseController
      */
     public function validateLoginLink(string $accessKey)
     {
-        // Buscar usuario por accessKey
+        // Buscar usuario por accessKey (CONSULTA SEGURA)
 		$now = date('Y-m-d H:i:s');
-		$condition = "access_key = '{$accessKey}' AND access_key != '' AND access_key_expiry > '{$now}'";
-        $user = DbUtils::row('users', $condition);
+        $user = $this->db->table('users')
+                         ->where('access_key', $accessKey)
+                         ->where('access_key !=', '')
+                         ->where('access_key_expiry >', $now)
+                         ->get()
+                         ->getRow();
 
         if ($user) {
             // Crear sesión
-            $this->accountModel->createSession($user->email, true);
+            $this->accountModel->createSession($user->email);
+
+            // Persistencia de la sesión (30 días por defecto en Magic Link)
+            $sessionConfig = config('Session');
+            $this->response->setCookie($sessionConfig->cookieName, session_id(), 2592000);
 
 			//Fecha y hora del último ingreso
 			$this->accountModel->updateLastLogin($user->id);

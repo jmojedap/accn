@@ -13,13 +13,22 @@ var albumsApp = createApp({
             fields: {
                 id: 0,
                 idcode: 0,
-                title: 'Probando',
-                excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                title: '',
+                excerpt: ''
             },
             albums: <?= json_encode($albums) ?>,
         }
     },
     methods: {
+        resetFields: function(){
+            this.fields = {
+                id: 0,
+                idcode: 0,
+                title: '',
+                excerpt: ''
+            }
+            this.section = 'form'
+        },
         handleSubmit: function(){
             this.loading = true
             var formValues = new FormData(document.getElementById('albumForm'))
@@ -59,7 +68,7 @@ var albumsApp = createApp({
             this.loading = true
             axios.get(URL_API + 'sits/albums/' + this.sidId)
             .then(response => {
-                this.albums = response.data
+                this.albums = (response.data.length > 0) ? response.data : []
                 this.loading = false
             })
             .catch( function(error) {console.log(error)} )

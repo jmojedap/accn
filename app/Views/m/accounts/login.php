@@ -14,6 +14,11 @@
                 <input type="password" class="form-control form-control-lg" name="password" placeholder="Contraseña" required value="malotv252">
             </div>
             
+            <div class="mb-3 form-check text-start">
+                <input type="checkbox" class="form-check-input" id="field-remember" name="remember" value="1">
+                <label class="form-check-label" for="field-remember">Recordarme</label>
+            </div>
+            
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary btn-lg w-100">Ingresar</button>
             </div>

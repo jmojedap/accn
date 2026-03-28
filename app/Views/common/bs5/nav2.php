@@ -1,13 +1,6 @@
 <div id="nav2App" class="mb-2">
     <div class="only-lg">
         <ul class="nav nav-tabs" role="tablist">
-            <?php if ( isset($backLink) ) : ?>
-                <li class="nav-item">
-                    <a href="<?= $backLink ?>" class="nav-link"> 
-                        <i class="fa fa-arrow-left"></i>
-                    </a>
-                </li>
-            <?php endif; ?>
             <li class="nav-item" v-for="(element, key) in nav2">
                 <a class="nav-link pointer"
                     v-bind:class="element.class" v-on:click="activateMenu(key)"

@@ -8,34 +8,35 @@ use App\Libraries\DbUtils;
 
 class Sits extends BaseController
 {
-	function __construct() 
-    {
-        $this->db = \Config\Database::connect();
-        $this->sitModel = new SitModel();
+	function __construct()
+	{
+		$this->db = \Config\Database::connect();
+		$this->sitModel = new SitModel();
 		$this->viewsFolder = 'm/sits/';
-        
-        //Local time set
-        date_default_timezone_set("America/Bogota");
-    }
 
-    public function index(){
+		//Local time set
+		date_default_timezone_set("America/Bogota");
+	}
+
+	public function index()
+	{
 		$this->login();
 	}
 
-    /**
+	/**
 	 * Vista para realizar inicio de sesión
 	 * 2022-06-22
 	 */
 	public function login($type = 'password')
 	{
-		if ( isset($_SESSION['logged']) ) {
+		if (isset($_SESSION['logged'])) {
 			return redirect()->to(base_url('m/sits/my_sits'));
 		} else {
 			$data['headTitle'] = 'Iniciar sesión';
 			$data['viewA'] = $this->viewsFolder . 'login';
 			if ($type == 'link') {
 				// Obtener access key por variables GET
-    			$data['accessKey'] = $this->request->getGet('access_key')?? '';
+				$data['accessKey'] = $this->request->getGet('access_key') ?? '';
 				$data['viewA'] = $this->viewsFolder . 'login_link';
 			}
 			return view(TPL_PUBLIC . 'main', $data);
@@ -48,7 +49,7 @@ class Sits extends BaseController
 	 */
 	public function signup()
 	{
-		if ( isset($_SESSION['logged']) ) {
+		if (isset($_SESSION['logged'])) {
 			return redirect()->to(base_url('m/accounts/logged'));
 		} else {
 			$data['headTitle'] = 'Crea tu cuenta';
@@ -67,7 +68,7 @@ class Sits extends BaseController
 	{
 		$role = $_SESSION['role'];
 		$destination = 'm/accounts/profile';
-		if ( $role == 1 ) {
+		if ($role == 1) {
 			$destination = 'admin/users/explore';
 		}
 
@@ -83,7 +84,7 @@ class Sits extends BaseController
 	{
 		$this->session->destroy();
 
-		if ( $type == 'ajax' ) {
+		if ($type == 'ajax') {
 			$data['status'] = 1;
 			return $this->response->setJSON($data);
 		} else {
@@ -92,36 +93,36 @@ class Sits extends BaseController
 	}
 
 	/**
-     * Validar un accessKey para login de usuario.
-     * Si es válido, inicia sesión; si no, redirecciona.
-     * 2025-08-23
-     */
-    public function validateLoginLink(string $accessKey)
-    {
-        // Buscar usuario por accessKey
+	 * Validar un accessKey para login de usuario.
+	 * Si es válido, inicia sesión; si no, redirecciona.
+	 * 2025-08-23
+	 */
+	public function validateLoginLink(string $accessKey)
+	{
+		// Buscar usuario por accessKey
 		$now = date('Y-m-d H:i:s');
 		$condition = "access_key = '{$accessKey}' AND access_key != '' AND access_key_expiry > '{$now}'";
-        $user = DbUtils::row('users', $condition);
+		$user = DbUtils::row('users', $condition);
 
-        if ($user) {
-            // Crear sesión
-            $this->accountModel->createSession($user->email, true);
+		if ($user) {
+			// Crear sesión
+			$this->accountModel->createSession($user->email, true);
 
 			//Fecha y hora del último ingreso
 			$this->accountModel->updateLastLogin($user->id);
 
-            // Inhabilitar el key actual generando uno nuevo
-            $this->accountModel->setAccessKey($user->id);
+			// Inhabilitar el key actual generando uno nuevo
+			$this->accountModel->setAccessKey($user->id);
 
-            // Redirigir al dashboard (o método logged())
-            return redirect()->to(base_url('m/accounts/logged'));
-        } else {
-            // Redirigir a pantalla de error/login
-            return redirect()->to(base_url("m/accounts/login/link"));
-        }
-    }
+			// Redirigir al dashboard (o método logged())
+			return redirect()->to(base_url('m/accounts/logged'));
+		} else {
+			// Redirigir a pantalla de error/login
+			return redirect()->to(base_url("m/accounts/login/link"));
+		}
+	}
 
-// SITS
+	// SITS
 //-----------------------------------------------------------------------------}
 
 	public function mySits()
@@ -140,6 +141,9 @@ class Sits extends BaseController
 	{
 		$data['headTitle'] = 'Crear Sit';
 		$data['viewA'] = $this->viewsFolder . 'add/add';
+		$data['backLink'] = 'm/sits/mis_sits/';
+		$data['pageTitle'] = 'Crear Sit';
+
 		return view(TPL_PUBLIC . 'main', $data);
 	}
 
@@ -153,10 +157,14 @@ class Sits extends BaseController
 		$data['viewA'] = $this->viewsFolder . 'edit/edit';
 		$data['nav2'] = $this->viewsFolder . 'menus/menu';
 		$data['row'] = $this->sitModel->find($id);
+
+		$data['backLink'] = 'm/sits/mis_sits/';
+		$data['pageTitle'] = $data['row']->title;
+
 		return view(TPL_PUBLIC . 'main', $data);
 	}
 
-// CONTENIDO PÚBLICO
+	// CONTENIDO PÚBLICO
 //-----------------------------------------------------------------------------
 
 	public function info($slug)
@@ -180,10 +188,11 @@ class Sits extends BaseController
 		$data['viewA'] = $this->viewsFolder . 'sit/sit';
 		$data['viewB'] = $this->viewsFolder . 'albums/albums';
 		$data['nav2'] = $this->viewsFolder . 'menus/public';
+		$data['albums'] = $this->sitModel->albums($data['row']->id);
 		return view(TPL_PUBLIC . 'main_base', $data);
 	}
 
-// EDICIÓN DEL CONTENIDO
+	// EDICIÓN DEL CONTENIDO
 //-----------------------------------------------------------------------------
 
 	/**
@@ -191,7 +200,7 @@ class Sits extends BaseController
 	 * 2026-01-30
 	 */
 	public function picture($id, $section = 'form')
-	{	
+	{
 		$data['row'] = $this->sitModel->find($id);
 		$data['section'] = $section;
 
@@ -203,6 +212,9 @@ class Sits extends BaseController
 		$data['headTitle'] = $data['row']->title . ' - Foto';
 		$data['viewA'] = $this->viewsFolder . 'picture/picture';
 		$data['nav2'] = $this->viewsFolder . 'menus/menu';
+		$data['pageTitle'] = $data['row']->title;
+		$data['backLink'] = 'm/sits/mis_sits/';
+
 		return $this->pml->view(TPL_PUBLIC . 'main', $data);
 	}
 
@@ -217,6 +229,8 @@ class Sits extends BaseController
 		$data['viewA'] = $this->viewsFolder . 'edit_albums/edit_albums';
 		$data['nav2'] = $this->viewsFolder . 'menus/menu';
 		$data['albums'] = $this->sitModel->albums($id);
+		$data['pageTitle'] = $data['row']->title;
+		$data['backLink'] = 'm/sits/mis_sits/';
 		return view(TPL_PUBLIC . 'main', $data);
 	}
 }

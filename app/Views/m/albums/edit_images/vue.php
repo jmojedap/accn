@@ -97,6 +97,20 @@ var postImages = createApp({
     },
     mounted(){
         //this.getList();
+        const el = document.getElementById('image_gallery');
+        const sortable = Sortable.create(el, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            filter: '.dropdown-options', // Ignore sorting when clicking on dropdown
+            preventOnFilter: false,
+            onEnd: (evt) => {
+                const fileId = evt.item.getAttribute('data-id');
+                const newPosition = evt.newIndex;
+                if (evt.oldIndex !== evt.newIndex) {
+                    this.updatePosition(fileId, newPosition);
+                }
+            }
+        });
     }
 }).mount('#postImages')
 </script>

@@ -39,6 +39,7 @@ class Accounts extends BaseController
 		//Setting variables
 		$userlogin = $this->request->getPost('username');
 		$password = $this->request->getPost('password');
+		$remember = $this->request->getPost('remember');
 
 		$data = $this->accountModel->validateLogin($userlogin, $password);
 
@@ -46,6 +47,16 @@ class Accounts extends BaseController
 		{
 			$data['sessionData'] = $this->accountModel->createSession($userlogin);
 			
+			// Si el usuario marcó 'Recordarme', extendemos la vida de la cookie de sesión a 30 días
+            if ( $remember == 1 ) {
+                $sessionConfig = config('Session');
+                $this->response->setCookie(
+                    $sessionConfig->cookieName,
+                    session_id(),
+                    2592000   // 30 días
+                );
+            }
+
 			$jwt = new \App\Libraries\JWT_Library();
 			$data['token'] = $jwt->encode($data['sessionData'], SKAPP);
 		}

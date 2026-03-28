@@ -1,0 +1,34 @@
+# ACCN | Lineamientos del Proyecto
+
+## 📂 Arquitectura (CodeIgniter 4)
+
+- Este es un proyecto basado en **CodeIgniter 4**.
+- Los controladores deben organizarse exclusivamente en las siguientes subcarpetas dentro de `app/Controllers/`:
+  - `M/`: Para la funcionalidad pública del sitio.
+  - `Admin/`: Para el panel de administración.
+  - `Api/`: Para todos los endpoints de datos JSON.
+- **Sistema de Plantillas**:
+  - Las vistas se arman mediante templates base ubicados en `app/Views/templates/`.
+  - El contenido dinámico de cada página se inserta en el template usando la función `view($viewA)`, o `view($viewB)`.
+- Las rutas del sistema deben agruparse en `app/Config/Routes.php` respetando estos namespaces.
+- El proyecto usa algo de polimorfismo de elementos en la tabla posts, entendiendo el tipo con el campo posts.type_id
+
+## 🎨 Diseño y Estilo
+
+- **Estética**: Diseño minimalista, simple y moderno.
+- **Framework CSS**: Se recomienda usar preferiblemente las clases nativas de **Bootstrap 5**.
+- **Personalización**: El estilo personalizado se centraliza en `public/resources/templates/easypml/style.css` (para el módulo Main).
+- **Consistencia**: Mantener el uso de bordes rectos (`rounded-0`), tipografías limpias y mucho espacio en blanco.
+
+## ⚡ Frontend e interactividad (Vue.js 3)
+
+- Todas las aplicaciones interactivas en las vistas (`app/Views/`) deben ser implementadas con **Vue 3**.
+- En el <head> del template base ya se ha hecho la definición const {createApp} = Vue;, así que no es necesario cargarla en cada VueApp en las vistas.
+- **Comunicación**: Las peticiones a la API deben realizarse mediante la librería **Axios**.
+
+## 🔒 Seguridad y Estándares
+
+- **Base de Datos**: Los IDs de las tablas deben ser autoincrementales de tipo INT/BIGINT.
+- **Clean Code**: Seguir el estándar PSR-12 para el código PHP y mantener los archivos de vista lo más limpios posible delegando la lógica a Vue.
+- **Roles de usuario**: Los roles de usuario se definen por un número entero (1 para admin, 2 para editor, etc), y se guardan en el campo users.role
+- **Control de acceso**: El control de acceso para las rutas se especifica en el archivo app/Config/ACL.php, rutas públicas, rutas para usuarios logueados y rutas específicas por roles.

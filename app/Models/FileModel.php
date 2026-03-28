@@ -221,6 +221,7 @@ class FileModel extends Model
         $aRow['type'] = $file->getMimeType();
         $aRow['file_name'] = $fileName;
         $aRow['size'] = intval($file->getSize() / 1028);
+        $aRow['position'] = $this->getPosition($aRow);
 
         // URLs
         $aRow['url'] = URL_UPLOADS . $folder . $fileName;
@@ -352,6 +353,18 @@ class FileModel extends Model
 
 // COLECCIONES DE ARCHIVOS
 //-----------------------------------------------------------------------------
+
+    /**
+     * Devuelve entero, para el campo position, en el momento de insertar
+     * el registro en la tabla files cuando se carga un archivo.
+     * 2026-03-22
+     */
+    public function getPosition($aRow)
+    {
+        return $this->where('table_id', $aRow['table_id'])
+                    ->where('related_1', $aRow['related_1'])
+                    ->countAllResults();
+    }
 
     /**
      * Actualiza la posición de un archivo dentro de su grupo

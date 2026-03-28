@@ -6,19 +6,13 @@
     <body>
         <?= view('templates/easypml/main/navbar') ?>
         <div class="container">
-            <?php if ( isset($backLink) ) : ?>
-                <div id="backLink" class="only-sm mb-2">
-                    <a class="btn btn-light" href="<?= base_url($backLink) ?>">
-                        <i class="fa fa-arrow-left"></i>
-                    </a>
-                </div>
-            <?php endif; ?>
             <div class="header">
-                <h1 id="page-title">
-                    <?php if ( isset($backLink) ) : ?>
-                        <a class="btn btn-light mr-2 only-lg" href="<?= base_url($backLink) ?>">
+                <h2 id="page-title">
+                    <?php if ( isset($backLink) && isset($pageTitle) ) : ?>
+                        <a class="btn-back-link only-lg" href="<?= base_url($backLink) ?>">
                             <i class="fa fa-arrow-left"></i>
                         </a>
+                        <?= $pageTitle ?>
                     <?php endif; ?>
                 </h1>
                 <?php if ( isset($nav2) ): ?>

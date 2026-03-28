@@ -44,12 +44,36 @@ body{
 
 h1, h2 {
     font-family: 'Rubik', sans-serif;
-    color: var(--color-dark);
-    font-weight: 700;
 }
 
 #page-title {
     font-size: 1.5em;
+}
+
+.btn-back-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: #495057;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-right: 8px;
+    border: none;
+    vertical-align: middle;
+}
+
+.btn-back-link i {
+    font-size: 0.85rem;
+}
+
+.btn-back-link:hover {
+    background-color: #e9ecef;
+    color: #212529;
+    transform: translateX(-2px);
 }
 
 a{
