@@ -148,3 +148,5 @@ nb-configuration.xml
 /phpunit*.xml
 /.phpunit.*.cache
 
+.clinerules
+AGENTS.md

@@ -71,8 +71,8 @@ var signupApp = createApp({
     data(){
         return{
             fields:{
-                display_name: 'Juan Pérez',
-                email: 'jperez@gmail.co',
+                display_name: '',
+                email: '',
             },
             validated: -1,
             validation: {

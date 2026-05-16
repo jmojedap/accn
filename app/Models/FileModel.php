@@ -436,7 +436,7 @@ class FileModel extends Model
      * Crea la miniatura de una imagen en JPG (independiente del formato original)
      * 2026-02-06
      */
-    public function createThumbnail($row, $prefix = 'sm_', $pixels = 120)
+    public function createThumbnail($row, $prefix = 'sm_', $pixels = 320)
     {
         try {
             $source = PATH_UPLOADS . $row->folder . $row->file_name;

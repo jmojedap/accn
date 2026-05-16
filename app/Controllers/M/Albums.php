@@ -25,6 +25,7 @@ class Albums extends BaseController
     public function images($albumId)
     {
         $data['row'] = $this->albumModel->getRow($albumId);
+        $data['sit'] = $this->albumModel->getRow($data['row']->parent_id);
         $data['images'] = $this->albumModel->images($albumId);
 
         $data['headTitle'] = $data['row']->title;

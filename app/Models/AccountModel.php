@@ -49,12 +49,20 @@ class AccountModel extends UserModel
         return $data;
     }
 
+    /**
+     * Convierte un array de input en un array listo para guardar en la tabla users.
+     * 2026-05-16
+     */
     public function inputToRow($input)
     {
         $aRow = $input;
         $aRow['role'] = 21;
-        $aRow['updater_id'] = $this->session->get('user_id');
         $aRow['updated_at'] = date('Y-m-d H:i:s');
+        
+        // Verificar si existe sesion de usuario de edición
+        if ( session()->has('user_id') ) {
+            $aRow['updater_id'] = session()->get('user_id');
+        }
         
         //Creación de usuario
         if ( !isset($aRow['id']) ) {
@@ -124,7 +132,7 @@ class AccountModel extends UserModel
     /**
      * Enviar por correo electrónico un link de inicio de sesión
      * 
-     * @param array|object $user
+     * @param object $user
      * @param string $appName
      * @return array
      */
@@ -133,7 +141,8 @@ class AccountModel extends UserModel
         $data = [
             'status' => 0,
             'message' => 'No fue posible enviar el correo electrónico',
-            'link' => ''
+            'link' => '',
+            'env' => ENV
         ];
 
         $accessKey = $this->setAccessKey($user->id, 'key');
@@ -147,11 +156,12 @@ class AccountModel extends UserModel
                 'to' => $user->email,
                 'subject' => 'Ingresa a ' . $appName,
                 'html_message' => $this->loginLinkMessage($dataMessage)
-                //'html_message' => '<p>Hola ' . $user->display_name . ',</p><p>Haz clic en el siguiente enlace para acceder a ' . $appName . ':</p><p><a href="' . $link . '">' . $link . '</a></p>'
             ]);
             if ( $result['status'] == 1 ) {
                 $data['status'] = 1;
                 $data['message'] = "El link fue enviado al correo electrónico {$user->email}";
+            } else {
+                $data['message'] = "Error al enviar el correo electrónico: {$result['error']}";
             }
         } elseif ( ENV == 'development') {
             // No se envía correo, se envía datos por ajax

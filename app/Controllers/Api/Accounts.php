@@ -158,6 +158,7 @@ class Accounts extends BaseController
         if ( count($errors) == 0) {
             $input = $this->request->getPost();
             $aRow = $this->accountModel->inputToRow($input);
+            
             $data['savedId'] = $this->accountModel->insert($aRow);
             
             //Si se creó, datos complementarios
