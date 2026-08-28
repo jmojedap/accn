@@ -4,102 +4,131 @@
 var conversationApp = createApp({
     data(){
         return{
-            conversationId: <?= $conversation['id'] ?>,
-            messages: <?php echo json_encode($messages); ?>,
+            conversationId: <?= (int) $conversation['id'] ?>,
+            messages: <?= json_encode($messages, JSON_UNESCAPED_UNICODE) ?>,
             prompt: '',
             loading: false,
             deleting: false,
             selectable: false,
             selected: [],
-            respuesta:'',
-            htmlResponse: '',
             chaterInfo: {
-                name: '<?= $sitAgent->title ?>',
-                picture: '<?= $sitAgent->url_thumbnail ?>'
+                name: <?= json_encode($sitAgent->title ?? 'Chat', JSON_UNESCAPED_UNICODE) ?>,
+                picture: <?= json_encode($sitAgent->url_thumbnail ?? '', JSON_UNESCAPED_UNICODE) ?>
             },
             deleteConfirmationTexts : {
                 title: 'Borrar mensajes',
-                text: '¿Confirma la eliminación de todos los mensajes?',
+                text: 'Confirmas la eliminacion de los mensajes seleccionados?',
                 buttonText: 'Eliminar'
             },
             entityInfo: {
                 plural: 'mensajes',
-                singular: 'mensaje' 
+                singular: 'mensaje'
             }
         }
     },
     methods: {
         handleSubmit: function(){
-            this.loading = true
-            var newMessage = {
-                role:'user',
-                text: this.prompt,
-            }
-            this.addNewMessage(newMessage)
-            this.getResponse()
-        },
-        getResponse: function() {
-            if (!this.prompt) {
-                console.warn("El input está vacío");
+            const promptText = this.prompt.trim();
+
+            if (promptText === '' || this.loading) {
                 return;
             }
 
+            const userMessage = this.addNewMessage({
+                role: 'user',
+                text: promptText,
+            });
+
+            this.prompt = '';
+            this.resetTextarea();
+            this.getResponse(promptText, userMessage);
+        },
+        getResponse: function(promptText, userMessage) {
             this.loading = true;
 
             const payload = {
-                prompt: this.prompt.trim(),
+                prompt: promptText,
                 conversation_id: this.conversationId,
             };
-            
-            this.prompt = ''; // Limpiar el input del usuario antes de enviar
 
             axios.post(URL_API + 'ai_generate/get_answer/', payload)
             .then(response => {
-                this.respuesta = response.data.responseText ?? 'Ocurrió un error al obtener la respuesta.';
-                this.htmlResponse = this.markdownToHtml(this.respuesta);
+                const data = response.data || {};
 
-                var newMessage = {
-                    role:'model',
-                    text: this.htmlResponse
+                if (userMessage && data.user_message_id) {
+                    userMessage.id = data.user_message_id;
                 }
-                this.addNewMessage(newMessage)
-                this.loading = false;
-                this.prompt = '';
+
+                const responseText = data.response_text || 'No fue posible obtener respuesta.';
+
+                this.addNewMessage({
+                    id: data.ai_message_id || null,
+                    role: 'model',
+                    text: responseText,
+                });
+
+                if (data.error) {
+                    console.error(data.error);
+                }
             })
             .catch(error => {
                 console.error(error);
-                this.htmlResponse = '<p>Error al obtener la respuesta del Chat.</p>';
+                this.addNewMessage({
+                    role: 'model',
+                    text: 'Error al obtener la respuesta del chat.',
+                });
+            })
+            .finally(() => {
+                this.loading = false;
+                // El textarea está dentro de un fieldset que se deshabilita
+                // durante la respuesta. Esperamos a que Vue actualice el DOM
+                // antes de devolverle el foco.
+                this.$nextTick(() => {
+                    this.focusInput();
+                });
             });
         },
-        // Convertir respuesta de Markdown a HTML
         markdownToHtml: function(markdownText) {
-            // Convertir markdown a HTML
-            const rawHtml = marked.parse(markdownText); //
+            const text = markdownText ? String(markdownText) : '';
 
-            // Sanitizar si DOMPurify está disponible
-            var htmlResponse = window.DOMPurify
+            if (typeof marked === 'undefined') {
+                return text;
+            }
+
+            const rawHtml = marked.parse(text);
+
+            return window.DOMPurify
                 ? DOMPurify.sanitize(rawHtml)
                 : rawHtml;
-
-            return htmlResponse;
         },
         addNewMessage(newMessage) {
+            if (!newMessage.local_id) {
+                newMessage.local_id = 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+            }
+
             this.messages.push(newMessage);
 
             this.$nextTick(() => {
                 this.aplicarFadeInUltimoMensaje();
                 this.scrollToDown();
-                document.getElementById('user-input').focus();
+                this.focusInput();
             });
+
+            return newMessage;
         },
         aplicarFadeInUltimoMensaje() {
             const chatContainer = document.getElementById('chat-messages');
-            const mensajes = chatContainer.querySelectorAll('.chat-mensaje');
+
+            if (!chatContainer) {
+                return;
+            }
+
+            const mensajes = chatContainer.querySelectorAll('.message-row');
             const ultimoMensaje = mensajes[mensajes.length - 1];
 
             if (ultimoMensaje) {
                 ultimoMensaje.classList.add('fade-enter');
-                void ultimoMensaje.offsetWidth; // Forzar reflow
+                void ultimoMensaje.offsetWidth;
 
                 setTimeout(() => {
                     ultimoMensaje.classList.remove('fade-enter');
@@ -112,59 +141,114 @@ var conversationApp = createApp({
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         },
+        focusInput() {
+            const input = this.$refs.userInput || document.getElementById('user-input');
+
+            if (input && !this.selectable && !this.loading) {
+                input.focus();
+
+                const cursorPosition = input.value.length;
+                input.setSelectionRange(cursorPosition, cursorPosition);
+            }
+        },
+        resetTextarea() {
+            const textarea = document.getElementById('user-input');
+
+            if (textarea) {
+                textarea.style.height = 'auto';
+            }
+        },
         handleKeyDown(event) {
-            if (!event.shiftKey) {
-                event.preventDefault();
-                if (this.prompt.trim() !== '') {
-                    this.handleSubmit();
-                }
+            if (event.shiftKey) {
+                return;
+            }
+
+            event.preventDefault();
+
+            if (this.prompt.trim() !== '' && !this.loading) {
+                this.handleSubmit();
             }
         },
         messageClass(message){
-            if ( message.role == 'user') {
-                return 'chat-pregunta'
-            }
-            return 'chat-respuesta'
+            return message.role === 'user' ? 'chat-pregunta' : 'chat-respuesta';
         },
         autoExpand(event) {
             const textarea = event.target;
-            textarea.style.height = 'auto'; // Resetear altura previa
-            textarea.style.height = textarea.scrollHeight + 'px'; // Ajustar a contenido
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
         },
         setSelected: function(messageId){
-            this.selected = []
-            this.selected.push(messageId)
+            if (!messageId) {
+                return;
+            }
+
+            this.selected = [messageId];
         },
         deleteSelected: function(){
-            this.loading = true
-            var formValues = {
-                selected: this.selected,
-                conversation_id: this.conversationId
+            const selectedIds = this.selected.filter(Boolean);
+
+            if (selectedIds.length === 0 || this.deleting) {
+                return;
             }
+
+            this.deleting = true;
+
+            const formValues = {
+                selected: selectedIds,
+                conversation_id: this.conversationId
+            };
+
             axios.delete(URL_API + 'ai_generate/delete_messages/', { data: formValues })
             .then(response => {
-                if ( response.data.qty_deleted > 0 ) {
-                    toastr['success']('Mensajes eliminados')
-                    this.hideDeletedMessages()
-                } else {
-                    toastr['warning']('No se eliminaron mensajes')
+                if (response.data.qty_deleted > 0) {
+                    if (window.toastr) {
+                        toastr.success('Mensajes eliminados');
+                    }
+
+                    this.hideDeletedMessages(selectedIds);
+                } else if (window.toastr) {
+                    toastr.warning('No se eliminaron mensajes');
                 }
-                //Ocultar modal
-                $('#modalDeleteSelected').modal('hide') 
-                this.loading = false
             })
-            .catch( function(error) {console.log(error)} )
+            .catch(error => {
+                console.error(error);
+
+                if (window.toastr) {
+                    toastr.error('No fue posible eliminar los mensajes');
+                }
+            })
+            .finally(() => {
+                this.deleting = false;
+                this.hideDeleteModal();
+            });
         },
-        hideDeletedMessages: function(){
-            //Ocultar mensajes eliminados
-            this.messages = this.messages.filter(message => message.id !== this.selected[0])
-            this.selected = []
+        hideDeletedMessages: function(selectedIds){
+            const deletedIds = new Set(selectedIds.map(id => String(id)));
+
+            this.messages = this.messages.filter(message => !deletedIds.has(String(message.id)));
+            this.selected = [];
+        },
+        hideDeleteModal: function(){
+            const modalElement = document.getElementById('modalDeleteSelected');
+
+            if (window.bootstrap && modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+
+                if (modal) {
+                    modal.hide();
+                    return;
+                }
+            }
+
+            if (window.jQuery) {
+                $('#modalDeleteSelected').modal('hide');
+            }
         }
     },
     mounted(){
         this.$nextTick(() => {
             this.scrollToDown();
-            document.getElementById('user-input').focus();
+            this.focusInput();
         });
     }
 }).mount('#conversationApp');

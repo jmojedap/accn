@@ -35,9 +35,9 @@
 
         <!-- Chat Area -->
         <div class="chat-messages" id="chat-messages" ref="chatMessages">
-            <div v-for="(message, index) in messages" :key="index" class="message-row" :class="message.role">
+            <div v-for="(message, index) in messages" :key="message.id || message.local_id || index" class="message-row" :class="message.role">
                 <div class="message-checkbox" v-show="selectable">
-                    <input type="checkbox" v-model="selected" :value="message.id">
+                    <input type="checkbox" v-model="selected" :value="message.id" :disabled="!message.id">
                 </div>
                 <!-- Avatar -->
                 <div class="message-avatar">
@@ -53,12 +53,12 @@
                         <div v-html="markdownToHtml(message.text)"></div>
                     </div>
                 </div>
-                <div class="dropdown">
+                <div class="dropdown" v-if="message.id">
                     <button class="btn-tool" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-ellipsis-v"></i>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" @click="setSelected(message.id)" data-bs-toggle="modal" data-bs-target="#modalDeleteSelected">Borrar</a></li>
+                        <li><a class="dropdown-item" href="#" @click.prevent="setSelected(message.id)" data-bs-toggle="modal" data-bs-target="#modalDeleteSelected">Borrar</a></li>
                     </ul>
                 </div>
             </div>
@@ -80,7 +80,8 @@
                     <div class="input-wrapper shadow-sm">
                         <textarea 
                             name="prompt" 
-                            id="user-input" 
+                            id="user-input"
+                            ref="userInput" 
                             v-model="prompt" 
                             rows="1"
                             @input="autoExpand($event)"
@@ -91,7 +92,7 @@
                         ></textarea>
                     </div>
 
-                    <button type="submit" class="btn-send shadow-sm" :disabled="!prompt.trim() && !loading">
+                    <button type="submit" class="btn-send shadow-sm" :disabled="!prompt.trim() || loading">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </fieldset>

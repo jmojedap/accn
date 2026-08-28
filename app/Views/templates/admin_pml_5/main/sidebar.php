@@ -33,9 +33,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="<?= URL_APP ?>accounts/logout">
-                            <i class="fa-fw fa fa-solid fa-right-from-bracket"></i>Cerrar sesión
-                        </a>
+                        <!-- Logout usa POST para que un enlace externo no pueda cerrar la sesión. -->
+                        <form method="post" action="<?= URL_APP ?>accounts/logout">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="btn btn-link text-start w-100">
+                                <i class="fa-fw fa fa-solid fa-right-from-bracket"></i>Cerrar sesión
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </li>
@@ -44,6 +48,35 @@
 </aside>
 
 <script>
+/**
+ * Limita la navegación visible del editor a contenido, archivos e ítems.
+ * La seguridad real sigue siendo aplicada por los filtros de Routes.php.
+ */
+function navigationForRole(elements, role) {
+    if (role !== 3) {
+        return elements;
+    }
+
+    return elements.reduce((allowedElements, element) => {
+        if (['Posts', 'Archivos'].includes(element.text)) {
+            allowedElements.push(element);
+        }
+
+        if (element.text === 'Ajustes') {
+            const itemsSettings = {
+                ...element,
+                subelements: element.subelements.filter(subelement => subelement.text === 'Ítems'),
+            };
+            allowedElements.push(itemsSettings);
+        }
+
+        return allowedElements;
+    }, []);
+}
+
+// Prepara el menú según el rol antes de calcular sus elementos activos.
+nav1Elements = navigationForRole(nav1Elements, APP_RID);
+
 //Activación inicial de elementos actuales
 //-----------------------------------------------------------------------------
     nav1Elements.forEach(element => {

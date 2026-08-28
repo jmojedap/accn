@@ -31,11 +31,27 @@ var misSitsApp = createApp({
             this.currentSit = this.sits.find(sit => sit.id == sitId);
         },
         deleteElement: function(){
-            axios.get(URL_API + 'sits/delete/' + this.currentSit.id)
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(function(error) { console.log(error) })
+            const idCode = this.currentSit.idcode;
+            this.deleting = true;
+
+            axios.delete(URL_API + 'sits/delete/' + idCode)
+                .then(response => {
+                    if (response.data.code === 'DELETED') {
+                        this.sits = this.sits.filter(sit => sit.idcode != idCode);
+                        toastr['info']('Sit eliminado');
+                    } else {
+                        toastr['warning']('No se pudo eliminar el Sit');
+                    }
+
+                    $('#modalSingleDelete').modal('hide');
+                })
+                .catch(error => {
+                    console.log(error);
+                    toastr['error']('Ocurrió un error al eliminar el Sit');
+                })
+                .finally(() => {
+                    this.deleting = false;
+                });
         },
     },
     mounted(){

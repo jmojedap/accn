@@ -1,4 +1,9 @@
 <div id="valuesApp">
+    <div class="py-2">
+        <button class="btn btn-primary w120p" v-on:click="updateItemsListFile" v-bind:disabled="loading">
+            Actualizar JS
+        </button>
+    </div>
     <div class="row">
         <div class="col-md-4">
             <div class="row mb-3">

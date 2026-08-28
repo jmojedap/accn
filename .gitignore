@@ -104,7 +104,7 @@ app/ConfigS/
 app/Config/App.php
 app/Config/Database.php
 app/Config/Constants.php
-app/Config/Acl.php
+# Acl.php se versiona porque contiene la política común de roles y rutas.
 app/ConfigServer/
 
 

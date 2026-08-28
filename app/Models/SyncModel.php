@@ -1,9 +1,45 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\DbUtils;
 
 class SyncModel extends Model
 {
+
+    protected $table      = 'sis_tables';
+    protected $primaryKey = 'id';
+
+    protected $returnType     = 'object';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'name', 'description', 'server_row_count', 'local_row_count', 
+        'last_sync_at', 'sync_chunk_size'
+    ];
+
+    protected $useTimestamps = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = '';
+
+    protected $validationRules = [
+        'name' => 'required',
+    ];
+    protected $skipValidation     = false;
+
+    /**
+     * Tables info desde la tabla sis_tables, con el número de registros en cada tabla (server_row_count)
+     * 2026-06-07
+     * @return array
+     */
+    public function tablesInfo()
+    {
+        $db = db_connect();
+        $tables = $db->table('sis_tables')->get()->getResultArray();
+
+        return $tables;
+    }
+
 
     /**
      * Exportar tabla a JSON en partes de N registros.
@@ -87,12 +123,17 @@ class SyncModel extends Model
             ];
         }
 
+        
         $files = get_filenames($folderPath, false);
         $inserted = 0;
         $updated  = 0;
-
+        
         $db = db_connect();
 
+        // Eliminar registros antes de sincronizar
+        $db->table($tableName)->truncate();
+
+        //Recorrer cada archivo JSON en la carpeta
         foreach ($files as $file) {
             if (pathinfo($file, PATHINFO_EXTENSION) !== 'json') continue;
 
@@ -102,6 +143,7 @@ class SyncModel extends Model
 
             if (!is_array($records)) continue;
 
+            //Recorrer cada registro del archivo JSON
             foreach ($records as $record) {
                 if (!isset($record[$primaryKey])) continue;
 
@@ -187,6 +229,73 @@ class SyncModel extends Model
             'deleted_files' => $deletedCount,
             'failed_files' => $errors
         ];
+    }
+
+    /**
+     * Obtiene el estado de las tablas de la base de datos y el número de registros
+     * 2026-06-07
+     * @return array
+     */
+    public function getDbTablesStatus()
+    {
+        $db = db_connect();
+        $tablesStatus = [];
+
+        foreach ($db->listTables() as $tableName) {
+            $tablesStatus[] = (object) [
+                'name' => $tableName,
+                'num_rows' => $db->table($tableName)->countAll(),
+            ];
+        }
+
+        return $tablesStatus;
+    }
+
+    /**
+     * Actualiza la cantidad de registros de cada tabla en el servidor, 
+     * pone los valores en la tabla sis_tables.
+     * 2026-06-07
+     */
+    public function updateServerTablesRowsCount()
+    {
+        // Cargar la librería Pml para usar funcion de llamar datos de url, 
+        $this->pml = new \App\Libraries\Pml();
+
+        $url = URL_SYNC . 'db_tables_status';
+        $tablesData = $this->pml->getUrlContent($url);
+        $tablesData = json_decode($tablesData, true);
+
+        log_message('debug', "URL consultada para actualizar filas: {$url}");
+        
+        $data['updated_tables'] = [];
+
+        // Actualizar la tabla sis_tables con la información obtenida
+        foreach ($tablesData as $table) {
+            $rowData = [
+                'name' => $table['name'],
+                'server_row_count' => $table['num_rows'],
+            ];
+            $data['updated_tables'][] = DbUtils::saveRow('sis_tables', "name = '{$table['name']}'", $rowData);
+        }
+
+        return $data;
+    }
+
+    public function updateTablesRowsCount()
+    {
+        $tablesData = $this->getDbTablesStatus();
+
+        $data['updated_tables'] = [];
+        
+        foreach ($tablesData as $table) {
+            $rowData = [
+                'name' => $table->name,
+                'local_row_count' => $table->num_rows,
+            ];
+            $data['updated_tables'][] = DbUtils::saveRow('sis_tables', "name = '{$table->name}'", $rowData);
+        }
+
+        return $data;
     }
 
 }

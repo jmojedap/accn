@@ -3,28 +3,21 @@
 namespace App\Controllers\M;
 
 use App\Controllers\BaseController;
-use App\Models\AiGenerateModel;
 use App\Models\AiConversationModel;
 use App\Models\AiMesagesModel;
 
 class Chat extends BaseController
 {
+    protected string $viewsFolder;
+    protected AiConversationModel $aiConversationModel;
+    protected AiMesagesModel $aiMesagesModel;
+
     public function __construct()
-	{
+    {
         $this->viewsFolder = 'm/chat/';
-		$this->aiMesagesModel = new AiMesagesModel();
+        $this->aiMesagesModel = new AiMesagesModel();
         $this->aiConversationModel = new AiConversationModel();
-		/*$this->db = \Config\Database::connect();
-		$this->userModel = new UserModel();
-        $this->viewsFolder = 'admin/users/';
-        $this->backLink = URL_ADMIN . 'users/explore';
-        $this->entityInfo = [
-            'controller' => 'users',
-            'singular' => 'Usuario',
-            'plural' => 'Usuarios',
-            'isMale' => 1,
-        ];*/
-	}
+    }
 
     public function index()
     {
@@ -32,19 +25,28 @@ class Chat extends BaseController
     }
 
     /**
-     * Vista de conversación chat
-     * 2026-03-04
+     * Vista de conversacion chat.
      */
     public function conversation($conversationId)
     {
         $conversation = $this->aiConversationModel->find($conversationId);
+
+        if ($conversation === null) {
+            return redirect()->to('m/info/no_permitido');
+        }
+
         $sitAgent = $this->aiConversationModel->sitAgent($conversation['agent_id']);
+        $sitAgent = $sitAgent ?? (object) [
+            'title' => 'Chat',
+            'url_thumbnail' => URL_IMG . 'users/user.png',
+        ];
 
         $data['headTitle'] = 'Chat';
         $data['conversation'] = $conversation;
         $data['sitAgent'] = $sitAgent;
         $data['viewA'] = $this->viewsFolder . 'conversation/conversation';
-        $data['messages'] = $this->aiMesagesModel->getMessages($conversationId);  
+        $data['messages'] = $this->aiMesagesModel->getMessages((int) $conversationId);
+
         return view(TPL_PUBLIC . 'main', $data);
     }
 }

@@ -176,6 +176,8 @@ class Items extends BaseController
         file_put_contents($filePath, $jsContent);
 
         $data['message'] = 'Archivo actualizado';
+        $data['result'] = true;
+        
         return $this->response->setJSON($data);
     }
 }

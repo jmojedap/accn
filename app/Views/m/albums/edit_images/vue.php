@@ -73,7 +73,7 @@ var postImages = createApp({
         setMainImage: function(key){
             this.setCurrent(key)
             var fileId = this.currentImage.id
-            axios.get(URL_API + 'posts/set_main_image/' + this.postId + '/' + fileId)
+            axios.put(URL_API + 'posts/set_main_image/' + this.postId + '/' + fileId)
             .then(response => {
                 if ( response.data.status == 1 ) {
                     this.getList()

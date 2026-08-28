@@ -155,7 +155,7 @@ var valuesApp = createApp({
         },
         deleteElement: function(){
             this.deleting = true
-            axios.get(URL_API + 'items/delete_row/' + this.rowId + '/' + this.currCategory.code)
+            axios.delete(URL_API + 'items/delete_row/' + this.rowId + '/' + this.currCategory.code)
             .then(response => {
                 console.log(response.data.result)
                 if ( response.data.result === true )
@@ -207,6 +207,17 @@ var valuesApp = createApp({
             })
             .catch(function (error) { console.log(error) })
         },
+        updateItemsListFile: function() {
+            axios.post(URL_API + 'items/update_items_list_file/')
+            .then(response => {
+                if ( response.data.result === true ) {
+                    toastr['success']('Archivo de lista actualizado')
+                } else {
+                    toastr['error']('No se pudo actualizar el archivo de lista')
+                }
+            })
+            .catch(function (error) { console.log(error) })
+        }
     },
     mounted(){
         //this.getCategories()

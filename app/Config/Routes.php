@@ -96,6 +96,7 @@ $routes->group('api/sync', static function ($routes) {
     $routes->get('generate_files/(:any)', 'Api\Sync::generateFiles/$1');
     $routes->get('sync_table/(:any)', 'Api\Sync::syncTable/$1');
     $routes->get('delete_generated_files/(:any)', 'Api\Sync::deleteGeneratedFiles/$1');
+    $routes->get('db_tables_status', 'Api\Sync::dbTablesStatus');
 });
 
 // -------------------------- USERS -------------------------------------------------

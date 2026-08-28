@@ -58,10 +58,12 @@ $session = session();
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?= URL_APP ?>accounts/profile">Mi Perfil</a></li>
                                 <li><a class="dropdown-item" href="<?= URL_APP ?>sits/mis_sits">Mis Sits</a></li>
-                                <?php if ( in_array($session->role, [1,2]) ) : ?>
-                                    <li><a class="dropdown-item" href="<?= URL_ADMIN ?>users/explore">Administrador</a></li>  
+                                <?php if (in_array((int) $session->role, [1, 2, 3], true)) : ?>
+                                    <!-- El editor entra directamente al módulo de contenido permitido. -->
+                                    <?php $panelEntry = (int) $session->role === 3 ? 'posts/explore' : 'users/explore'; ?>
+                                    <li><a class="dropdown-item" href="<?= URL_ADMIN . $panelEntry ?>">Panel</a></li>
                                 <?php endif; ?>
-                                <li><a class="dropdown-item" href="<?= URL_APP ?>accounts/logout">Cerrar Sesión</a></li>
+                                <li><a class="dropdown-item" href="#" v-on:click.prevent="logout">Cerrar Sesión</a></li>
                             </ul>
                         </li>
                     <?php else : ?>
@@ -141,7 +143,7 @@ $session = session();
                 }
             },
             logout: function() {
-                axios.get(URL_API + 'accounts/logout/ajax')
+                axios.post(URL_APP + 'accounts/logout/ajax')
                     .then(response => {
                         if (response.data.status == 1) {
                             window.location = URL_APP + 'accounts/login'

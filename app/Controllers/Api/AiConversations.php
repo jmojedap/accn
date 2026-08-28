@@ -39,6 +39,7 @@ class AiConversations extends BaseController
         //Si no existe crear
         $sitAgent = $this->aiConversationModel->sitAgent($aRow['agent_id']);
 
+        $aRow['system_instruction_key'] = $sitAgent->system_instruction_key;
         $aRow['created_at'] = date('Y-m-d H:i:s');
         $aRow['updated_at'] = date('Y-m-d H:i:s');
         $aRow['user_1_id'] = $_SESSION['user_id'];

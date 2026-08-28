@@ -1,63 +1,95 @@
  <div id="syncPanel">
+    <div class="mb-3">
+        <button class="btn btn-success me-2" v-on:click="updateRowsCount()">
+            Actualizar filas
+        </button>
+    </div>
     <table class="table bg-white">
         <thead>
             <th>Nombre</th>
-            <th>Título</th>
-            <th>sync_key</th>
-            <th></th>
+            <th>Filas Server</th>
+            
+
+            <!-- COLUMNAS PRODUCCION -->
+            <th v-show="env == 'production'">Generar</th>
+            <th v-show="env == 'production'">sync_key</th>
+            <th v-show="env == 'production'">Generación</th>
+
+            <!-- COLUMNAS LOCAL --> 
+            <th v-show="env == 'development'">Filas Local</th>
+            <th v-show="env == 'development'">Diferencia</th>
+            <th v-show="env == 'development'">Sincronizar</th>
+            <th v-show="env == 'development'">Insertados</th>
+            <th v-show="env == 'development'">Actualizados</th>
+            <th v-show="env == 'development'">Fecha sincronización</th>
+            <th v-show="env == 'development'">Hace</th>
         </thead>
         <tbody>
             <tr v-for="(table, key) in tables">
                 <td>{{ table.name }}</td>
-                <td>{{ table.title }}</td>
-                <td>
+                <td>{{ table.server_row_count }}</td>
+
+                <!-- COLUMNAS PRODUCCION -->
+                <td width="100px" v-show="env == 'production'">
+                    <button class="btn btn-light btn-sm" v-on:click="generateFiles(key)" v-bind:disabled="table.status == 'loading'">
+                        <span v-show="table.status == 'loading'">Generando...</span>
+                        <span v-show="table.status != 'loading'">Generar</span>
+                    </button>
+                </td>
+                <td v-show="env == 'production'">
                     <span v-show="table.table_key != ''">
-                        {{ table.name}}_{{ table.table_key }}_{{ table.qty_files }}
+                        {{ table.name }}-{{ table.table_key }}-{{ table.qty_files }}
                     </span>
                 </td>
-                <td width="100px">
-                    <button class="btn btn-light" v-on:click="generateFiles(key)">
-                        Generar
+                <td v-show="env == 'production'">
+                    <span v-show="table.qty_files > 0" class="badge badge-success">
+                        {{ table.qty_files }} archivos
+                    </span>
+                    <span v-show="table.qty_rows > 0" class="badge badge-primary">
+                        {{ table.qty_rows }} registros
+                    </span>
+                </td>
+                
+                <!-- COLUMNAS LOCAL -->
+                <td v-show="env == 'development'">
+                    <span v-show="table.local_row_count != null">
+                        {{ table.local_row_count }}
+                    </span>
+                </td>
+
+                <!-- DIFERENCIA -->
+                <td v-show="env == 'development'">
+                    <span v-show="table.local_row_count != null && table.server_row_count != null">
+                        {{ table.server_row_count - table.local_row_count }}
+                    </span>
+                </td>
+                    
+                <!-- BOTÓN SINCRONIZAR -->
+                <td width="100px" v-show="env == 'development'">
+                    <button class="btn btn-primary btn-sm" v-on:click="syncTable(key)" v-bind:disabled="table.status == 'updating'">
+                        <span v-show="table.status == 'updating'">Sincronizando...</span>
+                        <span v-show="table.status != 'updating'">Sincronizar</span>
                     </button>
+                </td>
+                <td v-show="env == 'development'">
+                    <span class="badge badge-success" v-show="table.inserted != null">
+                        {{ table.inserted }}
+                    </span>
+                </td>
+                <td v-show="env == 'development'">
+                    <span class="badge badge-success" v-show="table.updated_at != null">
+                        {{ table.updated_at }}
+                    </span>
+                </td>
+                <td v-show="env == 'development'">
+                    {{ dateFormat(table.last_sync_at) }}
+                </td>
+                <td v-show="env == 'development'">
+                    {{ ago(table.last_sync_at) }}
                 </td>
             </tr>
         </tbody>
     </table>
  </div>
- 
- <script>
- var syncPanel = createApp({
-    data(){
-        return{
-            loading: false,
-            fields: {},
-            currentIndex: 0,
-            currentTable: {},
-            tables: [
-                {name: 'items', title: 'Ítems', qty_files: 0, files: [], table_key: ''},
-                {name: 'users', title: 'Users', qty_files: 0, files: [], table_key: ''},
-                {name: 'posts', title: 'Posts', qty_files: 0, files: [], table_key: ''},
-            ]
-        }
-    },
-    methods: {
-        setCurrent: function(newIndex){
-            this.currentIndex = newIndex;
-            this.currentTable = this.tables[newIndex];
-        },
-        generateFiles: function(tableIndex){
-            this.setCurrent(tableIndex)
-            axios.get('<?= URL_API ?>' + 'sync/generate_files/' + this.currentTable.name)
-            .then(response => {
-                this.currentTable.files = response.data.files
-                this.currentTable.qty_files = response.data.qty_files
-                this.currentTable.table_key = response.data.prefix
-            })
-            .catch(function(error) { console.log(error) })
-        },
-    },
-    mounted(){
-        //this.getList()
-    }
- }).mount('#syncPanel')
- </script>
+
+ <?= view('admin/sync/panel/panel_vue') ?>

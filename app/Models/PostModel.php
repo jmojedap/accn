@@ -13,8 +13,9 @@ class PostModel extends Model
 
     protected $allowedFields = [
         'idcode', 
-        'title', 'slug', 'content', 'content_json', 'keywords', 'excerpt',
+        'title', 'slug', 'content', 'content_json', 'keywords', 'excerpt', 'visibility',
         'type_id', 'status', 'published_at', 'parent_id',
+        'text_1', 'text_2', 'text_3',
         'image_id', 'url_image', 'url_thumbnail',
         'creator_id', 'updater_id'
     ];

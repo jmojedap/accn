@@ -49,6 +49,17 @@ class Sits extends BaseController
     }
 
     /**
+     * Elimina un Sit mediante la función estándar de PostModel.
+     * 2026-07-22
+     */
+    public function delete($idCode)
+    {
+        $data = $this->sitModel->deleteByIdCode($idCode, $this->session);
+
+        return $this->response->setJSON($data);
+    }
+
+    /**
      * JSON
      * Actualizar la imagen de un sit, tabla posts
      * 2026-02-18

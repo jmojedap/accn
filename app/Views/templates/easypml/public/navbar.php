@@ -1,3 +1,10 @@
+<?php
+// El navbar público también puede renderizarse con una sesión activa.
+// En ese caso ofrece un formulario POST para cerrar sesión con protección CSRF.
+$session = session();
+$isAuthenticated = $session->get('logged') === true;
+?>
+
 <div id="navbarApp">
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark">
         <div class="container">
@@ -36,16 +43,29 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav -2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= URL_APP ?>accounts/login_link" role="button">
-                            Ingresar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= URL_APP ?>accounts/signup" role="button">
-                            Registrarme
-                        </a>
-                    </li>
+                    <?php if ($isAuthenticated) : ?>
+                        <!-- Logout usa POST; la barra de direcciones no debe ejecutar esta acción por GET. -->
+                        <li class="nav-item">
+                            <form method="post" action="<?= site_url('m/accounts/logout') ?>" class="d-inline">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="nav-link btn btn-link border-0 bg-transparent">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </li>
+                    <?php else : ?>
+                        <!-- Estas acciones permanecen públicas para usuarios sin sesión. -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URL_APP ?>accounts/login_link" role="button">
+                                Ingresar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URL_APP ?>accounts/signup" role="button">
+                                Registrarme
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

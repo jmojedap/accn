@@ -8,27 +8,40 @@ var addSitApp = createApp({
         return{
             loading: false,
             fields: {
-                type_id: '101',
-                title: 'Probando',
-                content: 'Contenido de prueba',
+                title: '',
+                content: '',
             },
         }
     },
     methods: {
         handleSubmit: function(){
+            const form = document.getElementById('sitForm');
+
+            if (!form.reportValidity()) {
+                return;
+            }
+
             this.loading = true;
-            let formData = new FormData();
-            formData.append('type_id', this.fields.type_id);
-            formData.append('title', this.fields.title);
-            formData.append('content', this.fields.content);
+            const formData = new FormData(form);
+            formData.set('type_id', '101');
+
             axios.post(URL_API + 'posts/create', formData)
                 .then(response => {
-                    console.log(response.data);
+                    if (response.data.savedId > 0) {
+                        toastr['success']('Sit creado');
+                        window.location = URL_MOD + 'sits/mis_sits/';
+                        return;
+                    }
+
+                    toastr['error']('No se pudo crear el Sit');
                 })
                 .catch(error => {
-                    this.loading = false;
                     console.log(error);
-                }); 
+                    toastr['error']('Ocurrió un error al crear el Sit');
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
         },
     },
     mounted(){

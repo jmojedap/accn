@@ -13,7 +13,7 @@ class SitModel extends PostModel
 
     protected $allowedFields = [
         'idcode', 
-        'title', 'slug', 'content', 'content_json', 'keywords', 'excerpt',
+        'title', 'slug', 'content', 'content_json', 'keywords', 'excerpt', 'visibility',
         'type_id', 'status', 'published_at',
         'image_id', 'url_image', 'url_thumbnail',
         'creator_id', 'updater_id'
@@ -57,8 +57,9 @@ class SitModel extends PostModel
     {
         $this->select('id, idcode, title, slug, excerpt, url_image, url_thumbnail');
         $this->where('parent_id', $sitId);
-        $this->where('type_id', 5);
+        $this->where('type_id', 5); // type_id 5 para álbumes de fotos
         $this->orderBy('title', 'asc');
         return $this->findAll();
     }
+
 }

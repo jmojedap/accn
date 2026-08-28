@@ -19,7 +19,11 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end mr-1">
                     <a class="dropdown-item" href="<?= URL_APP . 'accounts/profile' ?>">Mi cuenta</a>
-                    <a class="dropdown-item" href="<?= URL_APP . 'accounts/logout' ?>">Cerrar sesión</a>
+                    <!-- Logout usa POST para evitar cambios de sesión mediante enlaces GET. -->
+                    <form method="post" action="<?= URL_APP . 'accounts/logout' ?>">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="dropdown-item border-0 bg-transparent">Cerrar sesión</button>
+                    </form>
                 </ul>
             </div>
         </div>
