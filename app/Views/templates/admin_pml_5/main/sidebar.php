@@ -7,14 +7,14 @@
                 </a>
             </li>
             <li v-for="(element, i) in elements" v-bind:class="{ treeview: element.subelements.length, 'active': element.active }">
-                <a href="#" v-on:click="nav_1_click(i)">
+                <a :href="element.anchor ? urlMod + element.cf : '#'" v-on:click.prevent="nav_1_click(i)">
                     <i class="fa-fw" v-bind:class="element.icon"></i>
                     {{ element.text }}
                     <i class="fa fa-angle-left float-end" v-if="element.subelements.length > 0"></i>
                 </a>
                 <ul class="treeview-menu" v-if="element.subelements.length > 0">
                     <li v-for="(subelement, j) in element.subelements" v-bind:class="{ 'active': subelement.active }">
-                        <a href="#" v-on:click="nav_1_click_sub(i,j)">
+                        <a :href="subelement.anchor ? urlMod + subelement.cf : '#'" v-on:click.prevent="nav_1_click_sub(i,j)">
                             <i class="fa-fw" v-bind:class="subelement.icon"></i>
                             {{ subelement.text }}
                         </a>
@@ -49,47 +49,26 @@
 
 <script>
 /**
- * Limita la navegación visible del editor a contenido, archivos e ítems.
- * La seguridad real sigue siendo aplicada por los filtros de Routes.php.
+ * Cada archivo de rol declara su navegacion. Los permisos se aplican en Routes.php.
+ * La coincidencia por prefijo admite secciones anidadas y parametros de registro.
  */
-function navigationForRole(elements, role) {
-    if (role !== 3) {
-        return elements;
-    }
-
-    return elements.reduce((allowedElements, element) => {
-        if (['Posts', 'Archivos'].includes(element.text)) {
-            allowedElements.push(element);
-        }
-
-        if (element.text === 'Ajustes') {
-            const itemsSettings = {
-                ...element,
-                subelements: element.subelements.filter(subelement => subelement.text === 'Ítems'),
-            };
-            allowedElements.push(itemsSettings);
-        }
-
-        return allowedElements;
-    }, []);
+function isAdminMenuSection(sections, currentSection) {
+    return sections.some(section => currentSection === section || currentSection.startsWith(section + '/'));
 }
-
-// Prepara el menú según el rol antes de calcular sus elementos activos.
-nav1Elements = navigationForRole(nav1Elements, APP_RID);
 
 //Activación inicial de elementos actuales
 //-----------------------------------------------------------------------------
     nav1Elements.forEach(element => {
         //Activar elemento actual, si está en las secciones
-        if ( element.sections.includes(appSection) ) { element.active = true }
+        element.active = isAdminMenuSection(element.sections, appSection);
         //Activar subelemento actual, si está en las secciones
         if ( element.subelements )
         {
             element.subelements.forEach(subelement => {
-                if ( subelement.sections.includes(appSection) )
+                subelement.active = isAdminMenuSection(subelement.sections, appSection);
+                if (subelement.active)
                 {
                     element.active = true
-                    subelement.active = true
                 }
             })
         }

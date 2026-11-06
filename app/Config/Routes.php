@@ -63,7 +63,7 @@ $routes->group('m/accounts', static function ($routes) {
     $routes->get('signup', 'M\Accounts::signup');
     $routes->get('logged', 'M\Accounts::logged');
     $routes->get('master_login/(:num)', 'M\Accounts::masterLogin/$1');
-    $routes->get('logout', 'M\Accounts::logout');
+    $routes->get('logout/(:any)', 'M\Accounts::logout/$1');
     $routes->get('profile', 'M\Accounts::profile');
     $routes->get('picture', 'M\Accounts::picture');
     $routes->get('picture/(:any)', 'M\Accounts::picture/$1');
@@ -71,7 +71,12 @@ $routes->group('m/accounts', static function ($routes) {
 
 // ACCOUNTS API
 //-----------------------------------------------------------------------------
+$routes->options('api/(:any)', static function () {
+    return service('response')->setStatusCode(204)->setBody('');
+});
+
 $routes->group('api/accounts', static function ($routes) {
+    $routes->get('csrf', 'Api\Accounts::csrf');
     $routes->post('validate', 'Api\Accounts::validateForm');
     $routes->post('validate_login', 'Api\Accounts::validateLogin');
     $routes->post('get_login_link', 'Api\Accounts::getLoginLink');
@@ -151,6 +156,32 @@ $routes->group('api/posts', static function ($routes) {
     $routes->get('set_main_image/(:num)/(:num)', 'Api\Posts::setMainImage/$1/$2');
 });
 
+// PRODUCTS ADMIN
+//-----------------------------------------------------------------------------
+$routes->group('admin/ecommerce/products', ['namespace' => 'App\Controllers\Admin', 'filter' => 'auth'], static function ($routes) {
+    $routes->get('', 'Products::index');
+    $routes->get('explore', 'Products::explore');
+    $routes->get('add', 'Products::add');
+    $routes->get('info/(:num)', 'Products::info/$1');
+    $routes->get('edit/(:num)', 'Products::edit/$1');
+});
+
+// PRODUCTS API
+//-----------------------------------------------------------------------------
+$routes->group('api/products', ['namespace' => 'App\Controllers\Api', 'filter' => 'auth'], static function ($routes) {
+    $routes->get('', 'Products::index');
+    $routes->get('search', 'Products::search');
+    $routes->post('search', 'Products::search');
+    $routes->get('info/(:segment)', 'Products::info/$1');
+    $routes->post('validate', 'Products::validateForm');
+    $routes->post('create', 'Products::create');
+    $routes->post('update/(:segment)', 'Products::update/$1');
+    $routes->post('save', 'Products::save');
+    $routes->post('save/(:segment)', 'Products::save/$1');
+    $routes->delete('delete_selected', 'Products::deleteSelected');
+    $routes->delete('delete/(:segment)', 'Products::delete/$1');
+});
+
 // ---------------------------- FILES  --------------------------------------------------
 //---------------------------------------------------------------------------------------
 
@@ -208,6 +239,9 @@ $routes->group('api/items', static function ($routes) {
 //-----------------------------------------------------------------------------
 $routes->group('api/conversations', static function ($routes) {
     $routes->post('create', 'Api\AiConversations::create');
+    $routes->post('get_answer', 'Api\AiConversations::getAnswer', ['filter' => ['apiCors', 'auth']]);
+    $routes->get('conversation_info/(:num)', 'Api\AiConversations::conversationInfo/$1', ['filter' => ['apiCors', 'auth']]);
+    $routes->get('get_messages/(:num)', 'Api\AiConversations::getMessages/$1', ['filter' => ['apiCors', 'auth']]);
 });
 // ---------------------------- AI GENERATE ---------------------------------------------
 //---------------------------------------------------------------------------------------
@@ -219,7 +253,6 @@ $routes->group('m/chat', static function ($routes) {
 // AI GENERATE API
 //-----------------------------------------------------------------------------
 $routes->group('api/ai_generate', static function ($routes) {
-    $routes->post('get_answer', 'Api\AiGenerate::getAnswer');
     $routes->delete('delete_messages', 'Api\AiGenerate::deleteMessages');
 });
 

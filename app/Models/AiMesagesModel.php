@@ -8,12 +8,9 @@ class AiMesagesModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = [
         'conversation_id',
+        'ai_request_id',
         'role',
         'text',
-        'prompt_token_count',
-        'candidates_token_count',
-        'model_version',
-        'response_details',
         'updater_id',
         'updated_at',
         'creator_id',
@@ -38,6 +35,17 @@ class AiMesagesModel extends Model
     }
 
     /**
+     * Obtiene una pagina desde el mensaje mas reciente, excluyendo borrados logicos.
+     */
+    public function getRecentMessages(int $conversationId, int $limit = 50, int $offset = 0): array
+    {
+        return $this->where('conversation_id', $conversationId)
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('id', 'DESC')
+            ->findAll($limit, $offset);
+    }
+
+    /**
      * Inserta un mensaje de usuario en la tabla ai_messages
      * 2026-03-11
      * @param array $data
@@ -45,6 +53,7 @@ class AiMesagesModel extends Model
      */
     public function insertUserMessage($data)
     {
+        $data['ai_request_id'] = null;
         $data['role'] = 'user';
         $data['updater_id'] = session()->get('user_id');
         $data['creator_id'] = session()->get('user_id');
@@ -54,23 +63,20 @@ class AiMesagesModel extends Model
     }
 
     /**
-     * Inserta un mensaje de IA en la tabla ai_messages
+     * Inserta el texto de IA y la referencia a la solicitud que lo genero.
      * 
      * @param int $conversationId
      * @param string $responseText
-     * @param array $responseDetails
+     * @param int|string $aiRequestId
      * @return int
      */
-    public function insertAiMessage($conversationId, $responseText, $responseDetails)
+    public function insertAiMessage($conversationId, $responseText, $aiRequestId)
     {
         $aRow = [
             'conversation_id' => $conversationId,
+            'ai_request_id' => $aiRequestId,
             'role' => 'model',
             'text' => $responseText,
-            'model_version' => $responseDetails['modelVersion'] ?? '-',
-            'prompt_token_count' => $responseDetails['usageMetadata']['promptTokenCount'] ?? 0,
-            'candidates_token_count' => $responseDetails['usageMetadata']['candidatesTokenCount'] ?? 0,
-            'response_details' => json_encode($responseDetails),
             'creator_id' => session()->get('user_id'),
             'updater_id' => session()->get('user_id'),
         ];

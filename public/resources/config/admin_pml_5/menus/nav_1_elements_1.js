@@ -26,6 +26,23 @@ var nav1Elements = [
         subelements: []
     },
     {
+        text: 'ECommerce',
+        active: false,
+        icon: 'fa fa-store',
+        cf: '',
+        sections: ['ecommerce'],
+        subelements: [
+            {
+                text: 'Productos',
+                active: false,
+                icon: 'fa fa-box',
+                cf: 'ecommerce/products/explore',
+                anchor: true,
+                sections: ['ecommerce/products'],
+            },
+        ],
+    },
+    {
         text: 'Comentarios',
         active: false,
         icon: 'far fa-comment',

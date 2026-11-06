@@ -1,0 +1,121 @@
+/* Estilos compartidos por las vistas de acceso y registro. */
+.auth-page {
+    width: 100%;
+    max-width: 420px;
+    margin: clamp(2rem, 6vw, 4rem) auto;
+    color: var(--bs-body-color, #212529);
+}
+
+.auth-page [v-cloak],
+.auth-page[v-cloak] {
+    display: none;
+}
+
+.auth-page .auth-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.auth-page .auth-title {
+    margin-bottom: 0.75rem;
+    font-size: clamp(1.75rem, 4vw, 2rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+}
+
+.auth-page .auth-description {
+    margin-bottom: 0;
+    color: var(--bs-secondary, #6c757d);
+    line-height: 1.6;
+}
+
+.auth-page .form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.auth-page .form-control,
+.auth-page .btn {
+    min-height: 48px;
+    border-radius: 0;
+    font-size: 1rem;
+}
+
+.auth-page .form-check-input,
+.auth-page .alert {
+    border-radius: 0;
+}
+
+.auth-page .auth-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+/* Mantiene los estados de Bootstrap alineados con la paleta del tema. */
+.auth-page .btn-primary {
+    --bs-btn-bg: var(--color-main-app);
+    --bs-btn-border-color: var(--color-main-app);
+    --bs-btn-hover-bg: var(--color-dark);
+    --bs-btn-hover-border-color: var(--color-dark);
+    --bs-btn-active-bg: var(--color-dark);
+    --bs-btn-active-border-color: var(--color-dark);
+    --bs-btn-disabled-bg: var(--color-main-app);
+    --bs-btn-disabled-border-color: var(--color-main-app);
+    background-color: var(--color-main-app);
+    border-color: var(--color-main-app);
+}
+
+.auth-page .btn-primary:hover,
+.auth-page .btn-primary:focus,
+.auth-page .btn-primary:active {
+    background-color: var(--color-dark);
+    border-color: var(--color-dark);
+}
+
+.auth-page .btn-primary:focus-visible {
+    outline: 2px solid var(--color-dark);
+    outline-offset: 3px;
+    box-shadow: none;
+}
+
+.auth-page .btn-primary:disabled,
+.auth-page .btn-primary.disabled {
+    background-color: var(--color-main-app);
+    border-color: var(--color-main-app);
+}
+
+.auth-page .form-check-input:checked {
+    background-color: var(--color-bg-primary);
+    border-color: var(--color-bg-primary);
+}
+
+.auth-page .auth-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--bs-border-color, #dee2e6);
+    text-align: center;
+    font-size: 0.9375rem;
+}
+
+.auth-page .auth-footer p:last-child,
+.auth-page .alert:last-child {
+    margin-bottom: 0;
+}
+
+.auth-page a:not(.btn) {
+    color: var(--color-text-link);
+}
+
+.auth-page a:not(.btn):hover,
+.auth-page a:not(.btn):focus-visible {
+    color: var(--color-text-link-hover);
+    text-decoration: underline;
+}
+
+.auth-page .auth-success {
+    padding: 1.5rem 0;
+    text-align: center;
+}

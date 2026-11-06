@@ -11,7 +11,7 @@ class GeminiClient
      * Funciones para solicitar respuestas a la API de Gemini.
      * Version 2026-08-15
      */
-    protected const DEFAULT_MODEL_ID = 'gemini-3.5-flash-lite';
+    public const DEFAULT_MODEL_ID = 'gemini-3.5-flash-lite';
     protected const DEFAULT_GENERATE_CONTENT_FORMAT = 'generateContent';
 
     protected CURLRequest $http;
@@ -48,19 +48,7 @@ class GeminiClient
     {
         $requestSettings = $this->normalizeRequestSettings($requestSettings);
         $url = $this->buildUrl($requestSettings);
-
-        $requestData = [
-            'contents' => $requestSettings['contents'],
-            // La API de Gemini requiere esta llave en camelCase.
-            'generationConfig' => $this->geminiGenerationSettings($requestSettings['generation_config']),
-        ];
-
-        if (! empty($requestSettings['system_instruction_parts'])) {
-            $requestData['system_instruction'] = [
-                'parts' => $requestSettings['system_instruction_parts'],
-            ];
-        }
-
+        $requestData = $this->requestBody($requestSettings);
         $payload = json_encode($requestData, JSON_UNESCAPED_UNICODE);
 
         if ($payload === false) {
@@ -75,14 +63,39 @@ class GeminiClient
         $responseData = $this->executeRequest($url, $payload);
         log_message('info', 'Gemini response: ' . json_encode($responseData));
 
-        $response_text = $this->extractResponseText($responseData['response']);
+        $responseText = $this->extractResponseText($responseData['response']);
+        $error = $responseData['error'] ?: ($responseData['response']['error']['message'] ?? '');
+
+        if ($error === '' && trim($responseText) === '') {
+            $error = 'Gemini no devolvio contenido de texto.';
+        }
 
         return [
             'model_id' => $requestSettings['model_id'],
-            'response_text' => $response_text,
+            'response_text' => $responseText,
             'response_details' => $responseData['response'] ?? [],
-            'error' => $responseData['error'] ?? '',
+            'error' => $error,
         ];
+    }
+
+    /**
+     * Construye el cuerpo usado tanto en el envio como en el registro, sin URL ni clave de API.
+     */
+    public function requestBody(array $requestSettings): array
+    {
+        $requestSettings = $this->normalizeRequestSettings($requestSettings);
+        $requestData = [
+            'contents' => $requestSettings['contents'],
+            'generationConfig' => $this->geminiGenerationSettings($requestSettings['generation_config']),
+        ];
+
+        if (! empty($requestSettings['system_instruction_parts'])) {
+            $requestData['system_instruction'] = [
+                'parts' => $requestSettings['system_instruction_parts'],
+            ];
+        }
+
+        return $requestData;
     }
 
     /**
@@ -290,8 +303,15 @@ class GeminiClient
      */
     protected function extractResponseText(array $response): string
     {
-        return $response['candidates'][0]['content']['parts'][0]['text']
-            ?? 'Ocurrio un error al obtener la respuesta.';
+        $texts = [];
+
+        foreach ($response['candidates'][0]['content']['parts'] ?? [] as $part) {
+            if (isset($part['text']) && is_string($part['text'])) {
+                $texts[] = $part['text'];
+            }
+        }
+
+        return implode('', $texts);
     }
 
     /**

@@ -37,6 +37,7 @@ class Acl extends BaseConfig
         'api/accounts/logout',
         'api/accounts/validate',
         'api/accounts/validate_login',
+        'api/accounts/csrf',
         'api/accounts/create',
         'api/accounts/get_login_link',
         'api/accounts/test',
@@ -87,13 +88,26 @@ class Acl extends BaseConfig
         'm/albums/images',
 
         'api/conversations/create',
+        'api/conversations/conversation_info',
+        'api/conversations/get_messages',
+        'api/conversations/get_answer',
 
-        'api/ai_generate/get_answer',
         'api/ai_generate/delete_messages',
     ];
 
     //Rutas y sus roles permitidos
     public $routesRoles = [
+        //Gestion del catalogo: developer, admin y editor.
+        'admin/ecommerce/products' => [1, 2, 3],
+        'api/products' => [1, 2, 3],
+        'api/products/search' => [1, 2, 3],
+        'api/products/info' => [1, 2, 3],
+        'api/products/validate' => [1, 2, 3],
+        'api/products/create' => [1, 2, 3],
+        'api/products/update' => [1, 2, 3],
+        'api/products/save' => [1, 2, 3],
+        'api/products/delete' => [1, 2, 3],
+        'api/products/delete_selected' => [1, 2, 3],
         'admin/users/explore' => [2],
         'admin/users/edit' => [2]
     ];

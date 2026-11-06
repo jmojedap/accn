@@ -1,4 +1,4 @@
-<?= view('m/chat/conversation/style') ?>
+<?= view('m/chat/conversation/conversation_style') ?>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
@@ -115,4 +115,4 @@
     </div>
     <?= view('common/bs5/modal_delete_selected') ?>
 </div>
-<?= view('m/chat/conversation/vue') ?>
+<?= view('m/chat/conversation/conversation_vue') ?>

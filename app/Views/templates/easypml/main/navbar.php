@@ -143,10 +143,10 @@ $session = session();
                 }
             },
             logout: function() {
-                axios.post(URL_APP + 'accounts/logout/ajax')
+                axios.get(URL_MOD + 'accounts/logout/ajax')
                     .then(response => {
                         if (response.data.status == 1) {
-                            window.location = URL_APP + 'accounts/login'
+                            window.location = URL_MOD + 'accounts/login'
                         }
                     })
                     .catch(function(error) {

@@ -22,6 +22,8 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'auth' => \App\Filters\Auth::class,
+        'apiCors' => \App\Filters\ApiCors::class,
+        'csrfToken' => \App\Filters\CsrfToken::class,
     ];
 
     /**
@@ -30,6 +32,7 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
+            'apiCors',
             // 'honeypot',
             'csrf',
             // 'invalidchars',
@@ -62,5 +65,7 @@ class Filters extends BaseConfig
      * Example:
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
-    public array $filters = [];
+    public array $filters = [
+        'csrfToken' => ['after' => ['api/*']],
+    ];
 }

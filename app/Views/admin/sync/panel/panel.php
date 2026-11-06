@@ -13,7 +13,7 @@
             <!-- COLUMNAS PRODUCCION -->
             <th v-show="env == 'production'">Generar</th>
             <th v-show="env == 'production'">sync_key</th>
-            <th v-show="env == 'production'">Generación</th>
+            <th v-show="env == 'production'"></th>
 
             <!-- COLUMNAS LOCAL --> 
             <th v-show="env == 'development'">Filas Local</th>
@@ -38,16 +38,13 @@
                 </td>
                 <td v-show="env == 'production'">
                     <span v-show="table.table_key != ''">
-                        {{ table.name }}-{{ table.table_key }}-{{ table.qty_files }}
+                        {{ table.name }}_{{ table.table_key }}_{{ table.qty_files }}
                     </span>
                 </td>
                 <td v-show="env == 'production'">
-                    <span v-show="table.qty_files > 0" class="badge badge-success">
-                        {{ table.qty_files }} archivos
-                    </span>
-                    <span v-show="table.qty_rows > 0" class="badge badge-primary">
-                        {{ table.qty_rows }} registros
-                    </span>
+                    <button class="btn btn-light" v-on:click="deleteGeneratedFiles(key)" v-bind:disabled="table.status == 'loading'" title="Eliminar archivos generados">
+                        <i class="fa fa-trash"></i>
+                    </button>
                 </td>
                 
                 <!-- COLUMNAS LOCAL -->

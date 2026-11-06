@@ -17,7 +17,7 @@
         },
         generateFiles: function(tableIndex){
             this.setCurrent(tableIndex)
-            axios.post('<?= URL_API ?>' + 'sync/generate_files/' + this.currentTable.name)
+            axios.get('<?= URL_API ?>' + 'sync/generate_files/' + this.currentTable.name)
             .then(response => {
                 this.currentTable.files = response.data.files
                 this.currentTable.qty_files = response.data.qty_files
@@ -37,6 +37,14 @@
                         this.tables[index].server_row_count = table.num_rows
                     }
                 })
+            })
+            .catch(function(error) { console.log(error) })
+        },
+        deleteGeneratedFiles: function(tableIndex){
+            this.setCurrent(tableIndex)
+            axios.get('<?= URL_API ?>' + 'sync/delete_generated_files/' + this.currentTable.name)
+            .then(response => {
+                toastr['success'](response.data.message)
             })
             .catch(function(error) { console.log(error) })
         },

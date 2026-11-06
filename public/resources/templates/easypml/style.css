@@ -165,3 +165,260 @@ tr.selected {
         font-size: 1.5em;
     }
 }
+
+/* Landing de Multisits: estilos limitados a la página de inicio. */
+/*-----------------------------------------------------------------------------*/
+
+.multisits-home {
+    --home-ink: #24282e;
+    --home-muted: #60656d;
+    --home-accent: #c73532;
+    --home-line: #e8e9eb;
+    display: block;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    color: var(--home-ink);
+    padding-bottom: 2rem;
+}
+
+.multisits-home .home-hero {
+    padding: clamp(3.5rem, 7vw, 6rem) 0 clamp(4rem, 7vw, 6rem);
+}
+
+.multisits-home .home-eyebrow {
+    margin-bottom: 1rem;
+    color: var(--home-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.multisits-home .home-title,
+.multisits-home .home-section-title {
+    color: var(--home-ink);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+}
+
+.multisits-home .home-title {
+    max-width: 950px;
+    margin: 0 auto 1.5rem;
+    font-size: clamp(2.25rem, 4.6vw, 4rem);
+    line-height: 1.15;
+}
+
+.multisits-home .home-title span {
+    display: block;
+    color: var(--home-accent);
+}
+
+.multisits-home .home-intro {
+    max-width: 600px;
+    margin-bottom: 2rem;
+    color: var(--home-muted);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.75;
+}
+
+.multisits-home .home-btn-primary,
+.multisits-home .home-btn-secondary {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.multisits-home .home-btn-primary {
+    border-color: var(--home-accent);
+    background: var(--home-accent);
+    color: #fff;
+}
+
+.multisits-home .home-btn-primary:hover {
+    border-color: #ac2d2a;
+    background: #ac2d2a;
+    color: #fff;
+}
+
+.multisits-home .home-btn-secondary {
+    border-color: var(--home-line);
+    background: #fff;
+    color: var(--home-ink);
+}
+
+.multisits-home .home-btn-secondary:hover {
+    border-color: #b9bdc2;
+    background: #f7f8f9;
+    color: var(--home-ink);
+}
+
+.multisits-home a:focus-visible {
+    outline: 2px solid var(--home-accent);
+    outline-offset: 4px;
+    box-shadow: none;
+}
+
+.multisits-home .home-section {
+    padding: clamp(3rem, 6vw, 5rem) 0;
+}
+
+.multisits-home .home-section-bordered {
+    border-top: 1px solid var(--home-line);
+}
+
+.multisits-home .home-section-title {
+    margin-bottom: 1.25rem;
+    font-size: clamp(1.75rem, 2.8vw, 2.5rem);
+    line-height: 1.25;
+}
+
+.multisits-home .home-copy {
+    color: var(--home-muted);
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.multisits-home .home-copy strong {
+    color: var(--home-ink);
+    font-weight: 500;
+}
+
+.multisits-home .home-feature {
+    padding: 1.5rem;
+    border: 1px solid var(--home-line);
+}
+
+.multisits-home .home-icon {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--home-accent);
+    font-size: 1.25rem;
+}
+
+.multisits-home .home-card-title {
+    margin-bottom: 0.5rem;
+    color: var(--home-ink);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.multisits-home .home-feature p,
+.multisits-home .home-formats p {
+    margin-bottom: 0;
+    color: var(--home-muted);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+}
+
+.multisits-home .home-publishing {
+    padding-right: clamp(1.25rem, 4vw, 3rem);
+    padding-left: clamp(1.25rem, 4vw, 3rem);
+    background: #f7f8f9;
+}
+
+.multisits-home .home-text-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--home-accent);
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.multisits-home .home-text-link:hover {
+    color: #ac2d2a;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.multisits-home .home-formats li {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #dfe2e5;
+}
+
+.multisits-home .home-formats li:first-child {
+    padding-top: 0;
+}
+
+.multisits-home .home-format-number {
+    padding-top: 0.125rem;
+    color: var(--home-muted);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.multisits-home .home-section-heading {
+    max-width: 650px;
+    margin-bottom: 2.5rem;
+}
+
+.multisits-home .home-audience {
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid var(--home-line);
+}
+
+.multisits-home .home-audience-title {
+    margin-bottom: 0.5rem;
+    color: var(--home-ink);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+}
+
+.multisits-home .home-benefits li {
+    position: relative;
+    padding-left: 1.25rem;
+    color: var(--home-muted);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+}
+
+.multisits-home .home-benefits li + li {
+    margin-top: 0.75rem;
+}
+
+.multisits-home .home-benefits li::before {
+    position: absolute;
+    left: 0;
+    color: var(--home-accent);
+    content: '\2013';
+}
+
+.multisits-home .home-cta {
+    padding: clamp(2.5rem, 5vw, 4rem) 1.25rem;
+    border-top: 1px solid var(--home-line);
+    background: #fbf9f8;
+}
+
+.multisits-home .home-cta .home-copy {
+    max-width: 500px;
+    margin-bottom: 1.75rem;
+}
+
+@media (max-width: 575px) {
+    .multisits-home .home-actions {
+        flex-direction: column;
+        max-width: 320px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .multisits-home .home-btn-primary,
+    .multisits-home .home-btn-secondary {
+        transition: none;
+    }
+}

@@ -1,6 +1,12 @@
-var nav_1_elements = [
+// Admin: mantiene las opciones que el panel mostraba antes de cargar por rol.
+var nav1Elements = [
     {
-        text: 'Usuarios', active: false, icon: 'fa fa-user', cf: 'users/explore', anchor: false,
+        text: 'Inicio', active: false, icon: 'fa fa-gauge', cf: 'app/dashboard', anchor: false,
+        sections: ['app/dashboard'],
+        subelements: []
+    },
+    {
+        text: 'Usuarios', active: false, icon: 'fa fa-user', cf: 'users/explore', anchor: true,
         sections: ['users/explore', 'users/add', 'users/import', 'users/profile', 'users/edit', 'users/inbody', 'users/orders'],
         subelements: []
     },
@@ -13,28 +19,78 @@ var nav_1_elements = [
         subelements: []
     },
     {
-        text: 'Repositorio',
+        text: 'Archivos',
         active: false,
-        icon: 'fas fa-book',
-        cf: 'repositorio/explore',
-        sections: ['repositorio/explore','repositorio/info','repositorio/edit','repositorio/details','repositorio/add'],
+        icon: 'far fa-image',
+        cf: 'files/explore',
+        sections: ['files/explore', 'files/add', 'files/import', 'files/info', 'files/edit', 'files/image', 'files/details'],
         subelements: []
     },
     {
-        text: 'Escuela de Cuidado',
+        text: 'ECommerce',
         active: false,
-        icon: 'fa fa-solid fa-hands-holding',
+        icon: 'fa fa-store',
         cf: '',
-        sections: [],
+        sections: ['ecommerce'],
         subelements: [
             {
-                text: 'Actividades', active: false, icon: 'fa fa-regular fa-calendar', cf: 'cuidado/explore',
-                sections: ['cuidado/explore','cuidado/details','cuidado/add','cuidado/actividad_asistentes','cuidado/actividad_sesiones','cuidado/edit']
+                text: 'Productos',
+                active: false,
+                icon: 'fa fa-box',
+                cf: 'ecommerce/products/explore',
+                anchor: true,
+                sections: ['ecommerce/products'],
+            },
+        ],
+    },
+    {
+        text: 'Comentarios',
+        active: false,
+        icon: 'far fa-comment',
+        cf: 'comments/explore',
+        sections: ['comments/explore', 'comments/add', 'comments/info'],
+        subelements: []
+    },
+    {
+        text: 'Ajustes',
+        active: false,
+        style: '',
+        icon: 'fa fa-sliders-h',
+        cf: '',
+        sections: ['config/options'],
+        subelements: [
+            {
+                text: 'General', active: false, icon: 'fa fa-cogs', cf: 'config/options',
+                sections: ['config/options', 'config/processes', 'config/colors', 'config/import', 'config/import_e']
             },
             {
-                text: 'Exportar', active: false, icon: 'fa fa-download', cf: 'cuidado/export_panel',
-                sections: ['cuidado/export_panel']
+                text: 'Ítems', active: false, icon: 'fa fa-bars', cf: 'items/values/0',
+                sections: ['items/values', 'items/import']
             },
+            {
+                text: 'Base de datos', active: false, icon: 'fa fa-database', cf: 'sync/panel',
+                sections: ['sync/panel']
+            },
+            {
+                text: 'Eventos', active: false, icon: 'far fa-clock', cf: 'events/summary', anchor: false,
+                sections: ['events/explore', 'events/summary']
+            },
+            {
+                text: 'Lugares', active: false, icon: 'fa fa-map-marker-alt', cf: 'places/explore', anchor: false,
+                sections: ['places/explore', 'places/add', 'places/edit'],
+            },
+            {
+                text: 'Periodos', active: false, icon: 'fa fa-calendar', cf: 'periods/explore', anchor: false,
+                sections: ['periods/explore', 'periods/add', 'periods/edit', 'periods/calendar'],
+            }
         ]
+    },
+    {
+        text: 'Ayuda',
+        active: false,
+        icon: 'far fa-question-circle',
+        cf: 'app/help',
+        sections: ['app/help'],
+        subelements: []
     },
 ];

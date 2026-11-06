@@ -1,72 +1,75 @@
-<div id="loginApp" class="text-center center_box mw360p">
-    <p>
-        ¿No tienes una cuenta? <a href="<?= URL_APP . 'accounts/signup' ?>">Regístrate</a>
-    </p>
-    <form accept-charset="utf-8" method="POST" id="loginForm" @submit.prevent="handleSubmit">
-        <fieldset v-bind:disabled="loading">            
+<link rel="stylesheet" href="<?= URL_RESOURCES ?>templates/easypml/auth.css">
+
+<section id="loginApp" class="auth-page" aria-labelledby="auth-title" v-cloak>
+    <header class="auth-header">
+        <h1 id="auth-title" class="auth-title">Inicia sesión</h1>
+        <p class="auth-description">Ingresa a tu cuenta de <?= esc(APP_NAME) ?>.</p>
+    </header>
+
+    <form id="loginForm" accept-charset="utf-8" method="post" @submit.prevent="handleSubmit" :aria-busy="loading">
+        <fieldset :disabled="loading">
+            <legend class="visually-hidden">Datos de acceso</legend>
             <div class="mb-3">
-                <input
-                    class="form-control form-control-lg" name="username" value="admin"
-                    placeholder="Correo electrónico" required
-                    title="Correo electrónico">
+                <label class="form-label" for="login-username">Correo electrónico o usuario</label>
+                <input id="login-username" class="form-control rounded-0" name="username" type="text"
+                    autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
             </div>
             <div class="mb-3">
-                <input type="password" class="form-control form-control-lg" name="password" placeholder="Contraseña" required value="malotv252">
+                <label class="form-label" for="login-password">Contraseña</label>
+                <input id="login-password" class="form-control rounded-0" name="password" type="password"
+                    autocomplete="current-password" required>
             </div>
-            
-            <div class="mb-3 form-check text-start">
-                <input type="checkbox" class="form-check-input" id="field-remember" name="remember" value="1">
-                <label class="form-check-label" for="field-remember">Recordarme</label>
+            <div class="mb-4 form-check">
+                <input id="login-remember" class="form-check-input rounded-0" name="remember" type="checkbox" value="1">
+                <label class="form-check-label" for="login-remember">Recordarme</label>
             </div>
-            
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary btn-lg w-100">Ingresar</button>
-            </div>
-            
-            <div class="mb-3">
-                <a href="<?= URL_APP . 'accounts/login/link' ?>">¿Olvidaste tu contraseña?</a>
-            </div>
+            <button type="submit" class="btn btn-primary rounded-0 auth-submit" :disabled="loading">
+                <span v-if="loading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                {{ loading ? 'Ingresando…' : 'Ingresar' }}
+            </button>
         </fieldset>
     </form>
-    
-    <div id="messages" v-show="status == 1">
-        <div class="alert alert-warning" v-for="message in messages">
-            {{ message }}
-        </div>
+
+    <div class="mt-3" aria-live="polite" aria-atomic="true">
+        <div v-if="message" class="alert alert-warning rounded-0" role="alert">{{ message }}</div>
     </div>
-</div>
+
+    <footer class="auth-footer">
+        <p><a href="<?= URL_APP ?>accounts/login/link">¿Olvidaste tu contraseña? Ingresa con un enlace</a></p>
+        <p>¿No tienes una cuenta? <a href="<?= URL_APP ?>accounts/signup">Regístrate</a></p>
+    </footer>
+</section>
 
 <script>
 var loginApp = createApp({
-    data(){
-        return{
+    data() {
+        return {
             loading: false,
-            messages: [],
-            status: -1
-        }
+            message: ''
+        };
     },
     methods: {
-        handleSubmit: function(){
-            this.loading = true
-            var formValues = new FormData(document.getElementById('loginForm'))
-            axios.post(URL_API + 'accounts/validate_login', formValues)
-            .then(response => {
-                this.loading = false
-                if ( response.data.status == 1 )
-                {
-                    this.saveToken(response.data.token)
+        async handleSubmit() {
+            if (this.loading) return;
+
+            const payload = new FormData(document.getElementById('loginForm'));
+            this.loading = true;
+            this.message = '';
+
+            try {
+                const { data } = await axios.post(URL_API + 'accounts/validate_login', payload);
+                if (Number(data.status) === 1) {
+                    localStorage.setItem('jwtToken', data.token);
+                    window.location.href = URL_MOD + 'accounts/logged';
                 } else {
-                    this.messages = response.data.messages;
-                    this.status = response.data.status;
+                    this.message = data.message || 'Revisa tus datos e intenta de nuevo.';
                 }
-            })
-            .catch(function (error) { console.log(error) })
-        },
-        saveToken: function(jwtToken){
-            console.log('Guardano token')
-            localStorage.setItem("jwtToken", jwtToken);
-            window.location = URL_MOD + 'accounts/logged';
-        },
-    },
-}).mount('#loginApp')
+            } catch (error) {
+                this.message = 'No pudimos iniciar sesión. Intenta de nuevo.';
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
+}).mount('#loginApp');
 </script>

@@ -4,6 +4,7 @@ namespace App\Filters;
 
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\Filters\FilterInterface;
 
 class Auth implements FilterInterface
@@ -13,12 +14,14 @@ class Auth implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $uri = current_url(true);
-        $segments = $uri->getSegments();
-        $currentRoute = '';
-        if ( count($segments) == 2 ) $currentRoute =  $uri->getSegment(2, '');
-        if ( count($segments) == 3 ) $currentRoute =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '');
-        if ( count($segments) >= 4 ) $currentRoute =  $uri->getSegment(2, '') . '/' . $uri->getSegment(3, '') . '/' . $uri->getSegment(4, '');
+        if (! $request instanceof IncomingRequest) {
+            return null;
+        }
+
+        // getPath() ya es relativo a baseURL, tanto en raiz como en subcarpetas.
+        // La ACL identifica las rutas por sus primeros tres segmentos.
+        $segments = explode('/', trim($request->getPath(), '/'));
+        $currentRoute = implode('/', array_slice($segments, 0, 3));
 
         //Verificar si el usuario en sesión tiene acceso permitido
         $routeAllowed = $this->routeAllowed($currentRoute);
@@ -61,7 +64,7 @@ class Auth implements FilterInterface
         //Si inició sesión
         if ( $session->logged )
         {
-            //Es administrador
+            //Es desarrollador (1) o administrador (2)
             if ( $session->role == 1 or $session->role == 2 ) return 1;
 
             //Si está en las rutas para usuarios con sesión

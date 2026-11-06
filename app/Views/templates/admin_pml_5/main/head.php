@@ -1,5 +1,10 @@
 <?php
     $uri = current_url(true);
+    $segments = $uri->getSegments();
+    $adminIndex = array_search('admin', $segments, true);
+    $currentAdminSection = $adminIndex === false ? '' : implode('/', array_slice($segments, $adminIndex + 1));
+    $currentRole = (int) ($_SESSION['role'] ?? 0);
+    $menuRole = in_array($currentRole, [1, 2, 3, 21], true) ? $currentRole : 21;
 ?>
 
 <meta charset="UTF-8">
@@ -52,16 +57,16 @@
         <script>
             const URL_MOD = '<?= URL_ADMIN ?>'; const URL_API = '<?= URL_API ?>'; const URL_FRONT = '<?= URL_FRONT ?>';
             const URL_BASE = '<?= base_url() ?>';
-            var appSection = '<?= $uri->getSegment(3) . '/' . $uri->getSegment(4); ?>';
+            var appSection = <?= json_encode($currentAdminSection, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
         </script>
 
         <!-- Usuario con sesión iniciada -->
-        <?php if ( $_SESSION['logged'] ) : ?>
+        <?php if (! empty($_SESSION['logged'])) : ?>
             <!-- Elementos del menú -->
-            <script src="<?= URL_RESOURCES ?>config/admin_pml_5/menus/nav_1_elements_1.js"></script>
+            <script src="<?= URL_RESOURCES ?>config/admin_pml_5/menus/nav_1_elements_<?= $menuRole ?>.js"></script>
 
             <script>
-                const APP_RID = <?= $_SESSION['role'] ?>;
-                const APP_UID = <?= $_SESSION['user_id'] ?>;
+                const APP_RID = <?= $currentRole ?>;
+                const APP_UID = <?= (int) ($_SESSION['user_id'] ?? 0) ?>;
             </script>
         <?php endif; ?>

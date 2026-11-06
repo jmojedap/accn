@@ -51,7 +51,7 @@ var conversationApp = createApp({
                 conversation_id: this.conversationId,
             };
 
-            axios.post(URL_API + 'ai_generate/get_answer/', payload)
+            axios.post(URL_API + 'conversations/get_answer/', payload)
             .then(response => {
                 const data = response.data || {};
 

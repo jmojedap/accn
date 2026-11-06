@@ -2,7 +2,6 @@
 
 use CodeIgniter\Model;
 use App\Libraries\GeminiClient;
-use App\Models\AiGenerateModel;
 
 class AiConversationModel extends Model
 {
@@ -76,6 +75,32 @@ class AiConversationModel extends Model
     }
 
     /**
+     * Prepara el historial de una conversacion y lo envia al enrutador de solicitudes.
+     */
+    public function getConversationAnswer(array $conversation, array $requestOptions = []): array
+    {
+        $requestOptions['contents'] = $this->getMessagesAsContent((int) $conversation['id']);
+        $requestOptions['conversation_summary'] = $conversation['summary'] ?? null;
+        $requestOptions['system_instruction_key'] = $conversation['system_instruction_key'] ?? 'ayudante';
+
+        return $this->aiRequestModel()->generate($requestOptions, [
+            'tool' => 'chat',
+            'tool_type_request' => 'conversation_answer',
+            'response_type' => 'markdown',
+            'related_type' => 'conversation',
+            'related_id' => (int) $conversation['id'],
+        ]);
+    }
+
+    /**
+     * Usa la misma conexion para el historial y el registro de solicitudes.
+     */
+    protected function aiRequestModel(): AiRequestModel
+    {
+        return new AiRequestModel($this->db);
+    }
+
+    /**
      * Convierte un mensaje de la conversacion a la estructura contents de Gemini.
      */
     protected function messageAsContent(string $role, string $text): array
@@ -109,16 +134,6 @@ class AiConversationModel extends Model
 
         // Convertir el historial al formato contents que espera Gemini.
         $contents = $this->getMessagesAsContent($conversationId);
-        // Agregar un mensaje para evitar "Requests ending with a model turn are not supported."
-        $contents[] = [
-            'role' => 'user',
-            'parts' => [
-                [
-                    'text' => 'Resume la conversación.',
-                ],
-            ],
-        ];
-
         // No se puede generar un resumen si no hay mensajes con texto.
         if ($contents === []) {
             return [
@@ -128,13 +143,23 @@ class AiConversationModel extends Model
             ];
         }
 
+        // Terminar con un mensaje de usuario antes de solicitar el resumen.
+        $contents[] = [
+            'role' => 'user',
+            'parts' => [
+                [
+                    'text' => 'Resume la conversación.',
+                ],
+            ],
+        ];
+
         $geminiClient = new GeminiClient();
 
         $generationConfig = $geminiClient->defaultGenerationSettings();
         $generationConfig['max_output_tokens'] = 3000; // Limitar el resumen a 3000 tokens
 
         // Esta instruccion es especifica para resumir. No se usa la personalidad
-        // de Paula porque esa instruccion esta pensada para responder al usuario.
+        // del asistente porque esa instruccion esta pensada para responder al usuario.
         $requestOptions = [
             'contents' => $contents,
             'system_instruction_parts' => [[
@@ -147,12 +172,13 @@ class AiConversationModel extends Model
             'generation_config' => $generationConfig,
         ];
 
-        $aiGenerateModel = new AiGenerateModel();
-
-        // AiGenerateModel devuelve response_text, response_details y error;
-        // no devuelve candidates en el nivel superior.
-        $data = $aiGenerateModel->generate($requestOptions);
-        log_message('debug', 'Resumen de la conversacion: ' . json_encode($data, JSON_UNESCAPED_UNICODE));
+        $data = $this->aiRequestModel()->generate($requestOptions, [
+            'tool' => 'chat',
+            'tool_type_request' => 'conversation_summary',
+            'response_type' => 'plain_text',
+            'related_type' => 'conversation',
+            'related_id' => $conversationId,
+        ]);
 
         // No sobrescribir un resumen valido con un mensaje generico si Gemini fallo.
         if (($data['error'] ?? '') !== '') {

@@ -29,6 +29,17 @@ class Accounts extends BaseController
 		return redirect()->to(base_url($destination));
 	}
 
+    /** Obtiene el token antes del login o de otra petición que requiera CSRF. */
+    public function csrf()
+    {
+        return $this->response
+            ->setHeader('Cache-Control', 'no-store')
+            ->setJSON([
+                'headerName' => config('Security')->headerName,
+                'token' => csrf_hash(),
+            ]);
+    }
+
 	/**
 	 * JSON
 	 * Validar usuario y contraseña, si son válidos iniciar sesión

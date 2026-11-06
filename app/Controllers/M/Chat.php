@@ -41,7 +41,7 @@ class Chat extends BaseController
             'url_thumbnail' => URL_IMG . 'users/user.png',
         ];
 
-        $data['headTitle'] = 'Chat';
+        $data['headTitle'] = $sitAgent->title ?? 'Chat';
         $data['conversation'] = $conversation;
         $data['sitAgent'] = $sitAgent;
         $data['viewA'] = $this->viewsFolder . 'conversation/conversation';
